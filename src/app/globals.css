@@ -6,8 +6,7 @@
 @theme inline {
     --font-cormorantGaramond: var(--font-cormorant-garamond);
     --font-lora: var(--font-lora);
-    --color-primary-blue-1: var(--primary-blue-1);
-    --color-primary-blue-2: var(--primary-blue-2);
+    --color-primary-purple: var(--primary-purple);
     --color-primary-yellow-1: var(--primary-yellow-1);
     --color-background: var(--background);
     --color-foreground: var(--foreground);
@@ -49,9 +48,8 @@
 }
 
 :root {
-    --primary-blue-1: #1f2732;
-    --primary-blue-2: #2e3947;
-    --primary-yellow-1: #d1b06b;
+    --primary-purple: #49214c;
+    --primary-yellow-1: #bb923a;
     --radius: 0.625rem;
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
@@ -59,7 +57,7 @@
     --card-foreground: oklch(0.145 0 0);
     --popover: oklch(1 0 0);
     --popover-foreground: oklch(0.145 0 0);
-    --primary: #d1b06b;
+    --primary: #bb923a;
     --primary-foreground: oklch(0.985 0 0);
     --secondary: oklch(0.97 0 0);
     --secondary-foreground: oklch(0.205 0 0);
@@ -129,12 +127,87 @@
     }
 }
 
+@layer utilities {
+    .bg-brand-gradient {
+        background: radial-gradient(
+            ellipse at center,
+            #2e1035 0%,
+            #050208 100%
+        );
+    }
+}
+
+/* Unique class name to avoid conflict */
+.purple-reveal-btn {
+    position: relative;
+    overflow: hidden;
+
+    /* 1. Base Layer (Visible on Hover) */
+    background-color: #bb923a;
+    border: 1px solid #bb923a; /* Optional: Keep border same as hover color */
+
+    /* 2. Text Color (Visible Initially) */
+    color: #bb923a;
+
+    transition: color 0.3s ease;
+    cursor: pointer;
+    z-index: 1;
+}
+
+/* The "Curtains" (Visible Initially) */
+.purple-reveal-btn::before,
+.purple-reveal-btn::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 51%; /* Slight overlap to prevent gap */
+    height: 100%;
+
+    /* 3. Curtain Color (Purple) */
+    background-color: #2e1035;
+
+    z-index: -1;
+    transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* Initial Position: Closed */
+.purple-reveal-btn::before {
+    left: 0;
+    transform: translateX(0);
+}
+
+.purple-reveal-btn::after {
+    right: 0;
+    transform: translateX(0);
+}
+
+/* Hover States */
+.purple-reveal-btn:hover {
+    /* 4. Text Color on Hover */
+    color: #2e1035;
+}
+
+/* Open Curtains */
+.purple-reveal-btn:hover::before {
+    transform: translateX(-100%);
+}
+
+.purple-reveal-btn:hover::after {
+    transform: translateX(100%);
+}
+
+/* Ensure text sits on top */
+.purple-reveal-btn span {
+    position: relative;
+    z-index: 10;
+}
+
 /* Gold Reveal Button Animation */
 .gold-reveal-btn {
     position: relative;
     overflow: hidden;
     background-color: #ffffff;
-    border: 1px solid #c8a972;
+    border: 1px solid #bb923a;
     color: #ffffff;
     transition: color 0.3s ease;
     cursor: pointer;
@@ -147,7 +220,7 @@
     top: 0;
     width: 50%;
     height: 100%;
-    background-color: #d1b06b;
+    background-color: #bb923a;
     z-index: 0;
     transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
@@ -197,7 +270,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #d1b06b;
+    background-color: #bb923a;
     z-index: 0;
 
     /* NEW LOGIC START */

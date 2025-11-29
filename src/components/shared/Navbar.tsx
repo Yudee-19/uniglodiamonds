@@ -102,51 +102,8 @@ export default function Navbar() {
                     transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }} // Smooth cubic-bezier
                     className="overflow-hidden  border-b border-slate-800"
                 >
-                    {/* TOP BAR: Info & Socials */}
-                    <div className="bg-primary-blue-2 px-4 md:px-8 py-2 flex flex-col md:flex-row justify-between items-center text-[10px] md:text-sm text-slate-400 border-b border-slate-800/50 font-lora">
-                        <div className="container mx-auto  flex justify-between">
-                            <div className="flex flex-wrap gap-4 items-center justify-center md:justify-start">
-                                <span className="flex items-center gap-1 text-white/70 cursor-pointer transition-colors">
-                                    <Phone
-                                        size={12}
-                                        className={"text-primary"}
-                                    />{" "}
-                                    +32 473 565 758
-                                </span>
-                                <span className="flex items-center gap-1 text-white/70 cursor-pointer transition-colors">
-                                    <Mail
-                                        size={12}
-                                        className={"text-primary"}
-                                    />{" "}
-                                    suraj@uniglodiamonds.com
-                                </span>
-                                <span className="hidden md:flex items-center gap-1 text-white/70">
-                                    <Clock
-                                        size={12}
-                                        className={"text-primary"}
-                                    />{" "}
-                                    Mon-Fri: 10:00-18:00
-                                </span>
-                            </div>
-                            <div className="flex gap-4 mt-2 md:mt-0">
-                                <Facebook
-                                    size={12}
-                                    className="hover:text-[#c5a059] cursor-pointer transition-colors"
-                                />
-                                <Twitter
-                                    size={12}
-                                    className="hover:text-[#c5a059] cursor-pointer transition-colors"
-                                />
-                                <Instagram
-                                    size={12}
-                                    className="hover:text-[#c5a059] cursor-pointer transition-colors"
-                                />
-                            </div>
-                        </div>
-                    </div>
-
                     {/* BRAND BAR: Logo & Primary Buttons */}
-                    <div className=" px-4 md:px-8 py-2 bg-primary-blue-1 border-b border-white/70">
+                    <div className=" px-4 md:px-8 py-4 bg-brand-gradient  border-b border-white/70">
                         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
                             {/* Left Actions */}
                             <div className="hidden md:flex gap-3 w-1/3">
@@ -187,7 +144,7 @@ export default function Navbar() {
             This stays visible always.
         */}
                 <nav
-                    className={`bg-primary-blue-1 w-full border-b border-white/10 relative z-50 transition-colors duration-300`}
+                    className={`bg-brand-gradient py-3 w-full border-b border-white/10 relative z-50 transition-colors duration-300`}
                 >
                     <div className="container mx-auto px-4 md:px-8">
                         <div className="flex justify-between md:justify-center items-center h-14">
