@@ -173,7 +173,7 @@ export default function Navbar() {
                                     >
                                         <a
                                             href={link.href}
-                                            className="flex items-center gap-1 font-cormorantGaramond text-sm "
+                                            className="flex items-center gap-1 font-cormorantGaramond text-base text-primary "
                                         >
                                             {link.name}
                                             {link.hasDropdown && (
