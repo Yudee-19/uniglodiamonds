@@ -20,7 +20,6 @@ import {
 import { Button } from "../ui/button";
 import Image from "next/image";
 import logo from "@/assets/Uniglo-Logo-Horizontal1.png";
-import { sub } from "motion/react-client";
 
 const NAV_LINKS = [
     { name: "About", href: "/about" },
@@ -34,7 +33,7 @@ const NAV_LINKS = [
             { name: "Oval Cut", href: "#" },
         ],
     },
-    { name: "Sell Diamonds", href: "#" },
+    { name: "Sell Diamonds", href: "/sell-your-diamonds" },
     {
         name: "Services",
         href: "#",
