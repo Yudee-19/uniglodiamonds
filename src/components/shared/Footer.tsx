@@ -26,7 +26,7 @@ export default function Footer() {
     return (
         <footer className="bg-[#1a1120] pt-0 mt-20 font-cormorantGaramond relative">
             {/* Subscribe Banner */}
-            <div className=" relative max-w-7xl mx-auto -translate-y-32 bg-primary-yellow-1 py-12 flex flex-col items-center justify-center z-20 ">
+            <div className=" relative max-w-5xl mx-auto -translate-y-32 bg-primary-yellow-1 py-12 flex flex-col items-center justify-center z-20 px-10 ">
                 <div className="max-w-5xl w-full flex flex-col md:flex-row items-center justify-between mx-auto px-4">
                     <div className="mb-6 md:mb-0">
                         <span className="text-white text-lg uppercase font-lora tracking-widest">
@@ -107,7 +107,7 @@ export default function Footer() {
                 </div>
 
                 {/* Pages */}
-                <div className="md:col-span-1">
+                <div className="md:col-span-1 md:pl-10">
                     <h3 className="text-primary-yellow-1 text-2xl font-cormorantGaramond mb-8">
                         Pages
                     </h3>

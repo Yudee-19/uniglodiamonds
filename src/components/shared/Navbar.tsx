@@ -23,7 +23,7 @@ import logo from "@/assets/Uniglo-Logo-Horizontal1.png";
 import { sub } from "motion/react-client";
 
 const NAV_LINKS = [
-    { name: "About", href: "#" },
+    { name: "About", href: "/about" },
     {
         name: "Buy Diamonds",
         href: "#",
