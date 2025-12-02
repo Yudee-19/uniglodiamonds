@@ -76,7 +76,7 @@ const page = () => {
                     <Image
                         src={customDiamondImage}
                         alt="Custom Diamond Manufacturing"
-                        className="w-full md:h-120 h-full object-cover rounded-lg shadow-lg"
+                        className="w-full md:h-120 h-full object-cover  shadow-lg"
                     />
                     <div className="absolute inset-0 bg-linear-to-r from-primary-purple-dark via-primary-purple-dark/80 to-transparent pointer-events-none" />
                 </div>

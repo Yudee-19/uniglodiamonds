@@ -7,7 +7,8 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel";
-import banner from "@/assets/banner_3.jpg";
+import banner1 from "@/assets/Banner-01.jpg";
+import banner2 from "@/assets/Banner-02.jpg";
 import Autoplay from "embla-carousel-autoplay";
 import { Button } from "@/components/ui/button";
 import {
@@ -69,7 +70,7 @@ const services = [
 
 const diamondShapes = [
     { name: "Round", src: "/shapes/round-diamond.png" },
-    { name: "Oval", src: "/shapes/oval-diamond.png" },
+    { name: "Oval", src: "/shapes/Oval-Diamond.png" },
     { name: "Cushion", src: "/shapes/cushion-diamond.png" },
     { name: "Pear", src: "/shapes/pear-diamond.png" },
     { name: "Princess", src: "/shapes/princess-diamond.png" },
@@ -181,7 +182,7 @@ export default function Home() {
             {/* Hero Section : Carousel */}
             <section className="w-full   min-h-screen flex items-center justify-center">
                 <Carousel
-                    className="w-full min-h-screen p-0 m-0"
+                    className="w-full min-h-screen p-0 m-0 mt-30"
                     plugins={[
                         Autoplay({
                             delay: 3000,
@@ -191,14 +192,14 @@ export default function Home() {
                     <CarouselContent className="w-full min-h-screen p-0 m-0">
                         <CarouselItem className="p-0 m-0  min-h-screen  w-full">
                             <Image
-                                src={banner}
+                                src={banner1}
                                 alt="Description"
-                                className="w-full  min-h-screen  transform -scale-x-100 object-cover "
+                                className="w-full  min-h-screen   object-cover "
                             />
                         </CarouselItem>
                         <CarouselItem className="p-0 m-0  min-h-screen  w-full">
                             <Image
-                                src={banner}
+                                src={banner2}
                                 alt="Description"
                                 className="w-full  min-h-screen  object-cover "
                             />
