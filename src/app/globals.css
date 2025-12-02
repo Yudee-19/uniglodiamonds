@@ -137,6 +137,11 @@
     }
 }
 
+/* Reveal animation for blog overlay */
+.group:hover .bg-black\/80 {
+    transform: scaleX(1);
+}
+
 /* Unique class name to avoid conflict */
 .purple-reveal-btn {
     position: relative;
@@ -150,7 +155,7 @@
     color: #bb923a;
 
     transition: color 0.3s ease;
-    cursor: pointer;
+    /* cursor: pointer; */
     z-index: 1;
 }
 
