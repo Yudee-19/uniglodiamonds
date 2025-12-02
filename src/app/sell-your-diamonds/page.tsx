@@ -15,6 +15,7 @@ import { desc } from "motion/react-client";
 import CertificatesMarqueeSection from "@/components/shared/CertificatesMarqueeSection";
 import Image from "next/image";
 import appointmentRing from "@/assets/sell-your-diamonds/online-inventory-banner.png";
+import ArticleLayout from "@/components/shared/ArticleLayout";
 
 const articleData = [
     {
@@ -108,59 +109,20 @@ const Page = () => {
             {/* Articles Section */}
             <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
                 {articleData.map((data, index) => (
-                    <div
+                    <ArticleLayout
                         key={index}
-                        className="mb-10 after:clear-both after:block"
-                    >
-                        {/* 1. IMAGE: Must be placed BEFORE the text to float correctly. 
-                - md:float-right: Pushes image to right on desktop
-                - md:ml-10: Adds margin to the left so text doesn't touch it
-                - w-full md:w-[45%]: Full width on mobile, partial width on desktop
-            */}
-                        <div
-                            className={`relative w-full md:w-[45%] h-auto my-16  ${
-                                data.reverse
-                                    ? "md:float-right md:ml-10"
-                                    : "md:float-left md:mr-10"
-                            }`}
-                        >
-                            <img
-                                src={data.image.src} // Depending on your loader, might just be {data.image}
-                                alt={data.title}
-                                className="w-full h-auto object-cover  shadow-sm "
-                            />
-                        </div>
-
-                        {/* 2. TEXT CONTENT: This will naturally wrap around the floated image above */}
-                        <div className="text-content">
-                            {/* Subtitle */}
-                            <div className="flex items-center gap-2 mb-2">
-                                <h4 className="text-primary font-bold font-lora uppercase tracking-widest text-sm">
-                                    {data.subtitle}
-                                </h4>
-                                <span className="w-8 h-px bg-primary"></span>
-                            </div>
-
-                            {/* Title */}
-                            <h2 className="text-4xl md:text-5xl font-cormorantGaramond text-gray-900 mb-8 leading-tight">
-                                {data.title}
-                            </h2>
-
-                            {/* Paragraphs */}
-                            <div className="space-y-6 text-gray-600 text-lg leading-relaxed font-lora">
-                                {data.paragraphs.map((paragraph, i) => (
-                                    <p key={i}>{paragraph}</p>
-                                ))}
-                            </div>
-
-                            {/* Button (Optional based on design) */}
-                            {data.buttonText && (
-                                <Button className="mt-8 px-8 py-5 purple-reveal-btn uppercase">
-                                    <span>{data.buttonText}</span>
-                                </Button>
-                            )}
-                        </div>
-                    </div>
+                        title={data.title}
+                        subtitle={data.subtitle}
+                        paragraphs={data.paragraphs}
+                        // Handling the image object from imports
+                        image={{
+                            src: data.image.src,
+                            alt: data.title,
+                        }}
+                        reverse={data.reverse}
+                        buttonText={data.buttonText}
+                        // Passing bullet points (optional)
+                    />
                 ))}
             </section>
 

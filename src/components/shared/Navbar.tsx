@@ -39,8 +39,10 @@ const NAV_LINKS = [
         href: "#",
         hasDropdown: true,
         submenuItems: [
-            { name: "Diamond", href: "#" },
-            { name: "Manufacturing", href: "#" },
+            { name: "Diamond Manufacturing", href: "/diamond-manufacturing" },
+            { name: "Free diamond estimation", href: "#" },
+            { name: "Diamond Financing Options", href: "#" },
+            { name: "Investment Diamonds", href: "#" },
             { name: "Security Seals", href: "#" },
             { name: "Partners", href: "#" },
         ],
