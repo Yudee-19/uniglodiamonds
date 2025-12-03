@@ -40,11 +40,17 @@ const NAV_LINKS = [
         hasDropdown: true,
         submenuItems: [
             { name: "Diamond Manufacturing", href: "/diamond-manufacturing" },
-            { name: "Free diamond estimation", href: "#" },
-            { name: "Diamond Financing Options", href: "#" },
-            { name: "Investment Diamonds", href: "#" },
-            { name: "Security Seals", href: "#" },
-            { name: "Partners", href: "#" },
+            {
+                name: "Free diamond estimation",
+                href: "/the-best-price-for-your-diamonds",
+            },
+            {
+                name: "Diamond Financing Options",
+                href: "/diamond-financing-options",
+            },
+            { name: "Investment Diamonds", href: "/investment-diamonds" },
+            { name: "Security Seals", href: "/security-seals" },
+            { name: "Partners", href: "/partners" },
         ],
     },
     {
