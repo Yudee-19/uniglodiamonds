@@ -19,6 +19,7 @@ import {
     Hammer,
     Package,
     User,
+    Phone,
 } from "lucide-react";
 
 import sellDiamond from "@/assets/home/sell_diamonds.jpg";
@@ -182,27 +183,64 @@ export default function Home() {
             {/* Hero Section : Carousel */}
             <section className="w-full   min-h-screen flex items-center justify-center">
                 <Carousel
-                    className="w-full min-h-screen p-0 m-0 mt-30"
+                    className="w-full min-h-screen p-0 m-0 mt-30 border border-white "
                     plugins={[
                         Autoplay({
                             delay: 3000,
                         }),
                     ]}
                 >
-                    <CarouselContent className="w-full min-h-screen p-0 m-0">
-                        <CarouselItem className="p-0 m-0  min-h-screen  w-full">
+                    <CarouselContent className="  w-full min-h-screen p-0 m-0">
+                        <CarouselItem className="p-0 m-0  min-h-screen  w-full relative">
                             <Image
                                 src={banner1}
                                 alt="Description"
                                 className="w-full  min-h-screen   object-cover "
                             />
+                            {/* Phone Number Div - Left */}
+                            <div className="absolute left-6 md:left-10 top-1/2 -translate-y-1/2 z-20">
+                                <div className="border-2 border-white/80 px-4 md:px-6 py-4 md:py-12 flex flex-col items-center justify-center">
+                                    <p className="text-white text-lg font-lora font-semibold leading-tight [writing-mode:vertical-rl] rotate-180 tracking-widest">
+                                        +32 473 565 758
+                                    </p>
+                                    <span className="text-[#bb923a] [writing-mode:vertical-rl]  -rotate-50 mt-4">
+                                        <Phone size={24} />
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="absolute bottom-12 md:bottom-90 right-30  z-20">
+                                <Button
+                                    className="purple-reveal-btn px-10 py-8 font-cormorantGaramond text-xl uppercase"
+                                    size="lg"
+                                >
+                                    <span> Browse Inventory</span>
+                                </Button>
+                            </div>
                         </CarouselItem>
-                        <CarouselItem className="p-0 m-0  min-h-screen  w-full">
+                        <CarouselItem className="p-0 m-0  min-h-screen  w-full relative">
                             <Image
                                 src={banner2}
                                 alt="Description"
                                 className="w-full  min-h-screen  object-cover "
                             />
+                            <div className="absolute left-6 md:left-10 top-1/2 -translate-y-1/2 z-20">
+                                <div className="border-2 border-white/80 px-4 md:px-6 py-4 md:py-12 flex flex-col items-center justify-center">
+                                    <p className="text-white text-lg font-lora font-semibold leading-tight [writing-mode:vertical-rl] rotate-180 tracking-widest">
+                                        +32 473 565 758
+                                    </p>
+                                    <span className="text-[#bb923a] [writing-mode:vertical-rl]  -rotate-50 mt-4">
+                                        <Phone size={24} />
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="absolute bottom-12 md:bottom-90 left-1/2 -translate-x-1/2 -translate-y-4/4 z-20">
+                                <Button
+                                    className="purple-reveal-btn px-10 py-8 font-cormorantGaramond text-xl uppercase"
+                                    size="lg"
+                                >
+                                    <span> Browse Inventory</span>
+                                </Button>
+                            </div>
                         </CarouselItem>
                     </CarouselContent>
                 </Carousel>
