@@ -208,7 +208,7 @@ export default function Home() {
                                     </span>
                                 </div>
                             </div>
-                            <div className="absolute bottom-12 md:bottom-90 right-30  z-20">
+                            <div className="absolute  bottom-12 md:bottom-70 right-20  z-20">
                                 <Button
                                     className="purple-reveal-btn px-10 py-8 font-cormorantGaramond text-xl uppercase"
                                     size="lg"
@@ -233,9 +233,9 @@ export default function Home() {
                                     </span>
                                 </div>
                             </div>
-                            <div className="absolute bottom-12 md:bottom-90 left-1/2 -translate-x-1/2 -translate-y-4/4 z-20">
+                            <div className="absolute bottom-12 md:bottom-85 left-1/2 -translate-x-1/2  z-20">
                                 <Button
-                                    className="purple-reveal-btn px-10 py-8 font-cormorantGaramond text-xl uppercase"
+                                    className="purple-reveal-btn px-10 py-7 font-cormorantGaramond text-xl uppercase"
                                     size="lg"
                                 >
                                     <span> Browse Inventory</span>
