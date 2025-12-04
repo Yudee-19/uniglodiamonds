@@ -30,11 +30,6 @@ const page = () => {
             />
             <section className="max-w-7xl mx-auto px-10 mt-20">
                 <ArticleLayout {...article} />
-                <div className="mt-6 text-slate-600 text-lg leading-relaxed font-lora text-justify">
-                    Sealing guarantees that a given grading report and the
-                    corresponding diamond belong together, and it keeps the
-                    diamond safe from oil and dirt.
-                </div>
             </section>
             <SubFooter />
         </div>

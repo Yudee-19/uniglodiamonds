@@ -20,6 +20,7 @@ import {
 import { Button } from "../ui/button";
 import Image from "next/image";
 import logo from "@/assets/Uniglo-Logo-Horizontal1.png";
+import Link from "next/link";
 
 const NAV_LINKS = [
     { name: "About", href: "/about" },
@@ -58,12 +59,21 @@ const NAV_LINKS = [
         href: "#",
         hasDropdown: true,
         submenuItems: [
-            { name: "Diamond 4C's", href: "#" },
-            { name: "Certificates", href: "#" },
-            { name: "Diamond Shapes", href: "#" },
+            {
+                name: "Supply Chain Policy & Procedure",
+                href: "/supply-chain-policy-procedure",
+            },
+            { name: "Diamond 4C's", href: "/the-diamond-4cs" },
+            { name: "Diamond Certificates", href: "/diamond-certificates" },
+            { name: "Diamond Shapes", href: "/diamond-shapes" },
+            { name: "Fancy Colored Diamond", href: "/fancy-colored-diamonds" },
+            { name: "Ethical Diamond", href: "/ethical-diamonds" },
+            { name: "Conflict Free Diamond", href: "/conflict-free-diamonds" },
+            { name: "Security Seals", href: "/security-seals" },
+            { name: "Old Cut Diamonds", href: "/old-cut-diamonds" },
         ],
     },
-    { name: "Blog", href: "#" },
+    { name: "Blog", href: "/blogs" },
     {
         name: "Guides",
         href: "#",
@@ -125,13 +135,15 @@ export default function Navbar() {
                             {/* Center Logo */}
                             <div className="w-full md:w-1/3 flex justify-center items-center gap-3">
                                 {/* Logo Icon Mock */}
-                                <Image
-                                    src={logo}
-                                    alt="Uniglo Logo"
-                                    width={350}
-                                    height={100}
-                                    className="object-contain"
-                                />
+                                <Link href="/">
+                                    <Image
+                                        src={logo}
+                                        alt="Uniglo Logo"
+                                        width={350}
+                                        height={100}
+                                        className="object-contain"
+                                    />{" "}
+                                </Link>
                             </div>
 
                             {/* Right Actions */}

@@ -51,13 +51,6 @@ const page = () => {
                 {articles.map((article, idx) => (
                     <ArticleLayout key={idx} {...article} />
                 ))}
-                <div className="mt-6 text-slate-600 text-lg leading-relaxed font-lora text-justify">
-                    Diamonds serve as a profitable avenue for any investor
-                    because it is a tangible asset that appreciates over time.
-                    Therefore, it has gained popularity as an investment option.
-                    Compared to other traditional tools, diamond investments
-                    offer better appreciation and liquidity.
-                </div>
             </section>
             <SubFooter />
         </div>

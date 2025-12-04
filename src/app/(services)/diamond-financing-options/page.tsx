@@ -22,7 +22,6 @@ const page = () => {
                     subtitle="Financing"
                     paragraphs={[
                         "We aim at maximising your purchasing power and providing you with a hassle-free shopping experience. At Uniglo, we offer flexible financing, with a buy now and pay later scheme. We offer you payment schemes, through which you can pay for your purchase, over a period of time. If none of our existing diamond financing options meet your specific requirements, then we’d be glad to customize one for you. This lets you pay in several budget-friendly instalments, ridding you of the burden of paying in a lump sum. Also, under certain diamond jewellery online schemes, we offer no-interest payback options.",
-                        "Uniglo has designed its flexible diamond financing options for the benefits of its clients. These aim at increasing your affordability, while also giving you better control over your budget.",
                     ]}
                     image={{
                         src: FinancingImg.src,
