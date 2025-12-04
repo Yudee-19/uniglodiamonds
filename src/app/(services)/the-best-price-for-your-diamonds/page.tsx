@@ -177,12 +177,15 @@ const page = () => {
                         </div>
                         {/* Upload Button */}
                         <div className="md:col-span-2 flex justify-end">
-                            <button
-                                type="button"
-                                className="bg-primary text-white font-lora px-8 py-5 rounded-md text-lg w-full md:w-auto"
-                            >
+                            <label className="bg-primary text-white font-lora px-8 py-5 rounded-md text-lg w-full md:w-auto cursor-pointer flex items-center justify-center">
                                 Please Upload Photos And/or Certificates
-                            </button>
+                                <input
+                                    type="file"
+                                    multiple
+                                    className="hidden"
+                                    accept="image/*,application/pdf"
+                                />
+                            </label>
                         </div>
                         {/* Submit Button */}
                         <div className="md:col-span-2 flex justify-start mt-2">
