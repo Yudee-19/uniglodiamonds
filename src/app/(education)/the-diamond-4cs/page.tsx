@@ -7,7 +7,7 @@ import CutBanner from "@/assets/diamond-4cs/cut-banner.jpg";
 import ColorScale from "@/assets/diamond-4cs/color-scale.jpg";
 import ClarityBanner from "@/assets/diamond-4cs/clarity-banner.jpg";
 import CaratBanner from "@/assets/diamond-4cs/carat-banner.jpg";
-import AdImage from "@/assets/subfooter/recent-post.png";
+import AdImage from "@/assets/subFooter/recent-post.png";
 import GiaLogo from "@/assets/our-partners/gia-removebg-preview.png";
 import HrdLogo from "@/assets/our-partners/hrd-removebg-preview.png";
 import IgiLogo from "@/assets/our-partners/igi.jpg";
