@@ -24,7 +24,7 @@ const services = [
 
 export default function Footer() {
     return (
-        <footer className="bg-[#1a1120] pt-0 mt-20 font-cormorantGaramond relative">
+        <footer className="bg-[#1a1120] pt-0 mt-50 font-cormorantGaramond relative">
             {/* Subscribe Banner */}
             <div className=" relative max-w-5xl mx-auto -translate-y-32 bg-primary-yellow-1 py-12 flex flex-col items-center justify-center z-20 px-10 ">
                 <div className="max-w-5xl w-full flex flex-col md:flex-row items-center justify-between mx-auto px-4">

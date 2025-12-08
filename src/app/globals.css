@@ -124,6 +124,7 @@
     * {
         @apply border-border outline-ring/50;
     }
+
     body {
         @apply bg-background text-foreground;
     }
@@ -131,11 +132,9 @@
 
 @layer utilities {
     .bg-brand-gradient {
-        background: radial-gradient(
-            ellipse at center,
-            #2e1035 0%,
-            #050208 100%
-        );
+        background: radial-gradient(ellipse at center,
+                #2e1035 0%,
+                #050208 100%);
     }
 }
 
@@ -151,7 +150,8 @@
 
     /* 1. Base Layer (Visible on Hover) */
     background-color: #bb923a;
-    border: 1px solid #bb923a; /* Optional: Keep border same as hover color */
+    border: 1px solid #bb923a;
+    /* Optional: Keep border same as hover color */
 
     /* 2. Text Color (Visible Initially) */
     color: #bb923a;
@@ -167,7 +167,8 @@
     content: "";
     position: absolute;
     top: 0;
-    width: 51%; /* Slight overlap to prevent gap */
+    width: 51%;
+    /* Slight overlap to prevent gap */
     height: 100%;
 
     /* 3. Curtain Color (Purple) */
@@ -281,8 +282,10 @@
     z-index: 0;
 
     /* NEW LOGIC START */
-    transform: scaleY(0); /* Start hidden (collapsed) */
-    transform-origin: bottom; /* When mouse leaves, it shrinks to the bottom */
+    transform: scaleY(0);
+    /* Start hidden (collapsed) */
+    transform-origin: bottom;
+    /* When mouse leaves, it shrinks to the bottom */
     transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
     /* NEW LOGIC END */
 }
@@ -294,8 +297,10 @@
 
 .slide-down-link:hover::before {
     /* NEW LOGIC START */
-    transform: scaleY(1); /* Expand to full height */
-    transform-origin: top; /* When mouse enters, it grows from the top */
+    transform: scaleY(1);
+    /* Expand to full height */
+    transform-origin: top;
+    /* When mouse enters, it grows from the top */
     /* NEW LOGIC END */
 }
 
