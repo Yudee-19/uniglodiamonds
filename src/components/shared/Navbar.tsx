@@ -125,7 +125,9 @@ export default function Navbar() {
                             {/* Left Actions */}
                             <div className="hidden md:flex gap-3 w-1/3">
                                 <Button className="gold-reveal-btn  font-cormorantGaramond uppercase">
-                                    <span>Inventory</span>
+                                    <Link href="/inventory">
+                                        <span>Inventory</span>
+                                    </Link>
                                 </Button>
                                 <Button className="gold-reveal-btn font-cormorantGaramond uppercase">
                                     <span>Contact</span>

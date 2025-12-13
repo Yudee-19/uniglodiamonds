@@ -213,8 +213,11 @@ export default function Home() {
                                 <Button
                                     className="purple-reveal-btn px-10 py-8 font-cormorantGaramond text-xl uppercase"
                                     size="lg"
+                                    asChild
                                 >
-                                    <span> Browse Inventory</span>
+                                    <Link href="/inventory">
+                                        Browse Inventory
+                                    </Link>
                                 </Button>
                             </div>
                         </CarouselItem>
@@ -241,8 +244,7 @@ export default function Home() {
                                     asChild
                                 >
                                     <Link href="/inventory">
-                                        {" "}
-                                        Linkse Inventory
+                                        Browse Inventory
                                     </Link>
                                 </Button>
                             </div>
