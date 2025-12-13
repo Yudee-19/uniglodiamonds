@@ -1,10 +1,10 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
-import DataTable from "@/components/ui/table"; // Your existing component
-import TablePagination from "@/components/ui/tablePagination"; // Your existing component
+import DataTable from "@/components/ui/table";
+import TablePagination from "@/components/ui/tablePagination";
 import { DiamondFilters } from "@/components/inventory/diamonFilter";
 import { getDiamondColumns } from "@/components/columns/DiamondColumns";
-import { fetchDiamonds } from "@/services/diamondService";
+import { fetchDiamonds, searchDiamonds } from "@/services/diamondService";
 import {
     Diamond,
     DiamondShape,
@@ -13,17 +13,20 @@ import {
     DiamondCut,
 } from "@/interface/diamondInterface";
 import { Card, CardContent } from "@/components/ui/card";
-import ShimmerTable from "@/components/ui/shimmerTable"; // Assuming you have this
+import ShimmerTable from "@/components/ui/shimmerTable";
 
 export default function InventoryPage() {
     const [data, setData] = useState<Diamond[]>([]);
     const [loading, setLoading] = useState(false);
     const [totalCount, setTotalCount] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [hasNextPage, setHasNextPage] = useState(false);
+    const [hasPrevPage, setHasPrevPage] = useState(false);
 
     // Pagination & Sort State
     const [page, setPage] = useState(1);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [sortBy, setSortBy] = useState("totalPrice"); // Default sort
+    const [rowsPerPage, setRowsPerPage] = useState(25);
+    const [sortBy, setSortBy] = useState("weight");
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
     // Filter State
@@ -32,9 +35,9 @@ export default function InventoryPage() {
         caratRange: [0, 30] as [number, number],
         colors: [] as DiamondColor[],
         clarities: [] as DiamondClarity[],
-        cuts: [] as any[], // Using any for simplicity or import specific type
-        polish: [] as any[],
-        symmetry: [] as any[],
+        cuts: [] as DiamondCut[],
+        polish: [] as DiamondCut[],
+        symmetry: [] as DiamondCut[],
         fluorescence: [] as string[],
         lab: [] as string[],
         priceRange: [0, 1000000] as [number, number],
@@ -45,53 +48,161 @@ export default function InventoryPage() {
         tablePercentRange: [40, 90] as [number, number],
     });
 
-    const loadData = useCallback(async () => {
-        setLoading(true);
-        try {
-            const result = await fetchDiamonds({
-                page,
-                limit: rowsPerPage,
-                shapes: filterState.shapes.length ? filterState.shapes : undefined,
-                colors: filterState.colors.length ? filterState.colors : undefined,
-                clarities: filterState.clarities.length ? filterState.clarities : undefined,
-                cuts: filterState.cuts.length ? filterState.cuts : undefined,
-                polish: filterState.polish.length ? filterState.polish : undefined,
-                symmetry: filterState.symmetry.length ? filterState.symmetry : undefined,
-                fluorescence: filterState.fluorescence.length ? filterState.fluorescence : undefined,
-                lab: filterState.lab.length ? filterState.lab : undefined,
-                minPrice: filterState.priceRange[0] > 0 ? filterState.priceRange[0] : undefined,
-                maxPrice: filterState.priceRange[1] < 1000000 ? filterState.priceRange[1] : undefined,
-                minCarat: filterState.caratRange[0] > 0 ? filterState.caratRange[0] : undefined,
-                maxCarat: filterState.caratRange[1] < 30 ? filterState.caratRange[1] : undefined,
-                // Add other ranges as needed for the API
-                sortBy,
-                sortOrder,
-            });
-            setData(result.data);
-            setTotalCount(result.totalCount);
-        } catch (error) {
-            console.error("Failed to fetch diamonds", error);
-        } finally {
-            setLoading(false);
-        }
-    }, [
-        page,
-        rowsPerPage,
-        sortBy,
-        sortOrder,
-        filterState // Consolidated dependency
-    ]);
+    // Check if any filters are applied
+    const hasActiveFilters = useCallback(() => {
+        return (
+            filterState.shapes.length > 0 ||
+            filterState.colors.length > 0 ||
+            filterState.clarities.length > 0 ||
+            filterState.cuts.length > 0 ||
+            filterState.polish.length > 0 ||
+            filterState.symmetry.length > 0 ||
+            filterState.fluorescence.length > 0 ||
+            filterState.lab.length > 0 ||
+            filterState.caratRange[0] > 0 ||
+            filterState.caratRange[1] < 30 ||
+            filterState.priceRange[0] > 0 ||
+            filterState.priceRange[1] < 1000000 ||
+            filterState.lengthRange[0] > 0 ||
+            filterState.lengthRange[1] < 20 ||
+            filterState.widthRange[0] > 0 ||
+            filterState.widthRange[1] < 20 ||
+            filterState.depthRange[0] > 0 ||
+            filterState.depthRange[1] < 20 ||
+            filterState.depthPercentRange[0] > 40 ||
+            filterState.depthPercentRange[1] < 90 ||
+            filterState.tablePercentRange[0] > 40 ||
+            filterState.tablePercentRange[1] < 90
+        );
+    }, [filterState]);
 
-    // Initial load
+    const loadData = useCallback(
+        async (useSearchApi: boolean = false) => {
+            setLoading(true);
+            try {
+                const params = {
+                    page,
+                    limit: rowsPerPage,
+                    shapes:
+                        filterState.shapes.length > 0
+                            ? filterState.shapes
+                            : undefined,
+                    colors:
+                        filterState.colors.length > 0
+                            ? filterState.colors
+                            : undefined,
+                    clarities:
+                        filterState.clarities.length > 0
+                            ? filterState.clarities
+                            : undefined,
+                    cuts:
+                        filterState.cuts.length > 0
+                            ? filterState.cuts
+                            : undefined,
+                    polish:
+                        filterState.polish.length > 0
+                            ? filterState.polish
+                            : undefined,
+                    symmetry:
+                        filterState.symmetry.length > 0
+                            ? filterState.symmetry
+                            : undefined,
+                    fluorescence:
+                        filterState.fluorescence.length > 0
+                            ? filterState.fluorescence
+                            : undefined,
+                    lab:
+                        filterState.lab.length > 0
+                            ? filterState.lab
+                            : undefined,
+                    minPrice:
+                        filterState.priceRange[0] > 0
+                            ? filterState.priceRange[0]
+                            : undefined,
+                    maxPrice:
+                        filterState.priceRange[1] < 1000000
+                            ? filterState.priceRange[1]
+                            : undefined,
+                    minCarat:
+                        filterState.caratRange[0] > 0
+                            ? filterState.caratRange[0]
+                            : undefined,
+                    maxCarat:
+                        filterState.caratRange[1] < 30
+                            ? filterState.caratRange[1]
+                            : undefined,
+                    minLength:
+                        filterState.lengthRange[0] > 0
+                            ? filterState.lengthRange[0]
+                            : undefined,
+                    maxLength:
+                        filterState.lengthRange[1] < 20
+                            ? filterState.lengthRange[1]
+                            : undefined,
+                    minWidth:
+                        filterState.widthRange[0] > 0
+                            ? filterState.widthRange[0]
+                            : undefined,
+                    maxWidth:
+                        filterState.widthRange[1] < 20
+                            ? filterState.widthRange[1]
+                            : undefined,
+                    minDepth:
+                        filterState.depthRange[0] > 0
+                            ? filterState.depthRange[0]
+                            : undefined,
+                    maxDepth:
+                        filterState.depthRange[1] < 20
+                            ? filterState.depthRange[1]
+                            : undefined,
+                    minTable:
+                        filterState.tablePercentRange[0] > 40
+                            ? filterState.tablePercentRange[0]
+                            : undefined,
+                    maxTable:
+                        filterState.tablePercentRange[1] < 90
+                            ? filterState.tablePercentRange[1]
+                            : undefined,
+                    minDepthPercent:
+                        filterState.depthPercentRange[0] > 40
+                            ? filterState.depthPercentRange[0]
+                            : undefined,
+                    maxDepthPercent:
+                        filterState.depthPercentRange[1] < 90
+                            ? filterState.depthPercentRange[1]
+                            : undefined,
+                    sortBy,
+                    sortOrder,
+                };
+
+                // Use search API if filters are applied, otherwise use regular fetch
+                const result = useSearchApi
+                    ? await searchDiamonds(params)
+                    : await fetchDiamonds(params);
+
+                setData(result.data);
+                setTotalCount(result.totalCount);
+                setTotalPages(result.totalPages);
+                setHasNextPage(result.hasNextPage);
+                setHasPrevPage(result.hasPrevPage);
+            } catch (error) {
+                console.error("Failed to fetch diamonds", error);
+            } finally {
+                setLoading(false);
+            }
+        },
+        [page, rowsPerPage, sortBy, sortOrder, filterState]
+    );
+
+    // Auto-load data whenever filters, pagination, or sorting changes
     useEffect(() => {
-        loadData();
-    }, [loadData]);
+        // Add a small debounce to prevent too many API calls
+        const timeoutId = setTimeout(() => {
+            loadData(hasActiveFilters());
+        }, 500); // 500ms debounce
 
-    // Handler for manual Search button click
-    const handleSearch = () => {
-        setPage(1);
-        loadData();
-    };
+        return () => clearTimeout(timeoutId);
+    }, [loadData, hasActiveFilters]);
 
     const handleReset = () => {
         setFilterState({
@@ -112,7 +223,11 @@ export default function InventoryPage() {
             tablePercentRange: [40, 90],
         });
         setPage(1);
-        // loadData(); // Optional: auto reload on reset or wait for search
+    };
+
+    const handleViewDetails = (diamond: Diamond) => {
+        console.log("View diamond details:", diamond);
+        // Implement your view details logic here (e.g., open a modal/drawer)
     };
 
     return (
@@ -121,7 +236,6 @@ export default function InventoryPage() {
             <DiamondFilters
                 filters={filterState}
                 setFilters={setFilterState}
-                onSearch={handleSearch}
                 onReset={handleReset}
             />
 
@@ -137,31 +251,48 @@ export default function InventoryPage() {
                         </div>
                     ) : (
                         <div className="w-full overflow-x-auto">
-                            <DataTable
-                                data={data}
-                                columns={getDiamondColumns((row) => {
-                                    alert(
-                                        `View details for Lot: ${row.lotNumber} \n(You can open a Drawer here like in BusinessContact)`
-                                    );
-                                })}
-                                columnStyles={{
-                                    lotNumber: "font-mono text-gray-500",
-                                    totalPrice: "font-bold",
-                                }}
-                            />
+                            {data.length > 0 ? (
+                                <DataTable
+                                    data={data}
+                                    columns={getDiamondColumns(
+                                        handleViewDetails
+                                    )}
+                                    columnStyles={{
+                                        weight: "font-bold",
+                                    }}
+                                />
+                            ) : (
+                                <div className="text-center py-12 text-gray-500">
+                                    <p className="text-lg font-medium">
+                                        No diamonds found
+                                    </p>
+                                    <p className="text-sm mt-2">
+                                        Try adjusting your filters or search
+                                        criteria
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     )}
 
                     {/* 3. PAGINATION */}
-                    <div className="border-t p-2">
-                        <TablePagination
-                            total={totalCount}
-                            page={page}
-                            rowsPerPage={rowsPerPage}
-                            onPageChange={setPage}
-                            onRowsPerPageChange={setRowsPerPage}
-                        />
-                    </div>
+                    {!loading && data.length > 0 && (
+                        <div className="border-t p-2">
+                            <TablePagination
+                                total={totalCount}
+                                page={page}
+                                rowsPerPage={rowsPerPage}
+                                totalPages={totalPages}
+                                hasNextPage={hasNextPage}
+                                hasPrevPage={hasPrevPage}
+                                onPageChange={setPage}
+                                onRowsPerPageChange={(newRowsPerPage) => {
+                                    setRowsPerPage(newRowsPerPage);
+                                    setPage(1);
+                                }}
+                            />
+                        </div>
+                    )}
                 </CardContent>
             </Card>
         </div>

@@ -1,71 +1,88 @@
 // components/columns/DiamondColumns.tsx
-import { Diamond } from "@/interface/diamondInterface";
+import {
+    Diamond,
+    getShapeFullName,
+    getAvailabilityText,
+    calculateTotalPrice,
+} from "@/interface/diamondInterface";
 import { Badge } from "@/components/ui/badge";
-import { Eye, Circle } from "lucide-react";
+import { Eye } from "lucide-react";
 import { ActionButtonWithTooltip } from "@/components/ui/actionButtonWithTooltip";
 
 export const getDiamondColumns = (
     onViewDetails: (diamond: Diamond) => void
 ) => [
     {
-        key: "imageUrl",
+        key: "webLink",
         header: "Image",
         render: (row: Diamond) => (
             <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden border">
-                {/* Placeholder for actual image */}
-                <span className="text-[10px] text-gray-500">
-                    {row.shape.substring(0, 2)}
-                </span>
+                {row.webLink ? (
+                    <img
+                        src={row.webLink}
+                        alt={`${getShapeFullName(row.shape)} diamond`}
+                        className="w-full h-full object-cover"
+                    />
+                ) : (
+                    <span className="text-[10px] text-gray-500">
+                        {row.shape}
+                    </span>
+                )}
             </div>
         ),
     },
-    { key: "location", header: "Loc." },
-    { key: "carat", header: "Carat", cellClassName: () => "font-bold" },
+    { key: "country", header: "Loc." },
+    { key: "weight", header: "Carat", cellClassName: () => "font-bold" },
     { key: "color", header: "Color" },
     { key: "clarity", header: "Clarity" },
-    { key: "cut", header: "Cut" },
-    { key: "fluorescence", header: "Fluor" },
+    { key: "cutGrade", header: "Cut" },
+    { key: "fluorescenceIntensity", header: "Fluor" },
     { key: "lab", header: "Lab" },
     { key: "measurements", header: "Measurement" },
     {
-        key: "rapPercent",
-        header: "Rap %",
+        key: "discPerc",
+        header: "Disc %",
         render: (row: Diamond) => (
             <span
-                className={
-                    row.rapPercent < 0 ? "text-green-600" : "text-red-600"
-                }
+                className={row.discPerc < 0 ? "text-green-600" : "text-red-600"}
             >
-                {row.rapPercent}%
+                {row.discPerc}%
             </span>
         ),
     },
     {
-        key: "pricePerCarat",
+        key: "pricePerCts",
         header: "Price/ct",
-        render: (row: Diamond) => `$${row.pricePerCarat.toLocaleString()}`,
+        render: (row: Diamond) =>
+            `$${row.pricePerCts ? row.pricePerCts.toLocaleString() : "N/A"}`,
     },
     {
         key: "totalPrice",
         header: "Total",
-        render: (row: Diamond) => (
-            <span className="font-bold text-gray-900">
-                ${row.totalPrice.toLocaleString()}
-            </span>
-        ),
+        render: (row: Diamond) => {
+            const total = calculateTotalPrice(row.weight, row.pricePerCts);
+            return (
+                <span className="font-bold text-gray-900">
+                    ${total.toLocaleString()}
+                </span>
+            );
+        },
     },
     {
-        key: "status",
+        key: "availability",
         header: "Status",
         render: (row: Diamond) => {
+            const statusText = getAvailabilityText(row.availability);
             const color =
-                row.status === "AVAILABLE"
-                    ? "bg-purple-100 text-purple-700"
-                    : row.status === "SOLD"
+                row.availability === "A"
+                    ? "bg-primary-purple-dark text-white"
+                    : row.availability === "S"
                     ? "bg-red-100 text-red-700"
                     : "bg-yellow-100 text-yellow-700";
             return (
-                <Badge className={`${color} text-[10px]`}>{row.status}</Badge>
+                <Badge className={`${color} text-[10px] rounded-none`}>
+                    {statusText ? statusText : "UNKNOWN"}
+                </Badge>
             );
         },
     },

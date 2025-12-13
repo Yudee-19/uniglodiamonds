@@ -1,298 +1,359 @@
 // services/diamondService.ts
 import { Diamond, DiamondParams } from "@/interface/diamondInterface";
 
-// 1. DUMMY DATA
-const MOCK_DIAMONDS: Diamond[] = [
-    {
-        id: "1",
-        lotNumber: "CS461853",
-        imageUrl: "",
-        shape: "Round",
-        carat: 1.05,
-        color: "E",
-        clarity: "VS2",
-        cut: "EX",
-        polish: "EX",
-        symmetry: "EX",
-        fluorescence: "NON",
-        lab: "GIA",
-        certificateNumber: "LG617423",
-        measurements: "6.5x6.5x4.0",
-        location: "Mumbai",
-        rapPercent: -99.55,
-        pricePerCarat: 225.0,
-        totalPrice: 2274.72,
-        status: "AVAILABLE",
-    },
-    {
-        id: "2",
-        lotNumber: "CS992811",
-        imageUrl: "",
-        shape: "Oval",
-        carat: 2.71,
-        color: "F",
-        clarity: "VVS1",
-        cut: "VG",
-        polish: "VG",
-        symmetry: "G",
-        fluorescence: "FNT",
-        lab: "IGI",
-        certificateNumber: "LG881237",
-        measurements: "10.1x8.0x5.1",
-        location: "Mumbai",
-        rapPercent: -25.0,
-        pricePerCarat: 4500.0,
-        totalPrice: 12195.0,
-        status: "AVAILABLE",
-    },
-    {
-        id: "3",
-        lotNumber: "CS110293",
-        imageUrl: "",
-        shape: "Princess",
-        carat: 1.5,
-        color: "D",
-        clarity: "IF",
-        cut: "I",
-        polish: "EX",
-        symmetry: "EX",
-        fluorescence: "NON",
-        lab: "GIA",
-        certificateNumber: "LG110293",
-        measurements: "6.5x6.5x4.0",
-        location: "NY",
-        rapPercent: -10.0,
-        pricePerCarat: 8000.0,
-        totalPrice: 12000.0,
-        status: "HOLD",
-    },
-    {
-        id: "4",
-        lotNumber: "CS774829",
-        imageUrl: "",
-        shape: "Pear",
-        carat: 0.9,
-        color: "H",
-        clarity: "SI1",
-        cut: "VG",
-        polish: "G",
-        symmetry: "VG",
-        fluorescence: "MED",
-        lab: "HRD",
-        certificateNumber: "LG774829",
-        measurements: "8.0x5.0x3.2",
-        location: "London",
-        rapPercent: -40.0,
-        pricePerCarat: 3000.0,
-        totalPrice: 2700.0,
-        status: "AVAILABLE",
-    },
-    {
-        id: "5",
-        lotNumber: "CS332112",
-        imageUrl: "",
-        shape: "Cushion",
-        carat: 3.01,
-        color: "I",
-        clarity: "VS1",
-        cut: "EX",
-        polish: "EX",
-        symmetry: "EX",
-        fluorescence: "NON",
-        lab: "GIA",
-        certificateNumber: "LG332112",
-        measurements: "9.0x8.5x5.5",
-        location: "HK",
-        rapPercent: -35.5,
-        pricePerCarat: 5500.0,
-        totalPrice: 16555.0,
-        status: "AVAILABLE",
-    },
-    {
-        id: "6",
-        lotNumber: "CS551029",
-        imageUrl: "",
-        shape: "Emerald",
-        carat: 5.05,
-        color: "G",
-        clarity: "VVS2",
-        cut: "NA",
-        polish: "VG",
-        symmetry: "VG",
-        fluorescence: "NON",
-        lab: "IGI",
-        certificateNumber: "LG551029",
-        measurements: "11.0x8.0x5.0",
-        location: "Antwerp",
-        rapPercent: -30.0,
-        pricePerCarat: 6200.0,
-        totalPrice: 31310.0,
-        status: "SOLD",
-    },
-    {
-        id: "7",
-        lotNumber: "CS662910",
-        imageUrl: "",
-        shape: "Radiant",
-        carat: 1.02,
-        color: "D",
-        clarity: "FL",
-        cut: "EX",
-        polish: "EX",
-        symmetry: "EX",
-        fluorescence: "NON",
-        lab: "GIA",
-        certificateNumber: "LG662910",
-        measurements: "6.0x5.5x3.8",
-        location: "Dubai",
-        rapPercent: 0.0,
-        pricePerCarat: 9000.0,
-        totalPrice: 9180.0,
-        status: "AVAILABLE",
-    },
-    {
-        id: "8",
-        lotNumber: "CS883921",
-        imageUrl: "",
-        shape: "Heart",
-        carat: 0.5,
-        color: "E",
-        clarity: "SI2",
-        cut: "VG",
-        polish: "VG",
-        symmetry: "G",
-        fluorescence: "STG",
-        lab: "OTHERS",
-        certificateNumber: "LG883921",
-        measurements: "5.0x5.0x3.0",
-        location: "Surat",
-        rapPercent: -55.0,
-        pricePerCarat: 1200.0,
-        totalPrice: 600.0,
-        status: "AVAILABLE",
-    },
-    {
-        id: "9",
-        lotNumber: "CS229103",
-        imageUrl: "",
-        shape: "Marquise",
-        carat: 1.2,
-        color: "J",
-        clarity: "VS2",
-        cut: "G",
-        polish: "G",
-        symmetry: "F",
-        fluorescence: "VSL",
-        lab: "IGI",
-        certificateNumber: "LG229103",
-        measurements: "10.0x5.0x3.0",
-        location: "NA",
-        rapPercent: -45.0,
-        pricePerCarat: 2100.0,
-        totalPrice: 2520.0,
-        status: "AVAILABLE",
-    },
-    {
-        id: "10",
-        lotNumber: "CS448291",
-        imageUrl: "",
-        shape: "Asscher",
-        carat: 4.0,
-        color: "F",
-        clarity: "IF",
-        cut: "EX",
-        polish: "EX",
-        symmetry: "EX",
-        fluorescence: "NON",
-        lab: "GIA",
-        certificateNumber: "LG448291",
-        measurements: "9.0x9.0x6.0",
-        location: "Tel Aviv",
-        rapPercent: -15.0,
-        pricePerCarat: 7500.0,
-        totalPrice: 30000.0,
-        status: "AVAILABLE",
-    },
-];
+const API_BASE_URL = "https://uniglow-service-dev.onrender.com/api";
 
-// 2. MOCK FETCH FUNCTION
+interface ApiResponse {
+    success: boolean;
+    message: string;
+    data: Diamond[];
+    pagination: {
+        currentPage: number;
+        totalPages: number;
+        totalRecords: number;
+        recordsPerPage: number;
+        hasNextPage: boolean;
+        hasPrevPage: boolean;
+    };
+    appliedFilters?: Record<string, any>;
+    totalFilteredRecords?: number;
+}
+
 export const fetchDiamonds = async (
     params: DiamondParams
-): Promise<{ data: Diamond[]; totalCount: number }> => {
-    // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 500));
+): Promise<{
+    data: Diamond[];
+    totalCount: number;
+    currentPage: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+}> => {
+    try {
+        // Build query parameters
+        const queryParams = new URLSearchParams();
 
-    let filtered = [...MOCK_DIAMONDS];
+        // Pagination
+        if (params.page) queryParams.append("page", params.page.toString());
+        if (params.limit) queryParams.append("limit", params.limit.toString());
 
-    // Apply filters
-    if (params.search) {
-        const q = params.search.toLowerCase();
-        filtered = filtered.filter(
-            (d) =>
-                d.lotNumber.toLowerCase().includes(q) ||
-                d.certificateNumber.toLowerCase().includes(q)
-        );
-    }
-    if (params.shapes && params.shapes.length > 0) {
-        filtered = filtered.filter((d) => params.shapes!.includes(d.shape));
-    }
-    if (params.colors && params.colors.length > 0) {
-        filtered = filtered.filter((d) => params.colors!.includes(d.color));
-    }
-    if (params.clarities && params.clarities.length > 0) {
-        filtered = filtered.filter((d) => params.clarities!.includes(d.clarity));
-    }
-    if (params.cuts && params.cuts.length > 0) {
-        filtered = filtered.filter((d) => params.cuts!.includes(d.cut));
-    }
-    if (params.polish && params.polish.length > 0) {
-        filtered = filtered.filter((d) => params.polish!.includes(d.polish));
-    }
-    if (params.symmetry && params.symmetry.length > 0) {
-        filtered = filtered.filter((d) => params.symmetry!.includes(d.symmetry));
-    }
-    if (params.fluorescence && params.fluorescence.length > 0) {
-        // Note: Enum matching might be needed depending on exact values
-        filtered = filtered.filter((d) => params.fluorescence!.includes(d.fluorescence));
-    }
-    if (params.lab && params.lab.length > 0) {
-        filtered = filtered.filter((d) => params.lab!.includes(d.lab));
-    }
+        // Search
+        if (params.search) queryParams.append("search", params.search);
 
-    if (params.minPrice) {
-        filtered = filtered.filter((d) => d.totalPrice >= params.minPrice!);
-    }
-    if (params.maxPrice) {
-        filtered = filtered.filter((d) => d.totalPrice <= params.maxPrice!);
-    }
-    if (params.minCarat) {
-        filtered = filtered.filter((d) => d.carat >= params.minCarat!);
-    }
-    if (params.maxCarat) {
-        filtered = filtered.filter((d) => d.carat <= params.maxCarat!);
-    }
-    // Implement other ranges as needed (depth, table, etc.) if mock data has fields for them
+        // Sorting
+        if (params.sortBy) queryParams.append("sortBy", params.sortBy);
+        if (params.sortOrder) queryParams.append("sortOrder", params.sortOrder);
 
+        // Shape filters
+        if (params.shapes && params.shapes.length > 0) {
+            params.shapes.forEach((shape) =>
+                queryParams.append("shapes[]", shape)
+            );
+        }
 
-    // Sorting (Mock)
-    if (params.sortBy) {
-        filtered.sort((a: any, b: any) => {
-            if (a[params.sortBy!] < b[params.sortBy!])
-                return params.sortOrder === "asc" ? -1 : 1;
-            if (a[params.sortBy!] > b[params.sortBy!])
-                return params.sortOrder === "asc" ? 1 : -1;
-            return 0;
+        // Color filters
+        if (params.colors && params.colors.length > 0) {
+            params.colors.forEach((color) =>
+                queryParams.append("colors[]", color)
+            );
+        }
+
+        // Clarity filters
+        if (params.clarities && params.clarities.length > 0) {
+            params.clarities.forEach((clarity) =>
+                queryParams.append("clarities[]", clarity)
+            );
+        }
+
+        // Cut filters
+        if (params.cuts && params.cuts.length > 0) {
+            params.cuts.forEach((cut) => queryParams.append("cuts[]", cut));
+        }
+
+        // Polish filters
+        if (params.polish && params.polish.length > 0) {
+            params.polish.forEach((pol) => queryParams.append("polish[]", pol));
+        }
+
+        // Symmetry filters
+        if (params.symmetry && params.symmetry.length > 0) {
+            params.symmetry.forEach((sym) =>
+                queryParams.append("symmetry[]", sym)
+            );
+        }
+
+        // Fluorescence filters
+        if (params.fluorescence && params.fluorescence.length > 0) {
+            params.fluorescence.forEach((fluor) =>
+                queryParams.append("fluorescence[]", fluor)
+            );
+        }
+
+        // Lab filters
+        if (params.lab && params.lab.length > 0) {
+            params.lab.forEach((lab) => queryParams.append("lab[]", lab));
+        }
+
+        // Price range
+        if (params.minPrice !== undefined)
+            queryParams.append("minPrice", params.minPrice.toString());
+        if (params.maxPrice !== undefined)
+            queryParams.append("maxPrice", params.maxPrice.toString());
+
+        // Carat range
+        if (params.minCarat !== undefined)
+            queryParams.append("minCarat", params.minCarat.toString());
+        if (params.maxCarat !== undefined)
+            queryParams.append("maxCarat", params.maxCarat.toString());
+
+        // Depth range
+        if (params.minDepth !== undefined)
+            queryParams.append("minDepth", params.minDepth.toString());
+        if (params.maxDepth !== undefined)
+            queryParams.append("maxDepth", params.maxDepth.toString());
+
+        // Width range
+        if (params.minWidth !== undefined)
+            queryParams.append("minWidth", params.minWidth.toString());
+        if (params.maxWidth !== undefined)
+            queryParams.append("maxWidth", params.maxWidth.toString());
+
+        // Length range
+        if (params.minLength !== undefined)
+            queryParams.append("minLength", params.minLength.toString());
+        if (params.maxLength !== undefined)
+            queryParams.append("maxLength", params.maxLength.toString());
+
+        // Table percentage range
+        if (params.minTable !== undefined)
+            queryParams.append("minTable", params.minTable.toString());
+        if (params.maxTable !== undefined)
+            queryParams.append("maxTable", params.maxTable.toString());
+
+        // Depth percentage range
+        if (params.minDepthPercent !== undefined)
+            queryParams.append(
+                "minDepthPercent",
+                params.minDepthPercent.toString()
+            );
+        if (params.maxDepthPercent !== undefined)
+            queryParams.append(
+                "maxDepthPercent",
+                params.maxDepthPercent.toString()
+            );
+
+        const url = `${API_BASE_URL}/diamonds?${queryParams.toString()}`;
+
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
         });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result: ApiResponse = await response.json();
+
+        if (!result.success) {
+            throw new Error(result.message || "Failed to fetch diamonds");
+        }
+
+        return {
+            data: result.data,
+            totalCount: result.pagination.totalRecords,
+            currentPage: result.pagination.currentPage,
+            totalPages: result.pagination.totalPages,
+            hasNextPage: result.pagination.hasNextPage,
+            hasPrevPage: result.pagination.hasPrevPage,
+        };
+    } catch (error) {
+        console.error("Error fetching diamonds:", error);
+        throw error;
     }
+};
 
-    // Pagination (Mock)
-    const page = params.page || 1;
-    const limit = params.limit || 10;
-    const start = (page - 1) * limit;
-    const paginatedData = filtered.slice(start, start + limit);
+// Search/Filter API - for advanced filtering
+export const searchDiamonds = async (
+    params: DiamondParams
+): Promise<{
+    data: Diamond[];
+    totalCount: number;
+    currentPage: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+    appliedFilters?: Record<string, any>;
+}> => {
+    try {
+        // Build query parameters for search endpoint
+        const queryParams = new URLSearchParams();
 
-    return {
-        data: paginatedData,
-        totalCount: filtered.length,
-    };
+        // Pagination
+        if (params.page) queryParams.append("page", params.page.toString());
+        if (params.limit) queryParams.append("limit", params.limit.toString());
+
+        // Sorting
+        if (params.sortBy) queryParams.append("sortBy", params.sortBy);
+        if (params.sortOrder) queryParams.append("sortOrder", params.sortOrder);
+
+        // Shape filters - using repeated parameters with &
+        if (params.shapes && params.shapes.length > 0) {
+            params.shapes.forEach((shape) =>
+                queryParams.append("shape", shape)
+            );
+        }
+
+        // Color filters - using repeated parameters with &
+        if (params.colors && params.colors.length > 0) {
+            params.colors.forEach((color) =>
+                queryParams.append("color", color)
+            );
+        }
+
+        // Clarity filters - using repeated parameters with &
+        if (params.clarities && params.clarities.length > 0) {
+            params.clarities.forEach((clarity) =>
+                queryParams.append("clarity", clarity)
+            );
+        }
+
+        // Cut filters - using repeated parameters with &
+        if (params.cuts && params.cuts.length > 0) {
+            params.cuts.forEach((cut) => queryParams.append("cutGrade", cut));
+        }
+
+        // Polish filters - using repeated parameters with &
+        if (params.polish && params.polish.length > 0) {
+            params.polish.forEach((pol) => queryParams.append("polish", pol));
+        }
+
+        // Symmetry filters - using repeated parameters with &
+        if (params.symmetry && params.symmetry.length > 0) {
+            params.symmetry.forEach((sym) =>
+                queryParams.append("symmetry", sym)
+            );
+        }
+
+        // Fluorescence filters - using repeated parameters with &
+        if (params.fluorescence && params.fluorescence.length > 0) {
+            params.fluorescence.forEach((fluor) =>
+                queryParams.append("fluorescenceIntensity", fluor)
+            );
+        }
+
+        // Lab filters - using repeated parameters with &
+        if (params.lab && params.lab.length > 0) {
+            params.lab.forEach((lab) => queryParams.append("lab", lab));
+        }
+
+        // Price range
+        if (params.minPrice !== undefined)
+            queryParams.append("minPrice", params.minPrice.toString());
+        if (params.maxPrice !== undefined)
+            queryParams.append("maxPrice", params.maxPrice.toString());
+
+        // Carat range
+        if (params.minCarat !== undefined)
+            queryParams.append("minWeight", params.minCarat.toString());
+        if (params.maxCarat !== undefined)
+            queryParams.append("maxWeight", params.maxCarat.toString());
+
+        // Depth range
+        if (params.minDepth !== undefined)
+            queryParams.append("minDepth", params.minDepth.toString());
+        if (params.maxDepth !== undefined)
+            queryParams.append("maxDepth", params.maxDepth.toString());
+
+        // Width range
+        if (params.minWidth !== undefined)
+            queryParams.append("minWidth", params.minWidth.toString());
+        if (params.maxWidth !== undefined)
+            queryParams.append("maxWidth", params.maxWidth.toString());
+
+        // Length range
+        if (params.minLength !== undefined)
+            queryParams.append("minLength", params.minLength.toString());
+        if (params.maxLength !== undefined)
+            queryParams.append("maxLength", params.maxLength.toString());
+
+        // Table percentage range
+        if (params.minTable !== undefined)
+            queryParams.append("minTablePerc", params.minTable.toString());
+        if (params.maxTable !== undefined)
+            queryParams.append("maxTablePerc", params.maxTable.toString());
+
+        // Depth percentage range
+        if (params.minDepthPercent !== undefined)
+            queryParams.append(
+                "minDepthPerc",
+                params.minDepthPercent.toString()
+            );
+        if (params.maxDepthPercent !== undefined)
+            queryParams.append(
+                "maxDepthPerc",
+                params.maxDepthPercent.toString()
+            );
+
+        const url = `${API_BASE_URL}/diamonds/search?${queryParams.toString()}`;
+
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result: ApiResponse = await response.json();
+
+        if (!result.success) {
+            throw new Error(result.message || "Failed to search diamonds");
+        }
+
+        return {
+            data: result.data,
+            totalCount: result.pagination.totalRecords,
+            currentPage: result.pagination.currentPage,
+            totalPages: result.pagination.totalPages,
+            hasNextPage: result.pagination.hasNextPage,
+            hasPrevPage: result.pagination.hasPrevPage,
+            appliedFilters: result.appliedFilters,
+        };
+    } catch (error) {
+        console.error("Error searching diamonds:", error);
+        throw error;
+    }
+};
+
+// Function to fetch a single diamond by ID
+export const fetchDiamondById = async (id: string): Promise<Diamond> => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/diamonds/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (!result.success) {
+            throw new Error(result.message || "Failed to fetch diamond");
+        }
+
+        return result.data;
+    } catch (error) {
+        console.error("Error fetching diamond:", error);
+        throw error;
+    }
 };
