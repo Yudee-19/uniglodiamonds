@@ -84,6 +84,7 @@ const diamondShapes = [
 import mobileAppMockup from "@/assets/mobile-app.png";
 import UniglowFamilySection from "@/components/shared/UniglowFamilySection";
 import CertificatesMarqueeSection from "@/components/shared/CertificatesMarqueeSection";
+import Link from "next/link";
 
 const pyramidPattern = [4, 3, 2, 1];
 
@@ -237,8 +238,12 @@ export default function Home() {
                                 <Button
                                     className="purple-reveal-btn px-10 py-7 font-cormorantGaramond text-xl uppercase"
                                     size="lg"
+                                    asChild
                                 >
-                                    <span> Browse Inventory</span>
+                                    <Link href="/inventory">
+                                        {" "}
+                                        Linkse Inventory
+                                    </Link>
                                 </Button>
                             </div>
                         </CarouselItem>
