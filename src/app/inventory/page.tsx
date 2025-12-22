@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
+import { List, LayoutGrid } from "lucide-react";
 import DataTable from "@/components/ui/table";
 import TablePagination from "@/components/ui/tablePagination";
 import { DiamondFilters } from "@/components/inventory/diamonFilter";
@@ -14,6 +15,8 @@ import {
 } from "@/interface/diamondInterface";
 import { Card, CardContent } from "@/components/ui/card";
 import ShimmerTable from "@/components/ui/shimmerTable";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function InventoryPage() {
     const [data, setData] = useState<Diamond[]>([]);
@@ -22,7 +25,7 @@ export default function InventoryPage() {
     const [totalPages, setTotalPages] = useState(0);
     const [hasNextPage, setHasNextPage] = useState(false);
     const [hasPrevPage, setHasPrevPage] = useState(false);
-
+    const [view, setView] = useState("list");
     // Pagination & Sort State
     const [page, setPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(25);
@@ -32,7 +35,7 @@ export default function InventoryPage() {
     // Filter State
     const [filterState, setFilterState] = useState({
         shapes: [] as DiamondShape[],
-        caratRange: [0, 30] as [number, number],
+        caratRange: [0, 10.99] as [number, number],
         colors: [] as DiamondColor[],
         clarities: [] as DiamondClarity[],
         cuts: [] as DiamondCut[],
@@ -231,13 +234,98 @@ export default function InventoryPage() {
     };
 
     return (
-        <div className="p-4 space-y-4 bg-gray-50 min-h-screen mt-40">
+        <div className="p-4 space-y-4 bg-primary-purple-dark min-h-screen mt-40">
             {/* 1. FILTER DASHBOARD */}
+            <div className="flex flex-col rounded-lg w-full overflow-hidden border-primary border-2 mb-4">
+                <div className="bg-primary-purple2 flex justify-start items-center gap-2">
+                    <Button
+                        variant={"ghost"}
+                        className="text-white hover:text-white"
+                    >
+                        Natural Diamonds
+                    </Button>
+                    <Button
+                        variant={"ghost"}
+                        className="text-white hover:text-white"
+                    >
+                        Lab Diamonds
+                    </Button>
+                </div>
+                <div className="bg-white flex justify-start items-center gap-2">
+                    <Button variant={"ghost"} className="text-black">
+                        White Diamonds
+                    </Button>
+                    <Button variant={"ghost"} className="text-black">
+                        Fancy Color
+                    </Button>
+                    <Button variant={"ghost"} className="text-black">
+                        Melee Diamonds
+                    </Button>
+                </div>
+            </div>
             <DiamondFilters
                 filters={filterState}
                 setFilters={setFilterState}
                 onReset={handleReset}
             />
+            <div className="w-full bg-white rounded-lg px-2 py-1">
+                <div className="flex items-center justify-between gap-4">
+                    {/* Left side - Action buttons */}
+                    <div className="flex items-center gap-1">
+                        {/* List/Grid toggle buttons */}
+                        <div className="flex items-center gap-0 rounded-md border border-gray-200 bg-white  w-fit">
+                            {/* List View Button */}
+                            <button
+                                onClick={() => setView("list")}
+                                className={`p-2 rounded-sm transition-all duration-200 ${
+                                    view === "list"
+                                        ? "bg-primary-purple2 text-white shadow-sm" // Active State (Deep Purple)
+                                        : "text-gray-500 hover:bg-gray-100" // Inactive State
+                                }`}
+                            >
+                                <List className="h-5 w-5" />
+                            </button>
+
+                            {/* Grid View Button */}
+                            <button
+                                onClick={() => setView("grid")}
+                                className={`p-2 rounded-sm transition-all duration-200 ${
+                                    view === "grid"
+                                        ? "bg-primary-purple2 text-white shadow-sm"
+                                        : "text-gray-500 hover:bg-gray-100"
+                                }`}
+                            >
+                                <LayoutGrid className="h-5 w-5" />
+                            </button>
+                        </div>
+
+                        <Button variant="outline" className="text-sm">
+                            Reset Filters
+                        </Button>
+                        <Button variant="outline" className="text-sm">
+                            Advanced Filters
+                        </Button>
+                        <Button variant="outline" className="text-sm">
+                            Inquiry
+                        </Button>
+                        <Button variant="outline" className="text-sm">
+                            Compare
+                        </Button>
+                    </div>
+
+                    {/* Right side - Search */}
+                    <div className="relative w-full max-w-sm">
+                        <Input
+                            type="text"
+                            placeholder="Lot/Certificate"
+                            className="h-10 w-full rounded-4xl border border-gray-300 pl-5 pr-28 focus-visible:ring-2 focus-visible:ring-primary-purple2"
+                        />
+                        <Button className="absolute right-0 top-0 h-full  rounded-4xl bg-gray-800 px-8 text-white hover:bg-gray-700">
+                            Search
+                        </Button>
+                    </div>
+                </div>
+            </div>
 
             {/* 2. TABLE CARD */}
             <Card className="shadow-md rounded-lg overflow-hidden bg-white">

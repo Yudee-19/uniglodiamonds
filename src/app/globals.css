@@ -7,8 +7,10 @@
     --font-cormorantGaramond: var(--font-cormorant-garamond);
     --font-lora: var(--font-lora);
     --color-primary-purple: var(--primary-purple);
+    --color-primary-purple2: var(--primary-purple2);
     --color-primary-purple-dark: var(--primary-purple-dark);
     --color-primary-yellow-1: var(--primary-yellow-1);
+    --color-primary-yellow-2: var(--primary-yellow-2);
     --color-background: var(--background);
     --color-foreground: var(--foreground);
     --font-sans: var(--font-geist-sans);
@@ -50,8 +52,10 @@
 
 :root {
     --primary-purple: #49214c;
+    --primary-purple2: #26062b;
     --primary-purple-dark: #230c2a;
     --primary-yellow-1: #bb923a;
+    --primary-yellow-2: #e7d7b4;
     --radius: 0.625rem;
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
@@ -132,9 +136,11 @@
 
 @layer utilities {
     .bg-brand-gradient {
-        background: radial-gradient(ellipse at center,
-                #2e1035 0%,
-                #050208 100%);
+        background: radial-gradient(
+            ellipse at center,
+            #2e1035 0%,
+            #050208 100%
+        );
     }
 }
 

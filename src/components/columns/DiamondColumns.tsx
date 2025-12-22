@@ -75,12 +75,12 @@ export const getDiamondColumns = (
             const statusText = getAvailabilityText(row.availability);
             const color =
                 row.availability === "A"
-                    ? "bg-primary-purple-dark text-white"
+                    ? "bg-primary-purple2 text-white"
                     : row.availability === "S"
                     ? "bg-red-100 text-red-700"
                     : "bg-yellow-100 text-yellow-700";
             return (
-                <Badge className={`${color} text-[10px] rounded-none`}>
+                <Badge className={`${color} text-xs rounded-sm px-2 py-1`}>
                     {statusText ? statusText : "UNKNOWN"}
                 </Badge>
             );

@@ -24,7 +24,18 @@ export type DiamondColor =
     | "L"
     | "M"
     | "N"
-    | "O-Z";
+    | "O"
+    | "P"
+    | "Q"
+    | "R"
+    | "S"
+    | "T"
+    | "U"
+    | "V"
+    | "W"
+    | "X"
+    | "Y"
+    | "Z";
 
 export type DiamondClarity =
     | "FL"

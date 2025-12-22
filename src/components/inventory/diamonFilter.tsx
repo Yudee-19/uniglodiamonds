@@ -11,6 +11,7 @@ import {
     DiamondCut,
 } from "@/interface/diamondInterface";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 // --- Types & Interfaces ---
 
@@ -40,17 +41,17 @@ interface DiamondFiltersProps {
 
 // --- Constants ---
 
-const SHAPES: { value: DiamondShape; label: string; icon?: string }[] = [
+const SHAPES: { value: DiamondShape; label: string; icon: string }[] = [
     { value: "RD", label: "Round", icon: "/shapes/round-diamond.png" },
-    { value: "PR", label: "Princess" },
-    { value: "PS", label: "Pear" },
-    { value: "OV", label: "Oval" },
-    { value: "EM", label: "Emerald" },
-    { value: "MQ", label: "Marquise" },
-    { value: "HT", label: "Heart" },
-    { value: "RA", label: "Radiant" },
-    { value: "AS", label: "Asscher" },
-    { value: "CU", label: "Cushion" },
+    { value: "PR", label: "Princess", icon: "/shapes/princess-diamond.png" },
+    { value: "PS", label: "Pear", icon: "/shapes/pear-diamond.png" },
+    { value: "OV", label: "Oval", icon: "/shapes/Oval-Diamond.png" },
+    { value: "EM", label: "Emerald", icon: "/shapes/emerald-diamond.png" },
+    { value: "MQ", label: "Marquise", icon: "/shapes/marquise-diamond.png" },
+    { value: "HT", label: "Heart", icon: "/shapes/heart.png" },
+    { value: "RA", label: "Radiant", icon: "/shapes/radiant-diamond.png" },
+    { value: "AS", label: "Asscher", icon: "/shapes/asscher-diamond.png" },
+    { value: "CU", label: "Cushion", icon: "/shapes/cushion-diamond.png" },
 ];
 
 const CARAT_RANGES = [
@@ -81,7 +82,18 @@ const COLORS: DiamondColor[] = [
     "L",
     "M",
     "N",
-    "O-Z",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T",
+    "U",
+    "V",
+    "W",
+    "X",
+    "Y",
+    "Z",
 ];
 
 const CLARITIES: DiamondClarity[] = [
@@ -119,7 +131,7 @@ const ToggleButton = ({
         className={cn(
             "px-3 py-1.5 text-xs rounded transition-all border",
             active
-                ? "bg-[#d4b98c] text-black border-[#d4b98c] font-medium"
+                ? "bg-primary-yellow-2 text-black  font-medium"
                 : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50",
             className
         )}
@@ -146,12 +158,12 @@ const RangeSliderWithInputs = ({
     unit?: string;
 }) => {
     return (
-        <Card className="p-3 bg-white border-none shadow-sm h-full flex flex-col justify-between">
-            <h4 className="text-sm  font-semibold text-white mb-4 bg-primary-purple-dark  p-2 -mx-3 -mt-3 rounded-t-md">
+        <Card className="p-0  border-none shadow-sm h-full flex flex-col justify-start gap-0">
+            <h4 className="text-sm  font-semibold text-white  bg-primary-purple2  p-2 rounded-t-md">
                 {label}
             </h4>
-            <div className="px-2">
-                <div className="mb-6 pt-4">
+            <div className="px-2 border border-primary-yellow-2 rounded-b-lg w-full h-full flex flex-col gap-3 py-3">
+                <div className="">
                     <Slider
                         defaultValue={[minLimit, maxLimit]}
                         value={[value[0], value[1]]}
@@ -159,9 +171,9 @@ const RangeSliderWithInputs = ({
                         max={maxLimit}
                         step={step}
                         onValueChange={(vals) => onChange([vals[0], vals[1]])}
-                        className="my-4"
+                        className=""
                     />
-                    <div className="flex justify-between text-[10px] text-gray-500 mt-1">
+                    <div className="flex justify-between text-[10px] text-gray-800 mt-1">
                         <span>{minLimit}</span>
                         <span>{maxLimit}</span>
                     </div>
@@ -170,17 +182,17 @@ const RangeSliderWithInputs = ({
                 <div className="flex gap-2 items-center">
                     <Input
                         type="number"
-                        className="h-8 text-xs w-full"
+                        className="h-8 text-xs border-primary-yellow-2 border rounded-lg"
                         value={value[0]}
                         onChange={(e) =>
                             onChange([Number(e.target.value), value[1]])
                         }
                         step={step}
                     />
-                    <span className="text-gray-400 text-xs">To</span>
+                    <span className="text-gray-800 text-xs">To</span>
                     <Input
                         type="number"
-                        className="h-8 text-xs w-full"
+                        className="h-8 text-xs border-primary-yellow-2 border rounded-lg"
                         value={value[1]}
                         onChange={(e) =>
                             onChange([value[0], Number(e.target.value)])
@@ -211,16 +223,16 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
     };
 
     return (
-        <div className="w-full bg-white p-2">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <div className="w-full bg-white p-2 rounded-lg">
+            <div className="grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-1 gap-2">
                 {/* --- Left Column (Shapes, Carat, Color) --- */}
-                <div className="lg:col-span-4 flex flex-col gap-4">
+                <div className="lg:col-span-4  flex flex-col gap-2 ">
                     {/* Shapes */}
-                    <Card className="p-0 overflow-hidden border-none shadow-sm gap-1">
-                        <div className="bg-primary-purple-dark text-white p-2 font-semibold text-sm">
+                    <Card className="p-0 overflow-hidden border-none shadow-sm gap-0">
+                        <div className="bg-primary-purple2 text-white p-2 font-semibold text-sm">
                             Shapes
                         </div>
-                        <div className="p-3 grid grid-cols-5 gap-2 bg-white">
+                        <div className="p-3 grid grid-cols-5 gap-2 bg-white border-primary-yellow-2 border rounded-b-lg">
                             {SHAPES.map((shape) => (
                                 <button
                                     key={shape.value}
@@ -235,13 +247,19 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                                         "flex flex-col items-center justify-center p-2 rounded border transition-colors aspect-square",
                                         filters.shapes.includes(shape.value)
                                             ? "bg-[#d4b98c] text-black border-[#d4b98c] font-medium"
-                                            : "border-gray-100 hover:border-gray-300"
+                                            : " border-primary-yellow-2 border"
                                     )}
                                 >
-                                    <div className="w-6 h-6 bg-gray-200 rounded-full mb-1" />
-                                    <span className="text-[9px] uppercase">
+                                    <Image
+                                        src={shape.icon}
+                                        width={54}
+                                        height={54}
+                                        alt={shape.label}
+                                        className=" aspect-square object-contain "
+                                    />
+                                    {/* <span className="text-[9px] uppercase">
                                         {shape.label}
-                                    </span>
+                                    </span> */}
                                 </button>
                             ))}
                         </div>
@@ -249,17 +267,17 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
 
                     {/* Carat */}
                     <Card className="p-0 overflow-hidden border-none shadow-sm">
-                        <div className="bg-primary-purple-dark text-white p-2 font-semibold text-sm">
+                        <div className="bg-primary-purple2 text-white p-2 font-semibold text-sm">
                             Carat
                         </div>
-                        <div className="p-4 bg-white">
+                        <div className="p-2 py-3 bg-white border-primary-yellow-2 border rounded-b-lg">
                             <Slider
                                 value={[
                                     filters.caratRange[0],
                                     filters.caratRange[1],
                                 ]}
                                 min={0}
-                                max={30}
+                                max={10.99}
                                 step={0.01}
                                 onValueChange={(vals) =>
                                     setFilters((prev) => ({
@@ -269,15 +287,15 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                                 }
                                 className="mb-2"
                             />
-                            <div className="flex justify-between text-xs text-gray-500 mb-4">
+                            <div className="flex justify-between text-xs text-stone-800 mb-4">
                                 <span>0.00</span>
-                                <span>30.00</span>
+                                <span>10.99</span>
                             </div>
 
                             <div className="flex gap-2 mb-4">
                                 <Input
                                     type="number"
-                                    className="h-8 text-xs"
+                                    className="h-8 text-xs border-primary-yellow-2 border rounded-lg"
                                     value={filters.caratRange[0]}
                                     onChange={(e) =>
                                         setFilters((prev) => ({
@@ -294,7 +312,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                                 </span>
                                 <Input
                                     type="number"
-                                    className="h-8 text-xs"
+                                    className="h-8 text-xs border-primary-yellow-2 border rounded-lg"
                                     value={filters.caratRange[1]}
                                     onChange={(e) =>
                                         setFilters((prev) => ({
@@ -308,7 +326,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                                 />
                             </div>
 
-                            <div className="flex flex-wrap gap-1">
+                            <div className="flex flex-wrap gap-1 mx-auto">
                                 {CARAT_RANGES.map((range, idx) => (
                                     <button
                                         key={idx}
@@ -321,7 +339,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                                                 ],
                                             }))
                                         }
-                                        className="px-2 py-1 text-[10px] bg-gray-100 hover:bg-gray-200 rounded border border-gray-200 text-gray-700"
+                                        className="px-1 py-0 text-[12px] bg-transparent hover:bg-primary-yellow-2/50  text-gray-700 border-primary-yellow-2/50 border rounded-sm"
                                     >
                                         {range.label}
                                     </button>
@@ -332,10 +350,10 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
 
                     {/* Color */}
                     <Card className="p-0 overflow-hidden border-none shadow-sm">
-                        <div className="bg-primary-purple-dark text-white p-2 font-semibold text-sm">
+                        <div className="bg-primary-purple2 text-white p-2 font-semibold text-sm ">
                             Color
                         </div>
-                        <div className="p-3 bg-white flex flex-wrap gap-1">
+                        <div className="p-3 bg-white flex flex-wrap gap-1 border-primary-yellow-2 border rounded-b-lg">
                             {COLORS.map((color) => (
                                 <ToggleButton
                                     key={color}
@@ -348,7 +366,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                                             "colors"
                                         )
                                     }
-                                    className="w-8 h-8 flex items-center justify-center p-0"
+                                    className="w-6 h-5 flex items-center justify-center p-0 border border-primary-yellow-2 "
                                 />
                             ))}
                         </div>
@@ -356,13 +374,13 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                 </div>
 
                 {/* --- Middle Column (Clarity, Finish, Fluorescence, Lab) --- */}
-                <div className="lg:col-span-4 flex flex-col gap-4">
+                <div className="lg:col-span-4  flex flex-col gap-2">
                     {/* Clarity */}
                     <Card className="p-0 overflow-hidden border-none shadow-sm">
-                        <div className="bg-primary-purple-dark text-white p-2 font-semibold text-sm">
+                        <div className="bg-primary-purple2 text-white p-2 font-semibold text-sm">
                             Clarity
                         </div>
-                        <div className="p-3 bg-white flex flex-wrap gap-1">
+                        <div className="p-3 bg-white flex flex-wrap gap-1 border border-primary-yellow-2 rounded-b-lg">
                             {CLARITIES.map((clarity) => (
                                 <ToggleButton
                                     key={clarity}
@@ -375,7 +393,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                                             "clarities"
                                         )
                                     }
-                                    className="min-w-[12] text-center"
+                                    className="min-w-[10] text-center border border-primary-yellow-2 px-2 py-1 "
                                 />
                             ))}
                         </div>
@@ -383,13 +401,71 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
 
                     {/* Finish */}
                     <Card className="p-0 overflow-hidden border-none shadow-sm">
-                        <div className="bg-primary-purple-dark text-white p-2 font-semibold text-sm">
+                        <div className="bg-primary-purple2 text-white p-2 font-semibold text-sm">
                             Finish
                         </div>
-                        <div className="p-3 bg-white space-y-3">
+                        <div className="px-3 py-3 bg-white space-y-3 border border-primary-yellow-2 rounded-b-lg">
+                            <div className="flex justify-center gap-2">
+                                <ToggleButton
+                                    label="EX+"
+                                    active={false}
+                                    onClick={() => {
+                                        // Handle EX+ click
+                                        setFilters((prev) => ({
+                                            ...prev,
+                                            cuts: ["EX"],
+                                            symmetry: ["EX"],
+                                            polish: ["EX"],
+                                        }));
+                                    }}
+                                    className="px-4 py-2 bg-primary-purple2 text-white border-primary-purple2 hover:bg-primary-purple2/90"
+                                />
+                                <ToggleButton
+                                    label="EX-"
+                                    active={false}
+                                    onClick={() => {
+                                        // Handle EX- click
+                                        setFilters((prev) => ({
+                                            ...prev,
+                                            cuts: ["EX", "VG"],
+                                            symmetry: ["EX", "VG"],
+                                            polish: ["EX", "VG"],
+                                        }));
+                                    }}
+                                    className="px-4 py-2 bg-primary-purple2 text-white border-primary-purple2 hover:bg-primary-purple2/90"
+                                />
+                                <ToggleButton
+                                    label="VG+"
+                                    active={false}
+                                    onClick={() => {
+                                        // Handle VG+ click
+                                        setFilters((prev) => ({
+                                            ...prev,
+                                            cuts: ["VG"],
+                                            symmetry: ["VG"],
+                                            polish: ["VG"],
+                                        }));
+                                    }}
+                                    className="px-4 py-2 bg-primary-purple2 text-white border-primary-purple2 hover:bg-primary-purple2/90"
+                                />
+                                <ToggleButton
+                                    label="VG-"
+                                    active={false}
+                                    onClick={() => {
+                                        // Handle VG- click
+                                        setFilters((prev) => ({
+                                            ...prev,
+                                            cuts: ["VG", "G"],
+                                            symmetry: ["VG", "G"],
+                                            polish: ["VG", "G"],
+                                        }));
+                                    }}
+                                    className="px-4 py-2 bg-primary-purple2 text-white border-primary-purple2 hover:bg-primary-purple2/90"
+                                />
+                            </div>
                             {/* Cut */}
                             <div className="flex items-center gap-2">
-                                <span className="w-16 text-xs font-bold text-white bg-primary-purple-dark py-1 px-2 rounded-sm text-center">
+                                <span className="w-16 text-sm font-semibold text-white bg-primary-purple2 py-1 px-2 rounded-sm text-center">
                                     Cut
                                 </span>
                                 <div className="flex flex-1 gap-1">
@@ -405,7 +481,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                                                     "cuts"
                                                 )
                                             }
-                                            className="flex-1"
+                                            className="flex-1 border border-primary-yellow-2"
                                         />
                                     ))}
                                 </div>
@@ -413,7 +489,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
 
                             {/* Symmetry */}
                             <div className="flex items-center gap-2">
-                                <span className="w-16 text-xs font-bold text-white bg-primary-purple-dark py-1 px-2 rounded-sm text-center">
+                                <span className="w-16 text-sm font-semibold text-white bg-primary-purple2 py-1 px-2 rounded-sm text-center">
                                     Symm.
                                 </span>
                                 <div className="flex flex-1 gap-1">
@@ -431,7 +507,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                                                     "symmetry"
                                                 )
                                             }
-                                            className="flex-1"
+                                            className="flex-1 border border-primary-yellow-2"
                                         />
                                     ))}
                                 </div>
@@ -439,7 +515,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
 
                             {/* Polish */}
                             <div className="flex items-center gap-2">
-                                <span className="w-16 text-xs font-bold text-white bg-primary-purple-dark py-1 px-2 rounded-sm text-center">
+                                <span className="w-16 text-sm font-semibold text-white bg-primary-purple2 py-1 px-2 rounded-sm text-center">
                                     Polish
                                 </span>
                                 <div className="flex flex-1 gap-1">
@@ -457,7 +533,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                                                     "polish"
                                                 )
                                             }
-                                            className="flex-1"
+                                            className="flex-1 border border-primary-yellow-2"
                                         />
                                     ))}
                                 </div>
@@ -467,10 +543,10 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
 
                     {/* Fluorescence */}
                     <Card className="p-0 overflow-hidden border-none shadow-sm">
-                        <div className="bg-primary-purple-dark text-white p-2 font-semibold text-sm">
+                        <div className="bg-primary-purple2 text-white p-2 font-semibold text-sm">
                             Fluorescence
                         </div>
-                        <div className="p-3 bg-white flex flex-wrap gap-1">
+                        <div className="p-3 bg-white flex flex-wrap gap-1 border border-primary-yellow-2 rounded-b-lg">
                             {FLUORESCENCE_OPTIONS.map((fluor) => (
                                 <ToggleButton
                                     key={fluor}
@@ -485,6 +561,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                                             "fluorescence"
                                         )
                                     }
+                                    className="border border-primary-yellow-2"
                                 />
                             ))}
                         </div>
@@ -492,10 +569,10 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
 
                     {/* Lab */}
                     <Card className="p-0 overflow-hidden border-none shadow-sm">
-                        <div className="bg-primary-purple-dark text-white p-2 font-semibold text-sm">
+                        <div className="bg-primary-purple2 text-white p-2 font-semibold text-sm">
                             Lab
                         </div>
-                        <div className="p-3 bg-white flex flex-wrap gap-1">
+                        <div className="p-3 bg-white flex flex-wrap gap-1 border border-primary-yellow-2 rounded-b-lg">
                             {LAB_OPTIONS.map((lab) => (
                                 <ToggleButton
                                     key={lab}
@@ -504,7 +581,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                                     onClick={() =>
                                         toggleFilter(filters.lab, lab, "lab")
                                     }
-                                    className="min-w-[12]"
+                                    className="min-w-[12] border border-primary-yellow-2 rounded-sm"
                                 />
                             ))}
                         </div>
@@ -512,7 +589,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                 </div>
 
                 {/* --- Right Column (Price & Measurements) --- */}
-                <div className="lg:col-span-4 grid grid-cols-2 gap-4">
+                <div className="lg:col-span-4 grid grid-cols-2 gap-2">
                     <RangeSliderWithInputs
                         label="Price"
                         value={filters.priceRange}
@@ -586,11 +663,11 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
             </div>
 
             {/* Actions */}
-            <div className="flex justify-end gap-3 mt-4">
-                <Button variant="outline" onClick={onReset}>
+            {/* <div className="flex justify-end gap-3 mt-4">
+                <Button variant="" onClick={onReset}>
                     Reset Filters
                 </Button>
-            </div>
+            </div> */}
         </div>
     );
 };
