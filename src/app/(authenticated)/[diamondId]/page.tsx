@@ -3,21 +3,18 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { fetchDiamondById } from "@/services/diamondService";
-import {
-    Diamond,
-    getShapeFullName,
-    getAvailabilityText,
-} from "@/interface/diamondInterface";
+import { Diamond, getShapeFullName } from "@/interface/diamondInterface";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
     ArrowLeft,
-    Download,
-    Share2,
-    Heart,
+    ChevronLeft,
+    ChevronRight,
     Diamond as DiamondIcon,
+    Scale,
+    Palette,
+    Eye,
+    Star,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 
 export default function DiamondDetailPage() {
     const params = useParams();
@@ -25,13 +22,15 @@ export default function DiamondDetailPage() {
     const [diamond, setDiamond] = useState<Diamond | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [activeTab, setActiveTab] = useState<
+        "IMAGE" | "VIDEO" | "CERTIFICATE"
+    >("IMAGE");
 
     useEffect(() => {
         const loadDiamond = async () => {
             if (params.diamondId) {
                 try {
                     setLoading(true);
-                    // Decode the param in case it has special characters, though usually cert numbers are alphanumeric
                     const id = decodeURIComponent(params.diamondId as string);
                     const data = await fetchDiamondById(id);
                     setDiamond(data);
@@ -48,9 +47,9 @@ export default function DiamondDetailPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-brand-gradient">
+            <div className="min-h-screen flex items-center justify-center bg-white">
                 <div className="animate-pulse flex flex-col items-center">
-                    <DiamondIcon className="h-12 w-12 text-primary-purple2 animate-bounce" />
+                    <DiamondIcon className="h-12 w-12 text-[#49214c] animate-bounce" />
                     <p className="mt-4 text-gray-600">
                         Loading Diamond Details...
                     </p>
@@ -61,7 +60,7 @@ export default function DiamondDetailPage() {
 
     if (error || !diamond) {
         return (
-            <div className="min-h-screen  flex flex-col items-center justify-center bg-brand-gradient gap-4">
+            <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-4">
                 <p className="text-red-500 text-lg">
                     {error || "Diamond not found"}
                 </p>
@@ -72,238 +71,342 @@ export default function DiamondDetailPage() {
         );
     }
 
-    const DetailRow = ({
+    const totalPrice = diamond.weight * diamond.pricePerCts;
+    const shapeName = getShapeFullName(diamond.shape);
+
+    // Helper for the 3-column tables
+    const TableSection = ({
+        title,
+        rows,
+    }: {
+        title: string;
+        rows: { label: string; value: string | number | undefined }[];
+    }) => (
+        <div className="border font-lato border-[#e7d7b4] rounded-sm overflow-hidden h-fit">
+            <div className="bg-[#26062b] text-white px-4 py-2 font-medium text-sm uppercase tracking-wide">
+                {title}
+            </div>
+            <div className="bg-white">
+                {rows.map((row, idx) => (
+                    <div
+                        key={idx}
+                        className="flex border-b border-[#e7d7b4] last:border-0 text-sm"
+                    >
+                        <div className="w-1/2 px-4 py-1 font-semibold text-gray-800 border-r border-[#e7d7b4] ">
+                            {row.label}
+                        </div>
+                        <div className="w-1/2 px-4 py-1 text-gray-700">
+                            {row.value || "-"}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+
+    // Helper for the full-width bottom rows
+    const FullWidthRow = ({
         label,
         value,
     }: {
         label: string;
-        value: string | number | undefined;
+        value: string | undefined;
     }) => (
-        <div className="flex justify-between py-2 border-b border-gray-100 last:border-0">
-            <span className="text-gray-500 text-sm">{label}</span>
-            <span className="font-medium text-gray-900 text-sm">
-                {value || "-"}
-            </span>
+        <div className="flex border font-lato border-[#e7d7b4] border-t-0 first:border-t text-sm">
+            <div className="w-[200px] min-w-[150px] px-4 py-1 font-semibold text-gray-800 border-r border-[#e7d7b4] ">
+                {label}
+            </div>
+            <div className="flex-1 px-4 py-1 text-gray-700">{value || "-"}</div>
+        </div>
+    );
+
+    // Helper for Info Cards
+    const InfoCard = ({
+        icon: Icon,
+        title,
+        subtitle,
+        desc,
+    }: {
+        icon: any;
+        title: string;
+        subtitle: string;
+        desc: string;
+    }) => (
+        <div className="border border-[#e7d7b4] rounded-lg p-4 flex flex-col gap-1 relative">
+            <Icon className="w-5 h-5 text-gray-900 mb-1" />
+            <h3 className="font-bold text-gray-900 text-sm">{title}</h3>
+            <p className="text-xs text-gray-500">{subtitle}</p>
+            <p className="text-xs text-gray-400 mt-1">{desc}</p>
         </div>
     );
 
     return (
-        <div className="min-h-screen mt-40 bg-brand-gradient p-4 md:p-8 ">
-            {/* Header Navigation */}
-            <div className="max-w-7xl mx-auto mb-6 flex justify-between items-center">
-                <Button
-                    variant="ghost"
-                    onClick={() => router.back()}
-                    className="hover:bg-white/50 gap-2"
-                >
-                    <ArrowLeft className="h-4 w-4" /> Back to Inventory
-                </Button>
-                <div className="flex gap-2">
-                    <Button variant="outline" size="icon" className="bg-white">
-                        <Share2 className="h-4 w-4" />
+        <div className="min-h-screen bg-white text-gray-800 font-sans pb-20 pt-24 mt-25">
+            <div className="max-w-[1400px] mx-auto px-4 md:px-8">
+                {/* Top Navigation & Tabs */}
+                <div className="flex flex-col md:flex-row md:items-center justify-start mb-6 gap-4">
+                    <Button
+                        className="gold-reveal-btn  font-cormorantGaramond uppercase shadow-lg"
+                        onClick={() => router.back()}
+                    >
+                        <span className="flex items-center">
+                            <ArrowLeft className="w-4 h-4 mr-2" /> Back
+                        </span>
                     </Button>
-                    <Button variant="outline" size="icon" className="bg-white">
-                        <Heart className="h-4 w-4" />
-                    </Button>
+                    <div className="flex gap-2">
+                        {["IMAGE", "VIDEO", "CERTIFICATE"].map((tab) => (
+                            <button
+                                key={tab}
+                                onClick={() => setActiveTab(tab as any)}
+                                className={` px-6 py-2 text-sm font-medium border transition-colors uppercase shadow-lg ${
+                                    activeTab === tab
+                                        ? "bg-primary-yellow-2 border-0 text-gray-900 "
+                                        : "bg-gray-50 border-transparent text-gray-500 hover:bg-gray-100"
+                                }`}
+                            >
+                                {tab}
+                            </button>
+                        ))}
+                    </div>
+                    <div className="w-[100px] hidden md:block"></div>{" "}
+                    {/* Spacer for alignment */}
                 </div>
-            </div>
 
-            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Left Column - Media & Key Info */}
-                <div className="lg:col-span-1 space-y-6">
-                    <Card className="border-none shadow-md overflow-hidden">
-                        <CardContent className="p-6 bg-white flex flex-col items-center">
-                            <div className="w-full aspect-square relative flex items-center justify-center bg-gray-50 rounded-lg mb-4">
-                                {diamond.webLink ? (
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-12">
+                    {/* Left Column: Media Viewer */}
+                    <div className="lg:col-span-5">
+                        <div className="aspect-square  rounded-lg relative flex items-center justify-center border border-gray-100 group">
+                            <button className="absolute left-4 p-2 rounded-full bg-white shadow-md hover:bg-gray-50 z-10 border border-gray-100">
+                                <ChevronLeft className="w-5 h-5 text-gray-600" />
+                            </button>
+
+                            {activeTab === "IMAGE" &&
+                                (diamond.webLink ? (
                                     <img
                                         src={diamond.webLink}
                                         alt="Diamond"
-                                        className="max-w-full max-h-full object-contain mix-blend-multiply"
+                                        className="max-w-full max-h-full object-cover mix-blend-multiply "
                                     />
                                 ) : (
-                                    <DiamondIcon className="h-32 w-32 text-gray-200" />
-                                )}
-                                <Badge className="absolute top-2 right-2 bg-primary-purple2">
-                                    {getAvailabilityText(diamond.availability)}
-                                </Badge>
+                                    <DiamondIcon className="w-48 h-48 text-gray-200" />
+                                ))}
+                            {activeTab === "VIDEO" &&
+                                (diamond.videoLink ? (
+                                    <iframe
+                                        src={diamond.videoLink}
+                                        className="w-full h-full"
+                                        title="Diamond Video"
+                                    />
+                                ) : (
+                                    <div className="text-gray-400">
+                                        No Video Available
+                                    </div>
+                                ))}
+                            {activeTab === "CERTIFICATE" && (
+                                <div className="text-gray-400">
+                                    Certificate View
+                                </div>
+                            )}
+
+                            <button className="absolute right-4 p-2 rounded-full bg-white shadow-md hover:bg-gray-50 z-10 border border-gray-100">
+                                <ChevronRight className="w-5 h-5 text-gray-600" />
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Right Column: Basic Info */}
+                    <div className="lg:col-span-7 space-y-8 ">
+                        <div className="border-b border-primary-yellow-2 pb-4">
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <p className="text-gray-500 text-sm mb-1">
+                                        Diamond Details
+                                    </p>
+                                    <h1 className="text-4xl font-serif font-medium text-gray-900 mb-2">
+                                        {shapeName}{" "}
+                                        {diamond.shape !== "RD"
+                                            ? "Modified"
+                                            : ""}
+                                    </h1>
+                                </div>
+                                <div className="flex items-center gap-1 text-yellow-500">
+                                    <Star className="w-4 h-4 fill-current" />
+                                    <span className="text-sm font-medium text-gray-600">
+                                        5.0 (258 Reviews)
+                                    </span>
+                                </div>
                             </div>
 
-                            <div className="w-full grid grid-cols-2 gap-2 mb-4">
-                                {diamond.videoLink && (
-                                    <Button
-                                        variant="outline"
-                                        className="w-full text-xs"
-                                        onClick={() =>
-                                            window.open(
-                                                diamond.videoLink,
-                                                "_blank"
-                                            )
-                                        }
-                                    >
-                                        Watch Video
-                                    </Button>
-                                )}
-                                <Button
-                                    variant="outline"
-                                    className="w-full text-xs"
-                                >
-                                    <Download className="h-3 w-3 mr-1" />{" "}
-                                    Certificate
-                                </Button>
+                            <div className="flex items-baseline gap-3 mt-2">
+                                <span className="text-3xl font-bold text-gray-900">
+                                    ${diamond.priceListUSD.toLocaleString()} USD
+                                </span>
+                                {/* <span className="text-lg text-gray-400 line-through">
+                                    ${(totalPrice * 1.1).toLocaleString()} USD
+                                </span> */}
                             </div>
+                        </div>
 
-                            <div className="text-center space-y-1">
-                                <h1 className="text-2xl font-bold text-gray-900">
-                                    {diamond.weight} Carat{" "}
-                                    {getShapeFullName(diamond.shape)}
-                                </h1>
-                                <p className="text-lg text-primary-purple2 font-medium">
-                                    {diamond.color} Color • {diamond.clarity}{" "}
-                                    Clarity
-                                </p>
-                                <p className="text-sm text-gray-500">
-                                    SKU: {diamond.stockRef}
-                                </p>
+                        <div>
+                            <h3 className="font-bold text-gray-900 mb-4 text-lg">
+                                Basic Information
+                            </h3>
+                            <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
+                                <InfoCard
+                                    icon={DiamondIcon}
+                                    title={`${shapeName} Shape`}
+                                    subtitle="Classic cut known for maximum sparkle."
+                                    desc=""
+                                />
+                                <InfoCard
+                                    icon={Scale}
+                                    title={`${diamond.weight} Carat`}
+                                    subtitle="Measures a diamond's size and weight."
+                                    desc=""
+                                />
+                                <InfoCard
+                                    icon={Palette}
+                                    title={`Color ${diamond.color}`}
+                                    subtitle="Grades diamond's whiteness and purity."
+                                    desc=""
+                                />
+                                <InfoCard
+                                    icon={Eye}
+                                    title={`Clarity ${diamond.clarity}`}
+                                    subtitle="Reveals internal and external flaws."
+                                    desc=""
+                                />
                             </div>
-                        </CardContent>
-                    </Card>
+                        </div>
 
-                    <Card className="border-none shadow-md bg-primary-purple2 text-white">
-                        <CardContent className="p-6">
-                            <div className="flex justify-between items-end mb-2">
-                                <span className="text-white/80 text-sm">
-                                    Total Price
-                                </span>
-                                <span className="text-2xl font-bold">
-                                    $
-                                    {(
-                                        diamond.weight * diamond.pricePerCts
-                                    ).toLocaleString()}
-                                </span>
-                            </div>
-                            <div className="flex justify-between items-center text-sm text-white/80 mb-6">
-                                <span>Price per Carat</span>
-                                <span>
-                                    ${diamond.pricePerCts.toLocaleString()}
-                                </span>
-                            </div>
-                            <Button className="w-full bg-white text-primary-purple2 hover:bg-gray-100 font-bold">
-                                INQUIRE NOW
+                        <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                            <Button
+                                variant="outline"
+                                className="flex-1 h-12 border-gray-300 text-gray-700 font-semibold uppercase tracking-wide hover:bg-gray-50 rounded-sm"
+                            >
+                                Old Stone
                             </Button>
-                        </CardContent>
-                    </Card>
+                            <Button
+                                variant="outline"
+                                className="flex-1 h-12 border-gray-300 text-gray-700 font-semibold uppercase tracking-wide hover:bg-gray-50 rounded-sm"
+                            >
+                                Enquiry
+                            </Button>
+                            <Button className="flex-1 h-12  text-white font-semibold uppercase  border-none gold-reveal-btn  font-cormorantGaramond ">
+                                <span>Add to Cart</span>
+                            </Button>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Right Column - Detailed Specs */}
-                <div className="lg:col-span-2 space-y-6">
-                    {/* Grading Report */}
-                    <Card className="border-none shadow-md">
-                        <div className="p-4 border-b border-gray-100">
-                            <h2 className="font-bold text-lg text-gray-800">
-                                Grading Report
-                            </h2>
-                        </div>
-                        <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2">
-                            <DetailRow label="Lab" value={diamond.lab} />
-                            <DetailRow
-                                label="Certificate No"
-                                value={diamond.certiNo}
-                            />
-                            <DetailRow
-                                label="Shape"
-                                value={getShapeFullName(diamond.shape)}
-                            />
-                            <DetailRow
-                                label="Carat Weight"
-                                value={`${diamond.weight} ct`}
-                            />
-                            <DetailRow
-                                label="Color Grade"
-                                value={diamond.color}
-                            />
-                            <DetailRow
-                                label="Clarity Grade"
-                                value={diamond.clarity}
-                            />
-                            <DetailRow
-                                label="Cut Grade"
-                                value={diamond.cutGrade}
-                            />
-                            <DetailRow label="Polish" value={diamond.polish} />
-                            <DetailRow
-                                label="Symmetry"
-                                value={diamond.symmetry}
-                            />
-                            <DetailRow
-                                label="Fluorescence"
-                                value={diamond.fluorescenceIntensity}
-                            />
-                        </CardContent>
-                    </Card>
+                {/* Bottom Section: Detailed Tables */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-3 ">
+                    <TableSection
+                        title="Details"
+                        rows={[
+                            { label: "Packet No", value: diamond.stockRef },
+                            { label: "Report No", value: diamond.certiNo },
+                            { label: "Lab", value: diamond.lab },
+                            {
+                                label: "Rap.($)",
+                                value: diamond.priceListUSD?.toLocaleString(),
+                            },
+                            { label: "Shape", value: diamond.shape },
+                            { label: "Carat", value: diamond.weight },
+                            { label: "Color", value: diamond.color },
+                            { label: "Clarity", value: diamond.clarity },
+                            { label: "Shade", value: diamond.shade },
+                            { label: "Cut", value: diamond.cutGrade },
+                            { label: "Polish", value: diamond.polish },
+                            { label: "Symmetry", value: diamond.symmetry },
+                            {
+                                label: "Fluorescence",
+                                value: diamond.fluorescenceIntensity,
+                            },
+                        ]}
+                    />
+                    <TableSection
+                        title="Measurements"
+                        rows={[
+                            {
+                                label: "Table%",
+                                value: diamond.tablePerc?.toFixed(2),
+                            },
+                            {
+                                label: "Depth%",
+                                value: diamond.depthPerc?.toFixed(2),
+                            },
+                            { label: "Length", value: diamond.length },
+                            { label: "Width", value: diamond.width },
+                            { label: "Depth", value: diamond.height },
+                            {
+                                label: "Ratio",
+                                value: (diamond.length / diamond.width).toFixed(
+                                    2
+                                ),
+                            },
+                            {
+                                label: "Crown Angle",
+                                value: diamond.crownAngle?.toFixed(2),
+                            },
+                            {
+                                label: "Crown Height",
+                                value: diamond.crownHeight?.toFixed(2),
+                            },
+                            {
+                                label: "Pav Angle",
+                                value: diamond.pavalionAngle?.toFixed(2),
+                            },
+                            {
+                                label: "Pav Height",
+                                value: diamond.pavalionDepth?.toFixed(2),
+                            },
+                            { label: "Girdle", value: diamond.girdle },
+                            { label: "Culet", value: diamond.culetSize },
+                            {
+                                label: "Laser Ins.",
+                                value: diamond.laserInscription,
+                            },
+                        ]}
+                    />
+                    <TableSection
+                        title="Inclusion Details"
+                        rows={[
+                            { label: "Eye Clean", value: diamond.eyeClean },
+                            { label: "Heart & Arrow", value: diamond.handA },
+                            { label: "Brilliancy", value: "-" }, // Not in interface
+                            { label: "Milky", value: diamond.milky },
+                            {
+                                label: "Black Inclusion",
+                                value: diamond.blackinclusion,
+                            },
+                            { label: "Origin", value: diamond.origin },
+                            { label: "City", value: diamond.city },
+                            { label: "Country", value: diamond.country },
+                            {
+                                label: "Key to Symbols",
+                                value: diamond.keyToSymbols?.length
+                                    ? "Yes"
+                                    : "No",
+                            },
+                        ]}
+                    />
+                </div>
 
-                    {/* Measurements & Proportions */}
-                    <Card className="border-none shadow-md">
-                        <div className="p-4 border-b border-gray-100">
-                            <h2 className="font-bold text-lg text-gray-800">
-                                Measurements & Proportions
-                            </h2>
-                        </div>
-                        <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2">
-                            <DetailRow
-                                label="Measurements"
-                                value={diamond.measurements}
-                            />
-                            <DetailRow
-                                label="Depth %"
-                                value={`${diamond.depthPerc}%`}
-                            />
-                            <DetailRow
-                                label="Table %"
-                                value={`${diamond.tablePerc}%`}
-                            />
-                            <DetailRow
-                                label="Length"
-                                value={`${diamond.length} mm`}
-                            />
-                            <DetailRow
-                                label="Width"
-                                value={`${diamond.width} mm`}
-                            />
-                            <DetailRow
-                                label="Depth"
-                                value={`${diamond.height} mm`}
-                            />
-                            <DetailRow label="Girdle" value={diamond.girdle} />
-                            <DetailRow
-                                label="Culet"
-                                value={diamond.culetSize}
-                            />
-                        </CardContent>
-                    </Card>
-
-                    {/* Additional Information */}
-                    <Card className="border-none shadow-md">
-                        <div className="p-4 border-b border-gray-100">
-                            <h2 className="font-bold text-lg text-gray-800">
-                                Additional Information
-                            </h2>
-                        </div>
-                        <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2">
-                            <DetailRow label="Origin" value={diamond.origin} />
-                            <DetailRow
-                                label="Location"
-                                value={`${diamond.city}, ${diamond.country}`}
-                            />
-                            <DetailRow
-                                label="Key to Symbols"
-                                value={diamond.keyToSymbols?.join(", ")}
-                            />
-                            <DetailRow
-                                label="Comments"
-                                value={diamond.certComment}
-                            />
-                        </CardContent>
-                    </Card>
+                {/* Full Width Rows */}
+                <div className="border border-[#e7d7b4] rounded-sm overflow-hidden mb-12">
+                    <FullWidthRow
+                        label="Key to Symbols"
+                        value={diamond.keyToSymbols?.join(", ")}
+                    />
+                    <FullWidthRow
+                        label="Report Comments"
+                        value={diamond.certComment}
+                    />
+                    <FullWidthRow
+                        label="HRC Comments"
+                        value={diamond.memberComment}
+                    />
                 </div>
             </div>
         </div>
