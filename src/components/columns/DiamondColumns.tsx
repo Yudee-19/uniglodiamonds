@@ -9,14 +9,24 @@ import { Badge } from "@/components/ui/badge";
 import { Eye } from "lucide-react";
 import { ActionButtonWithTooltip } from "@/components/ui/actionButtonWithTooltip";
 
+export interface Column<T> {
+    key: keyof T | string;
+    header: React.ReactNode;
+    render?: (row: Diamond) => React.ReactNode;
+    cellClassName?: (row: Diamond) => string;
+}
+
 export const getDiamondColumns = (
     onViewDetails: (diamond: Diamond) => void
-) => [
+): Column<Diamond>[] => [
     {
         key: "webLink",
         header: "Image",
         render: (row: Diamond) => (
-            <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden border">
+            <div
+                className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden border cursor-pointer hover:ring-2 hover:ring-primary-purple2 transition-all"
+                onClick={() => onViewDetails(row)}
+            >
                 {row.webLink ? (
                     <img
                         src={row.webLink}
@@ -32,13 +42,22 @@ export const getDiamondColumns = (
         ),
     },
     { key: "country", header: "Loc." },
-    { key: "weight", header: "Carat", cellClassName: () => "font-bold" },
+    { key: "weight", header: "Carat", cellClassName: () => "font-normal" },
     { key: "color", header: "Color" },
     { key: "clarity", header: "Clarity" },
     { key: "cutGrade", header: "Cut" },
     { key: "fluorescenceIntensity", header: "Fluor" },
     { key: "lab", header: "Lab" },
-    { key: "measurements", header: "Measurement" },
+    {
+        key: "measurements",
+        header: "Measurement",
+        render: (row: Diamond) =>
+            row.length && row.width && row.height
+                ? `${row.length.toFixed(2)} x ${row.width.toFixed(
+                      2
+                  )} x ${row.height.toFixed(2)}`
+                : row.measurements,
+    },
     {
         key: "discPerc",
         header: "Disc %",
@@ -62,7 +81,7 @@ export const getDiamondColumns = (
         render: (row: Diamond) => {
             const total = calculateTotalPrice(row.weight, row.pricePerCts);
             return (
-                <span className="font-bold text-gray-900">
+                <span className=" text-gray-900">
                     ${total.toLocaleString()}
                 </span>
             );
@@ -75,12 +94,12 @@ export const getDiamondColumns = (
             const statusText = getAvailabilityText(row.availability);
             const color =
                 row.availability === "A"
-                    ? "bg-primary-purple2 text-white"
+                    ? "bg-primary-purple text-white"
                     : row.availability === "S"
                     ? "bg-red-100 text-red-700"
                     : "bg-yellow-100 text-yellow-700";
             return (
-                <Badge className={`${color} text-xs rounded-sm px-2 py-1`}>
+                <Badge className={`${color} text-xs rounded-[2] px-2 py-1`}>
                     {statusText ? statusText : "UNKNOWN"}
                 </Badge>
             );
@@ -94,7 +113,7 @@ export const getDiamondColumns = (
                 icon={<Eye className="w-4 h-4" />}
                 tooltip="View Details"
                 onClick={() => onViewDetails(row)}
-                colorClass="text-blue-600 hover:text-blue-700"
+                colorClass="text-primary-purple2 hover:text-primary-purple2"
             />
         ),
     },

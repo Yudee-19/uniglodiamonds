@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { List, LayoutGrid } from "lucide-react";
 import DataTable from "@/components/ui/table";
+import DiamondGrid from "@/components/ui/diamondGrid";
 import TablePagination from "@/components/ui/tablePagination";
 import { DiamondFilters } from "@/components/inventory/diamonFilter";
 import { getDiamondColumns } from "@/components/columns/DiamondColumns";
@@ -17,15 +18,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import ShimmerTable from "@/components/ui/shimmerTable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation"; // Add this import
 
 export default function InventoryPage() {
+    const router = useRouter(); // Initialize router
     const [data, setData] = useState<Diamond[]>([]);
     const [loading, setLoading] = useState(false);
     const [totalCount, setTotalCount] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [hasNextPage, setHasNextPage] = useState(false);
     const [hasPrevPage, setHasPrevPage] = useState(false);
-    const [view, setView] = useState("list");
+    const [view, setView] = useState<"list" | "grid">("list");
     // Pagination & Sort State
     const [page, setPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(25);
@@ -229,12 +232,16 @@ export default function InventoryPage() {
     };
 
     const handleViewDetails = (diamond: Diamond) => {
-        console.log("View diamond details:", diamond);
-        // Implement your view details logic here (e.g., open a modal/drawer)
+        // Navigate to the dynamic route using certificate number
+        if (diamond.certiNo) {
+            router.push(`/${diamond.certiNo}`);
+        } else {
+            console.error("Diamond missing certificate number");
+        }
     };
 
     return (
-        <div className="p-4 space-y-4 bg-primary-purple-dark min-h-screen mt-40">
+        <div className="p-4 space-y-2 bg-brand-gradient min-h-screen mt-40">
             {/* 1. FILTER DASHBOARD */}
             <div className="flex flex-col rounded-lg w-full overflow-hidden border-primary border-2 mb-4">
                 <div className="bg-primary-purple2 flex justify-start items-center gap-2">
@@ -325,10 +332,12 @@ export default function InventoryPage() {
                         </Button>
                     </div>
                 </div>
+                {/* Applied filters with cross icon to remove them */}
+                <div></div>
             </div>
 
             {/* 2. TABLE CARD */}
-            <Card className="shadow-md rounded-lg overflow-hidden bg-white">
+            <Card className="shadow-md rounded-lg overflow-hidden bg-white p-0 border-none">
                 <CardContent className="p-0">
                     {loading ? (
                         <div className="p-4">
@@ -340,15 +349,23 @@ export default function InventoryPage() {
                     ) : (
                         <div className="w-full overflow-x-auto">
                             {data.length > 0 ? (
-                                <DataTable
-                                    data={data}
-                                    columns={getDiamondColumns(
-                                        handleViewDetails
-                                    )}
-                                    columnStyles={{
-                                        weight: "font-bold",
-                                    }}
-                                />
+                                view === "grid" ? (
+                                    <DiamondGrid
+                                        data={data}
+                                        onViewDetails={handleViewDetails}
+                                    />
+                                ) : (
+                                    <DataTable
+                                        data={data}
+                                        columns={getDiamondColumns(
+                                            handleViewDetails
+                                        )}
+                                        columnStyles={{
+                                            weight: "font-bold",
+                                        }}
+                                        enableSelection={true}
+                                    />
+                                )
                             ) : (
                                 <div className="text-center py-12 text-gray-500">
                                     <p className="text-lg font-medium">

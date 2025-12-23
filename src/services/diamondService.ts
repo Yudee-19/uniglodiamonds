@@ -334,12 +334,15 @@ export const searchDiamonds = async (
 // Function to fetch a single diamond by ID
 export const fetchDiamondById = async (id: string): Promise<Diamond> => {
     try {
-        const response = await fetch(`${API_BASE_URL}/diamonds/${id}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        const response = await fetch(
+            `${API_BASE_URL}/diamonds/search?searchTerm=${id}`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -351,7 +354,12 @@ export const fetchDiamondById = async (id: string): Promise<Diamond> => {
             throw new Error(result.message || "Failed to fetch diamond");
         }
 
-        return result.data;
+        // The API returns an array, so we return the first match
+        if (Array.isArray(result.data) && result.data.length > 0) {
+            return result.data[0];
+        }
+
+        throw new Error("Diamond not found");
     } catch (error) {
         console.error("Error fetching diamond:", error);
         throw error;

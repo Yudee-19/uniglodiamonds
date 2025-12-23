@@ -80,29 +80,33 @@ const TablePagination: React.FC<TablePaginationProps> = ({
     return (
         <div className="flex flex-wrap items-center justify-center sm:justify-between gap-2 mt-3 text-xs text-gray-600">
             {/* Rows per page */}
-            <div className="flex items-center gap-1">
-                <span className="hidden sm:inline">Rows:</span>
-                <Select
-                    value={String(safeRowsPerPage)}
-                    onValueChange={(val) => onRowsPerPageChange(Number(val))}
-                >
-                    <SelectTrigger className="w-14 h-7 text-xs px-1">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="25">25</SelectItem>
-                        <SelectItem value="50">50</SelectItem>
-                        <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
+            <div className="flex gap-5 items-center">
+                <div className="flex items-center gap-1">
+                    <span className="hidden sm:inline">Rows:</span>
+                    <Select
+                        value={String(safeRowsPerPage)}
+                        onValueChange={(val) =>
+                            onRowsPerPageChange(Number(val))
+                        }
+                    >
+                        <SelectTrigger className="w-14 h-7 text-xs px-1">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="25">25</SelectItem>
+                            <SelectItem value="50">50</SelectItem>
+                            <SelectItem value="100">100</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
 
-            {/* Range */}
-            <span className="text-center">
-                {safeTotal === 0
-                    ? "0–0 of 0"
-                    : `${start}–${end} of ${safeTotal}`}
-            </span>
+                {/* Range */}
+                <span className="text-center">
+                    {safeTotal === 0
+                        ? "0–0 of 0"
+                        : `${start}–${end} of ${safeTotal}`}
+                </span>
+            </div>
 
             {/* Pagination Controls */}
             <div className="flex flex-wrap items-center justify-center gap-1">

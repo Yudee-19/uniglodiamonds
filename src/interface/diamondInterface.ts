@@ -55,31 +55,32 @@ export type DiamondLab = "GIA" | "IGI" | "HRD" | "OTHERS";
 export type DiamondAvailability = "A" | "M" | "H" | "S"; // Available, Memo, Hold, Sold
 
 export interface Diamond {
-    id: string;
+    // --- Identity & Meta ---
+    _id: string;
     stockRef: string;
-    availability: DiamondAvailability;
-    origin: string;
-    shape: DiamondShape;
+    InternalStockRefKey: number;
+    availability: DiamondAvailability | string; // e.g., "M"
+    source: string;
+
+    // --- Basic Specs ---
+    shape: DiamondShape | string; // e.g., "RD"
+    weight: number; // Carat weight
+    color: DiamondColor | string; // e.g., "E", "D", "F"
+    clarity: DiamondClarity | string; // e.g., "SI1", "VS2"
     shade: string;
-    color: DiamondColor;
-    fancyColor: string;
-    fancyIntensity: string;
-    fancyOvertone: string;
-    clarity: DiamondClarity;
-    lab: DiamondLab;
-    certiNo: string;
-    weight: number; // carat weight
-    priceListUSD: number;
-    discPerc: number; // discount percentage
-    pricePerCts: number; // price per carat
-    cashDiscPerc: number;
-    cashDiscPrice: number;
-    cutGrade: DiamondCut;
-    polish: DiamondCut;
-    symmetry: DiamondCut;
-    fluorescenceIntensity: "NON" | "FNT" | "MED" | "STG" | "VSL";
-    fluorescenceColor: string;
-    measurements: string;
+
+    // --- Cut & Finish ---
+    cutGrade: DiamondCut | string; // e.g., "EX"
+    polish: DiamondCut | string; // e.g., "EX", "VG"
+    symmetry: DiamondCut | string; // e.g., "EX"
+
+    // --- Fluorescence ---
+    // Updated based on data seeing "NON", "STG", "FNT"
+    fluorescenceIntensity: "NON" | "FNT" | "MED" | "STG" | "VSL" | string;
+    fluorescenceColor: string; // e.g., "Blue" or ""
+
+    // --- Dimensions & Proportions ---
+    measurements: string; // e.g., "4.72-4.74x2.89"
     length: number;
     width: number;
     height: number;
@@ -87,38 +88,65 @@ export interface Diamond {
     tablePerc: number;
     crownAngle: number;
     crownHeight: number;
-    pavalionAngle: number;
-    pavalionDepth: number;
-    girdle: string;
+    pavalionAngle: number; // Note: API typo matches this spelling
+    pavalionDepth: number; // Note: API typo matches this spelling
+
+    // --- Girdle & Culet ---
+    girdle: string; // e.g., "MED to STK"
     girdleThin: string;
     girdlePerc: number;
     girdleCondition: string;
     culetSize: string;
     culetCondition: string;
+
+    // --- Certification & Lab ---
+    lab: DiamondLab | string; // e.g., "GIA"
+    certiNo: string;
+    certIssueDate: string; // ISO Date String
+    certComment: string;
+    laserInscription: string; // "Y" or "N"
+
+    // --- Pricing ---
+    priceListUSD: number;
+    pricePerCts: number;
+    discPerc: number;
+    cashDiscPerc: number;
+    cashDiscPrice: number;
+
+    // --- Inclusions & Comments ---
+    keyToSymbols: string[]; // e.g., ["Crystal", "Cloud"]
     milky: string;
     blackinclusion: string;
     eyeClean: string;
-    laserInscription: string;
-    keyToSymbols: string[];
     memberComment: string;
-    handA: string;
+    handA: string; // Hearts and Arrows
     identificationMarks: string;
     enhancements: string;
     treatment: string;
-    certComment: string;
-    certIssueDate: string;
+
+    // --- Fancy Color Details (If applicable) ---
+    origin: string;
+    fancyColor: string;
+    fancyIntensity: string;
+    fancyOvertone: string;
+
+    // --- Location & Logistics ---
     city: string;
     state: string;
-    country: string;
+    country: string; // e.g., "ITALY"
+
+    // --- Media ---
+    webLink: string; // Image URL
+    videoLink: string; // Video URL
+
+    // --- Pairing ---
     pairStockRef: string;
     isMatchedPairSeparable: boolean;
-    webLink: string; // image URL
-    videoLink: string;
-    InternalStockRefKey: number;
-    source: string;
+
+    // --- System Timestamps ---
     __v: number;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: string; // ISO Date String
+    updatedAt: string; // ISO Date String
 }
 
 export interface DiamondParams {
@@ -152,7 +180,7 @@ export interface DiamondParams {
 }
 
 // Helper function to get full shape name from code
-export const getShapeFullName = (shapeCode: DiamondShape): string => {
+export const getShapeFullName = (shapeCode: DiamondShape | string): string => {
     const shapeMap: Record<DiamondShape, string> = {
         RD: "Round",
         PR: "Princess",
@@ -165,12 +193,17 @@ export const getShapeFullName = (shapeCode: DiamondShape): string => {
         HT: "Heart",
         AS: "Asscher",
     };
-    return shapeMap[shapeCode] || shapeCode;
+    if (typeof shapeCode === "string" && shapeCode in shapeMap) {
+        return shapeMap[shapeCode as DiamondShape];
+    } else {
+        // Optionally, return a fallback string if shapeCode is not recognized
+        return typeof shapeCode === "string" ? shapeCode : "Unknown Shape";
+    }
 };
 
 // Helper function to get availability status display text
 export const getAvailabilityText = (
-    availability: DiamondAvailability
+    availability: DiamondAvailability | string
 ): string => {
     const availabilityMap: Record<DiamondAvailability, string> = {
         A: "AVAILABLE",
@@ -178,7 +211,9 @@ export const getAvailabilityText = (
         H: "HOLD",
         S: "SOLD",
     };
-    return availabilityMap[availability] || availability;
+    return typeof availability === "string" && availability in availabilityMap
+        ? availabilityMap[availability as DiamondAvailability]
+        : availability;
 };
 
 // Helper function to calculate total price

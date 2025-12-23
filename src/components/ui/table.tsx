@@ -1,22 +1,17 @@
 import React, { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Diamond } from "@/interface/diamondInterface";
+import { Column } from "@/components/columns/DiamondColumns";
 
-interface Column<T> {
-    key: keyof T | string;
-    header: React.ReactNode;
-    render?: (row: T) => React.ReactNode;
-    cellClassName?: (row: T) => string;
-}
-
-interface DataTableProps<T extends { id: string }> {
-    data: T[];
+interface DataTableProps<T extends { _id: string }> {
+    data: Diamond[];
     columns: Column<T>[];
-    onRowClick?: (row: T) => void;
+    onRowClick?: (row: Diamond) => void;
     enableSelection?: boolean;
     columnStyles?: Record<string, string>;
 }
 
-function DataTable<T extends { id: string }>({
+function DataTable<T extends { _id: string }>({
     data,
     columns,
     onRowClick,
@@ -30,7 +25,7 @@ function DataTable<T extends { id: string }>({
 
     const toggleSelectAll = () => {
         if (allSelected) setSelected([]);
-        else setSelected(data.map((r) => r.id));
+        else setSelected(data.map((r) => r._id));
     };
 
     const toggleRow = (id: string) => {
@@ -41,14 +36,14 @@ function DataTable<T extends { id: string }>({
 
     return (
         <div
-            className="w-full h-full overflow-auto  rounded bg-white"
+            className="w-full h-full overflow-auto  rounded bg-red-400"
             data-slot="table-container"
         >
             <table
                 data-slot="table"
                 className="min-w-[70vh] w-full text-xs text-left"
             >
-                <thead className="sticky top-0 z-10 bg-formInput border-b border-gray-200">
+                <thead className="sticky top-0 z-10 bg-gray-200 border-b border-gray-200">
                     <tr className=" hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors ">
                         {enableSelection && (
                             <th className="p-2 pl-5  h-10 text-left table-10px align-middle whitespace-nowrap font-semibold text-gray-900">
@@ -94,16 +89,16 @@ function DataTable<T extends { id: string }>({
                     ) : (
                         data.map((row) => (
                             <tr
-                                key={row.id}
+                                key={row._id}
                                 className="hover:bg-gray-50 cursor-pointer bg-white"
                                 onClick={() => onRowClick?.(row)}
                             >
                                 {enableSelection && (
                                     <td className="p-2 pl-5 border-b">
                                         <Checkbox
-                                            checked={selected.includes(row.id)}
+                                            checked={selected.includes(row._id)}
                                             onCheckedChange={() =>
-                                                toggleRow(row.id)
+                                                toggleRow(row._id)
                                             }
                                         />
                                     </td>
@@ -111,21 +106,21 @@ function DataTable<T extends { id: string }>({
                                 {columns.map((col) => (
                                     <td
                                         key={col.key.toString()}
-                                        className={`p-2 pl-5 whitespace-nowrap border-b  hover:bg-gray-50${
+                                        className={`p-2 pl-5 whitespace-nowrap border-b t hover:bg-gray-50 font-lato ${
                                             col.cellClassName
                                                 ? col.cellClassName(row)
                                                 : ""
                                         } ${
                                             columnStyles?.[
                                                 col.key.toString()
-                                            ] || "text-gray-500"
+                                            ] || "text-gray-800"
                                         }`}
                                         data-slot="table-cell"
                                     >
                                         {col.render
                                             ? col.render(row)
                                             : (row[
-                                                  col.key as keyof T
+                                                  col.key as keyof Diamond
                                               ] as React.ReactNode)}
                                     </td>
                                 ))}

@@ -223,7 +223,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
     };
 
     return (
-        <div className="w-full bg-white p-2 rounded-lg">
+        <div className="w-full bg-white p-2 rounded-lg font-lato">
             <div className="grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-1 gap-2">
                 {/* --- Left Column (Shapes, Carat, Color) --- */}
                 <div className="lg:col-span-4  flex flex-col gap-2 ">
