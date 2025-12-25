@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
 import { List, LayoutGrid } from "lucide-react";
 import DataTable from "@/components/ui/table";
 import DiamondGrid from "@/components/ui/diamondGrid";
@@ -20,7 +20,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import DiamondDetailView from "@/components/inventory/DiamondDetailView";
-export default function InventoryPage() {
+
+function InventoryContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();
@@ -441,5 +442,22 @@ export default function InventoryPage() {
                 </CardContent>
             </Card>
         </div>
+    );
+}
+
+export default function InventoryPage() {
+    return (
+        <Suspense
+            fallback={
+                <div className="min-h-screen flex items-center justify-center bg-white">
+                    <div className="animate-pulse flex flex-col items-center">
+                        <div className="h-12 w-12 bg-gray-200 rounded-full mb-4"></div>
+                        <p className="text-gray-500">Loading Inventory...</p>
+                    </div>
+                </div>
+            }
+        >
+            <InventoryContent />
+        </Suspense>
     );
 }
