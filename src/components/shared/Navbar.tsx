@@ -165,7 +165,7 @@ export default function Navbar() {
             This stays visible always.
         */}
                 <nav
-                    className={`bg-brand-gradient py-3 w-full border-b border-white/10 relative z-50 transition-colors duration-300 border-b-white`}
+                    className={`bg-brand-gradient py-3 w-full border-b border-white/10 relative z-50 transition-colors duration-300 `}
                 >
                     <div className="container mx-auto px-4 md:px-8">
                         <div className="flex justify-between md:justify-center items-center h-14">

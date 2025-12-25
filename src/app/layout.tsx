@@ -53,7 +53,7 @@ export default function RootLayout({
             <body
                 className={`${geistSans.variable} ${geistMono.variable} ${cormorantGaramond.variable} ${lora.variable} ${lato.variable} antialiased `}
             >
-                <div className="h-40 " />
+                <div className="h-41 bg-brand-gradient" />
                 <Navbar />
                 <main className="relative z-0">{children}</main>
                 <Footer />

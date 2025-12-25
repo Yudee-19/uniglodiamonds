@@ -150,7 +150,7 @@ export default function DiamondDetailView({
     );
 
     return (
-        <div className="min-h-screen bg-white text-gray-800 font-sans pb-20 pt-24 mt-25">
+        <div className="min-h-screen bg-white text-gray-800 font-sans pb-20 pt-5 ">
             <div className="max-w-[1400px] mx-auto px-4 md:px-8">
                 {/* Top Navigation & Tabs */}
                 <div className="flex flex-col md:flex-row md:items-center justify-start mb-6 gap-4">
