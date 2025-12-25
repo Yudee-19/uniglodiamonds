@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"; // Removed useParams as we use props now
 import { fetchDiamondById } from "@/services/diamondService";
 import { Diamond, getShapeFullName } from "@/interface/diamondInterface";
 import { Button } from "@/components/ui/button";
@@ -16,8 +16,14 @@ import {
     Star,
 } from "lucide-react";
 
-export default function DiamondDetailPage() {
-    const params = useParams();
+interface DiamondDetailViewProps {
+    diamondId: string;
+}
+
+export default function DiamondDetailView({
+    diamondId,
+}: DiamondDetailViewProps) {
+    // const params = useParams(); // Removed
     const router = useRouter();
     const [diamond, setDiamond] = useState<Diamond | null>(null);
     const [loading, setLoading] = useState(true);
@@ -28,14 +34,17 @@ export default function DiamondDetailPage() {
 
     useEffect(() => {
         const loadDiamond = async () => {
-            if (params.diamondId) {
+            // Changed params.diamondId to the prop diamondId
+            if (diamondId) {
                 try {
                     setLoading(true);
-                    const id = decodeURIComponent(params.diamondId as string);
+                    const id = decodeURIComponent(diamondId as string);
                     const data = await fetchDiamondById(id);
                     setDiamond(data);
                 } catch (err) {
-                    setError("Failed to load diamond details");
+                    setError(
+                        "Failed to load diamond details. Please try again."
+                    );
                     console.error(err);
                 } finally {
                     setLoading(false);
@@ -43,7 +52,7 @@ export default function DiamondDetailPage() {
             }
         };
         loadDiamond();
-    }, [params.diamondId]);
+    }, [diamondId]); // Dependency changed to the prop
 
     if (loading) {
         return (

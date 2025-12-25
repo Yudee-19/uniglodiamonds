@@ -9,6 +9,8 @@ interface DataTableProps<T extends { _id: string }> {
     onRowClick?: (row: Diamond) => void;
     enableSelection?: boolean;
     columnStyles?: Record<string, string>;
+    selectedIds?: string[];
+    onSelectionChange?: (ids: string[]) => void;
 }
 
 function DataTable<T extends { _id: string }>({
@@ -17,21 +19,35 @@ function DataTable<T extends { _id: string }>({
     onRowClick,
     enableSelection = false,
     columnStyles = {},
+    selectedIds,
+    onSelectionChange,
 }: DataTableProps<T>) {
-    const [selected, setSelected] = useState<string[]>([]);
+    const [internalSelected, setInternalSelected] = useState<string[]>([]);
+
+    // Determine if we are using controlled (props) or uncontrolled (internal state) mode
+    const selected = selectedIds !== undefined ? selectedIds : internalSelected;
+
+    const updateSelection = (newSelection: string[]) => {
+        if (onSelectionChange) {
+            onSelectionChange(newSelection);
+        } else {
+            setInternalSelected(newSelection);
+        }
+    };
 
     const allSelected = data.length > 0 && selected.length === data.length;
     const someSelected = selected.length > 0 && selected.length < data.length;
 
     const toggleSelectAll = () => {
-        if (allSelected) setSelected([]);
-        else setSelected(data.map((r) => r._id));
+        if (allSelected) updateSelection([]);
+        else updateSelection(data.map((r) => r.certiNo));
     };
 
     const toggleRow = (id: string) => {
-        setSelected((prev) =>
-            prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-        );
+        const newSelection = selected.includes(id)
+            ? selected.filter((x) => x !== id)
+            : [...selected, id];
+        updateSelection(newSelection);
     };
 
     return (
@@ -96,9 +112,11 @@ function DataTable<T extends { _id: string }>({
                                 {enableSelection && (
                                     <td className="p-2 pl-5 border-b">
                                         <Checkbox
-                                            checked={selected.includes(row._id)}
+                                            checked={selected.includes(
+                                                row.certiNo
+                                            )}
                                             onCheckedChange={() =>
-                                                toggleRow(row._id)
+                                                toggleRow(row.certiNo)
                                             }
                                         />
                                     </td>

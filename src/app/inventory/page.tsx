@@ -18,10 +18,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import ShimmerTable from "@/components/ui/shimmerTable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useRouter } from "next/navigation"; // Add this import
-
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import DiamondDetailView from "@/components/inventory/DiamondDetailView";
 export default function InventoryPage() {
-    const router = useRouter(); // Initialize router
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
+
+    // 2. Extract the View ID
+    const viewId = searchParams.get("view");
+
     const [data, setData] = useState<Diamond[]>([]);
     const [loading, setLoading] = useState(false);
     const [totalCount, setTotalCount] = useState(0);
@@ -34,6 +40,9 @@ export default function InventoryPage() {
     const [rowsPerPage, setRowsPerPage] = useState(25);
     const [sortBy, setSortBy] = useState("weight");
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
+    // State for selected diamonds
+    const [selectedDiamondIds, setSelectedDiamondIds] = useState<string[]>([]);
 
     // Filter State
     const [filterState, setFilterState] = useState({
@@ -84,6 +93,9 @@ export default function InventoryPage() {
 
     const loadData = useCallback(
         async (useSearchApi: boolean = false) => {
+            // OPTIONAL: Don't load list data if we are in detail view
+            if (viewId) return;
+
             setLoading(true);
             try {
                 const params = {
@@ -197,15 +209,14 @@ export default function InventoryPage() {
                 setLoading(false);
             }
         },
-        [page, rowsPerPage, sortBy, sortOrder, filterState]
+        [page, rowsPerPage, sortBy, sortOrder, filterState, viewId]
     );
 
     // Auto-load data whenever filters, pagination, or sorting changes
     useEffect(() => {
-        // Add a small debounce to prevent too many API calls
         const timeoutId = setTimeout(() => {
             loadData(hasActiveFilters());
-        }, 500); // 500ms debounce
+        }, 500);
 
         return () => clearTimeout(timeoutId);
     }, [loadData, hasActiveFilters]);
@@ -229,17 +240,35 @@ export default function InventoryPage() {
             tablePercentRange: [40, 90],
         });
         setPage(1);
+        setSelectedDiamondIds([]); // Clear selection on reset
+    };
+
+    const handleCompare = () => {
+        if (selectedDiamondIds.length < 2) {
+            alert("Please select at least 2 diamonds to compare");
+            return;
+        }
+        // Create a comma-separated string
+        const queryString = selectedDiamondIds.join(",");
+        router.push(`/compare?ids=${queryString}`);
     };
 
     const handleViewDetails = (diamond: Diamond) => {
-        // Navigate to the dynamic route using certificate number
+        // 3. UPDATED NAVIGATION: Use Query Parameter
         if (diamond.certiNo) {
-            router.push(`/${diamond.certiNo}`);
+            // This appends ?view=123 to current URL
+            router.push(`${pathname}?view=${diamond.certiNo}`);
         } else {
             console.error("Diamond missing certificate number");
         }
     };
 
+    // 4. CONDITIONAL RENDER: If viewId exists, show Detail View
+    if (viewId) {
+        return <DiamondDetailView diamondId={viewId} />;
+    }
+
+    // Otherwise, show the Inventory List
     return (
         <div className="p-4 space-y-2 bg-brand-gradient min-h-screen mt-40">
             {/* 1. FILTER DASHBOARD */}
@@ -315,8 +344,15 @@ export default function InventoryPage() {
                         <Button variant="outline" className="text-sm">
                             Inquiry
                         </Button>
-                        <Button variant="outline" className="text-sm">
-                            Compare
+                        <Button
+                            variant="outline"
+                            className="text-sm"
+                            onClick={handleCompare}
+                            disabled={selectedDiamondIds.length < 2}
+                        >
+                            Compare{" "}
+                            {selectedDiamondIds.length > 0 &&
+                                `(${selectedDiamondIds.length})`}
                         </Button>
                     </div>
 
@@ -364,6 +400,10 @@ export default function InventoryPage() {
                                             weight: "font-bold",
                                         }}
                                         enableSelection={true}
+                                        selectedIds={selectedDiamondIds}
+                                        onSelectionChange={
+                                            setSelectedDiamondIds
+                                        }
                                     />
                                 )
                             ) : (
