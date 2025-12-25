@@ -178,7 +178,7 @@ export default function ComparePage() {
     }
 
     return (
-        <div className="min-h-screen bg-white p-6  font-lato mt-40">
+        <div className="min-h-screen bg-white p-6  font-lato ">
             <Button
                 className="gold-reveal-btn font-cormorantGaramond uppercase shadow-lg mb-6"
                 onClick={() => router.back()}

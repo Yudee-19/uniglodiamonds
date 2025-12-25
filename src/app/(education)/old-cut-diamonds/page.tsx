@@ -64,7 +64,7 @@ const oldCutTypes = [
 
 const page = () => {
     return (
-        <div className="min-h-screen mt-40 mb-20">
+        <div className="min-h-screen  mb-20">
             <BannerSection
                 image={BannerImage}
                 text="The Inescapable Charm of Antique Cut Diamonds"

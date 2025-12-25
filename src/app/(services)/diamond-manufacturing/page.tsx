@@ -13,7 +13,7 @@ import Image from "next/image";
 
 const page = () => {
     return (
-        <div className="min-h-screen mt-30">
+        <div className="min-h-screen ">
             <BannerSection
                 image={BannerImage}
                 text="Diamond Manufacturing"

@@ -9,7 +9,7 @@ import SubFooter from "@/components/shared/SubFooter";
 
 const page = () => {
     return (
-        <div className="min-h-screen mt-40">
+        <div className="min-h-screen ">
             <BannerSection
                 image={BannerImage}
                 text="The best price for your diamond"

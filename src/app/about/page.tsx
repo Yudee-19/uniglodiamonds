@@ -36,7 +36,7 @@ const latestBlogs = [
 
 const Page = () => {
     return (
-        <div className="min-h-screen py-20">
+        <div className="min-h-screen ">
             {/* Banner section */}
             <BannerSection image={bannerImage} text="About us" />
             {/* Uniglow Family Section */}

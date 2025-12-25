@@ -51,10 +51,11 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body
-                className={`${geistSans.variable} ${geistMono.variable} ${cormorantGaramond.variable} ${lora.variable} ${lato.variable} antialiased`}
+                className={`${geistSans.variable} ${geistMono.variable} ${cormorantGaramond.variable} ${lora.variable} ${lato.variable} antialiased `}
             >
+                <div className="h-40 " />
                 <Navbar />
-                {children}
+                <main className="relative z-0">{children}</main>
                 <Footer />
             </body>
         </html>

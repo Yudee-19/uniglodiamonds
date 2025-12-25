@@ -17,7 +17,7 @@ import BannerSection from "@/components/shared/BannerSection";
 import BannerImage from "@/assets/services/the-best-price-for-your-diamonds/banner1.png";
 const page = () => {
     return (
-        <div className="min-h-screen mt-40 mb-20">
+        <div className="min-h-screen  mb-20">
             <BannerSection
                 image={BannerImage}
                 text="The Diamond 4Cs"

@@ -66,7 +66,7 @@ const certificates = [
 
 const page = () => {
     return (
-        <div className="min-h-screen mt-40">
+        <div className="min-h-screen ">
             <BannerSection
                 image={BannerImage}
                 text="Diamond Certificates"

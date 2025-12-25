@@ -184,7 +184,7 @@ export default function Home() {
             {/* Hero Section : Carousel */}
             <section className="w-full   min-h-screen flex items-center justify-center">
                 <Carousel
-                    className="w-full min-h-screen p-0 m-0 mt-30 border border-white "
+                    className="w-full min-h-screen p-0 m-0  border border-white "
                     plugins={[
                         Autoplay({
                             delay: 3000,

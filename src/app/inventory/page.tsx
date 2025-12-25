@@ -270,7 +270,7 @@ export default function InventoryPage() {
 
     // Otherwise, show the Inventory List
     return (
-        <div className="p-4 space-y-2 bg-brand-gradient min-h-screen mt-40">
+        <div className="p-4 space-y-2 bg-brand-gradient min-h-screen ">
             {/* 1. FILTER DASHBOARD */}
             <div className="flex flex-col rounded-lg w-full overflow-hidden border-primary border-2 mb-4">
                 <div className="bg-primary-purple2 flex justify-start items-center gap-2">
