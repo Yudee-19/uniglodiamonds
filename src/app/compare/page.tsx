@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { fetchDiamondById } from "@/services/diamondService";
 import { Diamond } from "@/interface/diamondInterface";
@@ -15,7 +15,7 @@ type RowConfig = {
     getValue?: (d: Diamond) => string | number | React.ReactNode;
 };
 
-export default function ComparePage() {
+function CompareContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const [diamonds, setDiamonds] = useState<Diamond[]>([]);
@@ -283,5 +283,27 @@ export default function ComparePage() {
                 ))}
             </div>
         </div>
+    );
+}
+
+export default function ComparePage() {
+    return (
+        <Suspense
+            fallback={
+                <div className="min-h-screen flex items-center justify-center bg-white">
+                    <div className="animate-pulse flex flex-col items-center">
+                        <Image
+                            src={"/logo/logo.png"}
+                            alt="Uniglow Logo"
+                            width={50}
+                            height={40}
+                            className="mb-2 animate-pulse"
+                        />
+                    </div>
+                </div>
+            }
+        >
+            <CompareContent />
+        </Suspense>
     );
 }
