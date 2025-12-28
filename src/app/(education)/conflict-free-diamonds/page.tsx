@@ -1,14 +1,14 @@
 import BannerSection from "@/components/shared/BannerSection";
 import ArticleLayout from "@/components/shared/ArticleLayout";
 import React from "react";
-import BannerImage from "@/assets/diamond-shape/banner.png";
+import BannerImage from "@/assets/conflict-free/banner.jpg";
 import Image from "next/image";
 
 // Replace with your actual image paths
-import ConflictFreeDiamondsImg from "@/assets/services/diamond-manufacturing/manufacturing1.png";
-import WhatAreConflictDiamondsImg from "@/assets/services/diamond-manufacturing/why-choose.png";
+import ConflictFreeDiamondsImg from "@/assets/conflict-free/image-1.jpg";
+import WhatAreConflictDiamondsImg from "@/assets/conflict-free/image-2.jpg";
 import HistoryBannerImg from "@/assets/services/diamond-financing-options/banner3.png";
-import KimberleyProcessImg from "@/assets/sell-your-diamonds/reson.jpg";
+import KimberleyProcessImg from "@/assets/conflict-free/image-3.png";
 import SubFooter from "@/components/shared/SubFooter";
 
 const articles = [
@@ -50,7 +50,7 @@ const page = () => {
                 image={BannerImage}
                 text="Conflict-free Diamonds"
                 textClassName="left-10 top-110 text-5xl"
-                imageClassName="h-130 object-cover"
+                imageClassName="h-130 object-cover  transform scaleX(-1)"
             />
 
             {/* Articles Section */}

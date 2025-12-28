@@ -1,6 +1,6 @@
 import BannerSection from "@/components/shared/BannerSection";
 import React from "react";
-import bannerImage from "@/assets/banner_2.jpg";
+import bannerImage from "@/assets/sell-your-diamonds/banner.jpg";
 import sellyourdiamondsImage from "@/assets/sell-your-diamonds/sell_diamonds.jpg";
 import adviceImage from "@/assets/sell-your-diamonds/advice.png";
 import benefitImage from "@/assets/sell-your-diamonds/banifits.jpg";
@@ -144,92 +144,7 @@ const Page = () => {
             </section>
 
             {/* Blog Section */}
-            <section className="bg-brand-gradient  pb-20  px-10">
-                <div className="max-w-7xl mx-auto flex flex-col items-center justify-center">
-                    <div className="my-15 flex flex-col md:flex-row justify-between items-center gap-10">
-                        <div>
-                            <span className="text-primary-yellow-1 text-xs uppercase font-lora mb-4 block">
-                                Our Blog
-                            </span>
-                            <h2 className="text-4xl md:text-5xl font-cormorantGaramond text-white mb-4">
-                                Recent Posts
-                            </h2>
-                        </div>
-                        <div>
-                            <p className="text-white font-lora max-w-xl">
-                                Discover expert insights, from buying guides to
-                                expert advice, and the latest trends to help you
-                                make informed choices.
-                            </p>
-                        </div>
-                        <div>
-                            <Button className="px-8 py-5 purple-reveal-btn uppercase font-lora ">
-                                <span>VIEW ALL POST</span>
-                            </Button>
-                        </div>
-                    </div>
-                    {/* First grid: 3 blogs */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full mb-5 max-w-6xl mx-auto">
-                        {blogData.slice(0, 3).map((blog, idx) => (
-                            <div
-                                key={idx}
-                                className="relative group  overflow-hidden h-80 cursor-pointer"
-                            >
-                                <img
-                                    src={blog.image.src}
-                                    alt={blog.title}
-                                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                />
-                                {/* Black overlay reveal */}
-                                <div className="absolute inset-0 z-10 flex flex-col justify-end pointer-events-none">
-                                    <div className="absolute inset-0 bg-black/80 transition-transform duration-500 ease-in-out origin-center scale-x-0 group-hover:scale-x-100" />
-                                    <div className="absolute inset-0 flex flex-col justify-end p-6 transition-opacity duration-500 pointer-events-auto group-hover:opacity-100 opacity-0 ">
-                                        <h3 className="text-3xl font-cormorantGaramond font-semibold text-white mb-2">
-                                            {blog.title}
-                                        </h3>
-                                        <p className="text-sm text-gray-200 font-lora mb-3">
-                                            {blog.description}
-                                        </p>
-                                        <Button className="gold-reveal-btn px-8 py-5 w-fit uppercase font-lora text-sm">
-                                            <span>Learn More</span>
-                                        </Button>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                    {/* Second grid: 2 blogs */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full  max-w-6xl mx-auto">
-                        {blogData.slice(3, 5).map((blog, idx) => (
-                            <div
-                                key={idx}
-                                className="relative group overflow-hidden h-80 cursor-pointer"
-                            >
-                                <img
-                                    src={blog.image.src}
-                                    alt={blog.title}
-                                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                />
-                                {/* Black overlay reveal */}
-                                <div className="absolute inset-0 z-10 flex flex-col justify-end pointer-events-none">
-                                    <div className="absolute inset-0 bg-black/80 transition-transform duration-500 ease-in-out origin-center scale-x-0 group-hover:scale-x-100" />
-                                    <div className="absolute inset-0 flex flex-col justify-end p-6 transition-opacity duration-500 pointer-events-auto group-hover:opacity-100 opacity-0 ">
-                                        <h3 className="text-3xl font-cormorantGaramond font-semibold text-white mb-2">
-                                            {blog.title}
-                                        </h3>
-                                        <p className="text-sm text-gray-200 font-lora mb-3">
-                                            {blog.description}
-                                        </p>
-                                        <Button className="gold-reveal-btn px-8 py-5 w-fit uppercase font-lora text-sm">
-                                            <span>Learn More</span>
-                                        </Button>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+
             <CertificatesMarqueeSection />
             {/* Make an Appointment Section */}
             <section className="bg-brand-gradient py-20 px-4">

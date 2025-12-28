@@ -20,6 +20,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import DiamondDetailView from "@/components/inventory/DiamondDetailView";
+import { toast } from "sonner";
+import { addToCart } from "@/services/cartService";
 
 function InventoryContent() {
     const router = useRouter();
@@ -43,7 +45,9 @@ function InventoryContent() {
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
     // State for selected diamonds
-    const [selectedDiamondIds, setSelectedDiamondIds] = useState<string[]>([]);
+    // const [selectedDiamondIds, setSelectedDiamondIds] = useState<string[]>([]);
+    const [selectedDiamonds, setSelectedDiamonds] = useState<Diamond[]>([]);
+    const [addingToCart, setAddingToCart] = useState(false);
 
     // Filter State
     const [filterState, setFilterState] = useState({
@@ -76,7 +80,7 @@ function InventoryContent() {
             filterState.fluorescence.length > 0 ||
             filterState.lab.length > 0 ||
             filterState.caratRange[0] > 0 ||
-            filterState.caratRange[1] < 30 ||
+            filterState.caratRange[1] < 10.99 ||
             filterState.priceRange[0] > 0 ||
             filterState.priceRange[1] < 1000000 ||
             filterState.lengthRange[0] > 0 ||
@@ -225,7 +229,7 @@ function InventoryContent() {
     const handleReset = () => {
         setFilterState({
             shapes: [],
-            caratRange: [0, 30],
+            caratRange: [0, 10.99],
             colors: [],
             clarities: [],
             cuts: [],
@@ -241,19 +245,39 @@ function InventoryContent() {
             tablePercentRange: [40, 90],
         });
         setPage(1);
-        setSelectedDiamondIds([]); // Clear selection on reset
+        setSelectedDiamonds([]); // Clear selection on reset
     };
 
     const handleCompare = () => {
-        if (selectedDiamondIds.length < 2) {
-            alert("Please select at least 2 diamonds to compare");
+        if (selectedDiamonds.length < 2) {
+            toast.warning("Please select at least 2 diamonds to compare");
             return;
         }
         // Create a comma-separated string
-        const queryString = selectedDiamondIds.join(",");
+        const queryString = selectedDiamonds.map((d) => d.certiNo).join(",");
         router.push(`/compare?ids=${queryString}`);
     };
 
+    const handleAddToCart = async () => {
+        if (selectedDiamonds.length === 0) {
+            toast.warning("Please select diamonds to add to cart");
+            return;
+        }
+
+        setAddingToCart(true);
+        try {
+            const diamondIds = selectedDiamonds.map((diamond) => diamond._id);
+            await addToCart(diamondIds);
+            toast.success("Selected diamonds added to cart successfully!");
+            setSelectedDiamonds([]);
+            setSelectedDiamonds([]);
+        } catch (error) {
+            // console.error("Failed to add to cart", error);
+            toast.error(error as string);
+        } finally {
+            setAddingToCart(false);
+        }
+    };
     const handleViewDetails = (diamond: Diamond) => {
         // 3. UPDATED NAVIGATION: Use Query Parameter
         if (diamond.certiNo) {
@@ -336,7 +360,12 @@ function InventoryContent() {
                             </button>
                         </div>
 
-                        <Button variant="outline" className="text-sm">
+                        <Button
+                            variant="outline"
+                            className="text-sm"
+                            onClick={handleReset}
+                            disabled={!hasActiveFilters()}
+                        >
                             Reset Filters
                         </Button>
                         <Button variant="outline" className="text-sm">
@@ -348,12 +377,21 @@ function InventoryContent() {
                         <Button
                             variant="outline"
                             className="text-sm"
+                            onClick={handleAddToCart}
+                        >
+                            Cart{" "}
+                            {selectedDiamonds.length > 0 &&
+                                `(${selectedDiamonds.length})`}
+                        </Button>
+                        <Button
+                            variant="outline"
+                            className="text-sm"
                             onClick={handleCompare}
-                            disabled={selectedDiamondIds.length < 2}
+                            // disabled={selectedDiamonds.length < 2}
                         >
                             Compare{" "}
-                            {selectedDiamondIds.length > 0 &&
-                                `(${selectedDiamondIds.length})`}
+                            {selectedDiamonds.length > 0 &&
+                                `(${selectedDiamonds.length})`}
                         </Button>
                     </div>
 
@@ -401,10 +439,8 @@ function InventoryContent() {
                                             weight: "font-bold",
                                         }}
                                         enableSelection={true}
-                                        selectedIds={selectedDiamondIds}
-                                        onSelectionChange={
-                                            setSelectedDiamondIds
-                                        }
+                                        selectedDiamonds={selectedDiamonds}
+                                        onSelectionChange={setSelectedDiamonds}
                                     />
                                 )
                             ) : (

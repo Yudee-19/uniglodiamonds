@@ -223,3 +223,17 @@ export const calculateTotalPrice = (
 ): number => {
     return weight * pricePerCts;
 };
+
+export interface CartItem {
+    diamondId: string;
+    addedAt: string;
+    diamond: Diamond;
+}
+
+export interface Cart {
+    _id: string;
+    userId: string;
+    items: CartItem[];
+    createdAt: string;
+    updatedAt: string;
+}

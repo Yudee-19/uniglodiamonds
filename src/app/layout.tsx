@@ -9,6 +9,9 @@ import {
 import "./globals.css";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
+import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider } from "@/context/AuthContext";
+import RouteGuard from "@/components/auth/RouteGuard"; // Import the new guard
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -53,10 +56,17 @@ export default function RootLayout({
             <body
                 className={`${geistSans.variable} ${geistMono.variable} ${cormorantGaramond.variable} ${lora.variable} ${lato.variable} antialiased `}
             >
-                <div className="h-41 bg-brand-gradient" />
-                <Navbar />
-                <main className="relative z-0">{children}</main>
-                <Footer />
+                {" "}
+                <AuthProvider>
+                    <div className="md:h-41 bg-brand-gradient h-20" />
+                    <Navbar />
+                    <main className="relative z-0">
+                        {/* Wrap children with RouteGuard */}
+                        <RouteGuard>{children}</RouteGuard>
+                    </main>
+                    <Footer />
+                    <Toaster />
+                </AuthProvider>
             </body>
         </html>
     );

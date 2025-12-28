@@ -16,11 +16,15 @@ import {
     ChevronDown,
     Menu,
     X,
+    UserIcon,
+    LogOut,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import logo from "@/assets/Uniglo-Logo-Horizontal1.png";
+import logoIcon from "@/../public/logo/logo.png";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
 const NAV_LINKS = [
     { name: "About", href: "/about" },
@@ -91,6 +95,7 @@ export default function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { scrollY } = useScroll();
     const [lastScrollY, setLastScrollY] = useState(0);
+    const { user, logout, isAuthenticated } = useAuth();
 
     // 2. Listen to scroll changes using the Motion hook (Replacing native event listener)
     useMotionValueEvent(scrollY, "change", (latest: number) => {
@@ -117,14 +122,17 @@ export default function Navbar() {
                         opacity: isScrolled ? 1 : 1,
                     }}
                     transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }} // Smooth cubic-bezier
-                    className="overflow-hidden  border-b border-slate-800"
+                    className="overflow-hidden  border-b border-slate-800 hidden md:block"
                 >
                     {/* BRAND BAR: Logo & Primary Buttons */}
                     <div className=" px-4 md:px-8 py-4 bg-brand-gradient  border-b border-white/70">
                         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
                             {/* Left Actions */}
                             <div className="hidden md:flex gap-3 w-1/3">
-                                <Button className="gold-reveal-btn  font-cormorantGaramond uppercase">
+                                <Button
+                                    asChild
+                                    className="gold-reveal-btn  font-cormorantGaramond uppercase"
+                                >
                                     <Link href="/inventory">
                                         <span>Inventory</span>
                                     </Link>
@@ -133,7 +141,7 @@ export default function Navbar() {
                                     <span>Contact</span>
                                 </Button>
                             </div>
-
+                            ``
                             {/* Center Logo */}
                             <div className="w-full md:w-1/3 flex justify-center items-center gap-3">
                                 {/* Logo Icon Mock */}
@@ -147,15 +155,46 @@ export default function Navbar() {
                                     />{" "}
                                 </Link>
                             </div>
-
                             {/* Right Actions */}
                             <div className="hidden md:flex gap-3 w-1/3 justify-end">
-                                <Button className="gold-reveal-btn font-cormorantGaramond uppercase">
-                                    <span>Login</span>
-                                </Button>
-                                <Button className="gold-reveal-btn font-cormorantGaramond uppercase">
-                                    <span>Signup</span>
-                                </Button>
+                                {isAuthenticated && user ? (
+                                    <>
+                                        <Button className="gold-reveal-btn font-cormorantGaramond uppercase flex items-center gap-2">
+                                            <span className="flex items-center gap-1">
+                                                <UserIcon size={16} />
+                                                <span>{user.username}</span>
+                                            </span>
+                                        </Button>
+                                        <Button
+                                            onClick={logout}
+                                            className="gold-reveal-btn font-cormorantGaramond uppercase flex items-center gap-2"
+                                        >
+                                            <span className="flex items-center gap-1">
+                                                <LogOut size={16} />
+                                                <span>Logout</span>
+                                            </span>
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Button
+                                            asChild
+                                            className="gold-reveal-btn font-cormorantGaramond uppercase"
+                                        >
+                                            <Link href="/login">
+                                                <span>Login</span>
+                                            </Link>
+                                        </Button>
+                                        <Button
+                                            asChild
+                                            className="gold-reveal-btn font-cormorantGaramond uppercase"
+                                        >
+                                            <Link href="/register">
+                                                <span>Signup</span>
+                                            </Link>
+                                        </Button>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -172,9 +211,16 @@ export default function Navbar() {
                             {/* Mobile Menu Toggle (Visible only on small screens) */}
                             <div className="md:hidden flex items-center gap-4 w-full justify-between">
                                 {/* When scrolled, we might want to show a mini logo on mobile, otherwise just text */}
-                                <span className="font-serif text-lg text-white">
+                                <div className="font-serif text-2xl text-white flex items-center gap-2">
+                                    <Image
+                                        src={logoIcon}
+                                        alt="Uniglo Logo"
+                                        width={40}
+                                        height={50}
+                                        className="object-contain"
+                                    />
                                     UNIGLO
-                                </span>
+                                </div>
                                 <button
                                     onClick={() =>
                                         setIsMobileMenuOpen(!isMobileMenuOpen)
@@ -251,18 +297,35 @@ export default function Navbar() {
                                         <a
                                             key={link.name}
                                             href="#"
-                                            className="text-slate-300 text-sm uppercase tracking-wider py-2 border-b border-slate-800"
+                                            className="text-slate-300 text-sm uppercase tracking-wider py-2 border-b border-slate-800 font-cormorantGaramond"
                                         >
                                             {link.name}
                                         </a>
                                     ))}
                                     <div className="flex gap-2 mt-4">
-                                        <button className="flex-1 py-3 bg-[#c5a059] text-black text-xs font-bold uppercase">
+                                        <button className="flex-1 py-3 bg-primary-yellow-1 font-cormorantGaramond text-black text-lg font-bold uppercase">
                                             Inventory
                                         </button>
-                                        <button className="flex-1 py-3 border border-slate-600 text-white text-xs font-bold uppercase">
-                                            Login
-                                        </button>
+                                        {isAuthenticated ? (
+                                            <button
+                                                onClick={() => {
+                                                    logout();
+                                                    setIsMobileMenuOpen(false);
+                                                }}
+                                                className="flex-1 py-3 border border-slate-600 text-white text-lg font-cormorantGaramond font-bold uppercase"
+                                            >
+                                                Logout
+                                            </button>
+                                        ) : (
+                                            <Link
+                                                href="/login"
+                                                className="flex-1"
+                                            >
+                                                <button className="w-full py-3 border border-slate-600 text-white text-lg font-cormorantGaramond font-bold uppercase">
+                                                    Login
+                                                </button>
+                                            </Link>
+                                        )}
                                     </div>
                                 </div>
                             </motion.div>

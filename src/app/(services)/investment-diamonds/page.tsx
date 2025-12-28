@@ -1,9 +1,9 @@
 import React from "react";
 import BannerSection from "@/components/shared/BannerSection";
-import BannerImage from "@/assets/services/the-best-price-for-your-diamonds/banner1.png";
+import BannerImage from "@/assets/services/investment/banner.jpg";
 import ArticleLayout from "@/components/shared/ArticleLayout";
-import FedexImage from "@/assets/services/diamond-manufacturing/manufacturing1.png";
-import LoupeImage from "@/assets/services/diamond-manufacturing/manufacturing2.png"; // Update path as needed
+import FedexImage from "@/assets/services/investment/image-1.png";
+import LoupeImage from "@/assets/services/investment/image-2.png"; // Update path as needed
 import SubFooter from "@/components/shared/SubFooter";
 
 const articles = [

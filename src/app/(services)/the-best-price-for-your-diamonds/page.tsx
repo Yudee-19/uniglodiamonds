@@ -1,9 +1,9 @@
 import BannerSection from "@/components/shared/BannerSection";
-import BannerImage from "@/assets/services/the-best-price-for-your-diamonds/banner1.png";
+import BannerImage from "@/assets/services/the-best-price-for-your-diamonds/banner.png";
 import React from "react";
 import ArticleLayout from "@/components/shared/ArticleLayout";
 import DiamondsBanner from "@/assets/services/the-best-price-for-your-diamonds/banner2.png";
-import FedexImage from "@/assets/about/antwerp_1.jpg"; // Add your FedEx image path
+import FedexImage from "@/assets/services/the-best-price-for-your-diamonds/fedex.png"; // Add your FedEx image path
 import { Button } from "@/components/ui/button";
 import SubFooter from "@/components/shared/SubFooter";
 

@@ -8,6 +8,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Eye } from "lucide-react";
 import { ActionButtonWithTooltip } from "@/components/ui/actionButtonWithTooltip";
+import { DiamondImage } from "@/app/compare/page";
 
 export interface Column<T> {
     key: keyof T | string;
@@ -27,17 +28,7 @@ export const getDiamondColumns = (
                 className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden border cursor-pointer hover:ring-2 hover:ring-primary-purple2 transition-all"
                 onClick={() => onViewDetails(row)}
             >
-                {row.webLink ? (
-                    <img
-                        src={row.webLink}
-                        alt={`${getShapeFullName(row.shape)} diamond`}
-                        className="w-full h-full object-cover"
-                    />
-                ) : (
-                    <span className="text-[10px] text-gray-500">
-                        {row.shape}
-                    </span>
-                )}
+                <DiamondImage src={row.webLink} showdefault />
             </div>
         ),
     },

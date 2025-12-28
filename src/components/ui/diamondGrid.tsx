@@ -2,6 +2,7 @@ import React from "react";
 import { Diamond, getShapeFullName } from "@/interface/diamondInterface";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
+import { DiamondImage } from "@/app/compare/page";
 
 interface DiamondGridProps {
     data: Diamond[];
@@ -33,17 +34,7 @@ export default function DiamondGrid({ data, onViewDetails }: DiamondGridProps) {
                         <button className="absolute top-5 right-9 text-gray-300 hover:text-primary-purple2 transition-colors z-10">
                             <Heart className="w-4 h-4" />
                         </button>
-                        {item.webLink ? (
-                            <img
-                                src={item.webLink}
-                                alt={`${item.shape} diamond`}
-                                className="w-full h-full object-contain mix-blend-multiply p-4 transition-transform duration-300 group-hover:scale-105"
-                            />
-                        ) : (
-                            <div className="text-gray-300 text-4xl font-light">
-                                💎
-                            </div>
-                        )}
+                        <DiamondImage src={item.webLink} />
                     </div>
 
                     {/* Details */}

@@ -4,9 +4,9 @@ import BannerSection from "@/components/shared/BannerSection";
 import ArticleLayout from "@/components/shared/ArticleLayout";
 
 // Placeholder imports - Replace with your actual assets
-import BannerImage from "@/assets/services/banner.png";
-import FedexImage from "@/assets/home/blog_1.jpg";
-import InspectionImage from "@/assets/sell-your-diamonds/advice.png";
+import BannerImage from "@/assets/diamond-certificates/banner.jpg";
+import FedexImage from "@/assets/diamond-certificates/image-1.png";
+import InspectionImage from "@/assets/diamond-certificates/image-2.png";
 
 // Certificate Images (Placeholders)
 import GiaReport from "@/assets/our-partners/gia-full.png";

@@ -5,9 +5,9 @@ import ArticleLayout from "@/components/shared/ArticleLayout";
 
 // Example images (replace with your actual paths)
 import manufacturing1 from "@/assets/services/diamond-manufacturing/manufacturing1.png";
-import manufacturing2 from "@/assets/services/diamond-manufacturing/manufacturing2.png";
+import manufacturing2 from "@/assets/services/diamond-manufacturing/image-2.png";
 import customDiamondImage from "@/assets/services/diamond-manufacturing/custom-diamond-manufacturing.png";
-import whyChooseImage from "@/assets/services/diamond-manufacturing/why-choose.png";
+import whyChooseImage from "@/assets/services/diamond-manufacturing/image-3.png";
 import contactUsImage from "@/assets/services/diamond-manufacturing/contact-us.jpg";
 import Image from "next/image";
 

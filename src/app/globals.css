@@ -147,6 +147,27 @@
     }
 }
 
+/* subtle floating animation */
+@keyframes subtle-floating {
+    0%,
+    100% {
+        transform: translateY(
+            -10px
+        ); /* Adjust this pixel value for subtleness */
+        animation-timing-function: ease-in-out;
+    }
+    50% {
+        transform: translateY(0);
+        animation-timing-function: ease-in-out;
+    }
+}
+
+/* Create a custom class */
+.animate-subtle-float {
+    /* 3s = duration (slow), infinite = loops forever */
+    animation: subtle-floating 3s infinite;
+}
+
 /* Reveal animation for blog overlay */
 .group:hover .bg-black\/80 {
     transform: scaleX(1);

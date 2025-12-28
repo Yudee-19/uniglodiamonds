@@ -1,8 +1,8 @@
 import React from "react";
 import BannerSection from "@/components/shared/BannerSection";
-import BannerImage from "@/assets/services/the-best-price-for-your-diamonds/banner1.png";
+import BannerImage from "@/assets/services/diamond-financing-options/banner.jpg";
 import ArticleLayout from "@/components/shared/ArticleLayout";
-import FinancingImg from "@/assets/home/diamonds_guide.jpg"; // Update path as needed
+import FinancingImg from "@/assets/services/diamond-financing-options/image-1.png"; // Update path as needed
 import Image from "next/image";
 import SubFooter from "@/components/shared/SubFooter";
 

@@ -9,8 +9,8 @@ interface DataTableProps<T extends { _id: string }> {
     onRowClick?: (row: Diamond) => void;
     enableSelection?: boolean;
     columnStyles?: Record<string, string>;
-    selectedIds?: string[];
-    onSelectionChange?: (ids: string[]) => void;
+    selectedDiamonds?: Diamond[];
+    onSelectionChange?: (diamonds: Diamond[]) => void;
 }
 
 function DataTable<T extends { _id: string }>({
@@ -19,15 +19,16 @@ function DataTable<T extends { _id: string }>({
     onRowClick,
     enableSelection = false,
     columnStyles = {},
-    selectedIds,
+    selectedDiamonds,
     onSelectionChange,
 }: DataTableProps<T>) {
-    const [internalSelected, setInternalSelected] = useState<string[]>([]);
+    const [internalSelected, setInternalSelected] = useState<Diamond[]>([]);
 
     // Determine if we are using controlled (props) or uncontrolled (internal state) mode
-    const selected = selectedIds !== undefined ? selectedIds : internalSelected;
+    const selected =
+        selectedDiamonds !== undefined ? selectedDiamonds : internalSelected;
 
-    const updateSelection = (newSelection: string[]) => {
+    const updateSelection = (newSelection: Diamond[]) => {
         if (onSelectionChange) {
             onSelectionChange(newSelection);
         } else {
@@ -40,19 +41,19 @@ function DataTable<T extends { _id: string }>({
 
     const toggleSelectAll = () => {
         if (allSelected) updateSelection([]);
-        else updateSelection(data.map((r) => r.certiNo));
+        else updateSelection(data.map((r) => r));
     };
 
-    const toggleRow = (id: string) => {
-        const newSelection = selected.includes(id)
-            ? selected.filter((x) => x !== id)
-            : [...selected, id];
+    const toggleRow = (diamond: Diamond) => {
+        const newSelection = selected.includes(diamond)
+            ? selected.filter((x) => x !== diamond)
+            : [...selected, diamond];
         updateSelection(newSelection);
     };
 
     return (
         <div
-            className="w-full h-full overflow-auto  rounded bg-red-400"
+            className="w-full h-full overflow-auto  rounded "
             data-slot="table-container"
         >
             <table
@@ -112,11 +113,9 @@ function DataTable<T extends { _id: string }>({
                                 {enableSelection && (
                                     <td className="p-2 pl-5 border-b">
                                         <Checkbox
-                                            checked={selected.includes(
-                                                row.certiNo
-                                            )}
+                                            checked={selected.includes(row)}
                                             onCheckedChange={() =>
-                                                toggleRow(row.certiNo)
+                                                toggleRow(row)
                                             }
                                         />
                                     </td>

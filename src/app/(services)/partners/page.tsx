@@ -1,8 +1,8 @@
 import React from "react";
 import BannerSection from "@/components/shared/BannerSection";
-import BannerImage from "@/assets/services/the-best-price-for-your-diamonds/banner1.png";
+import BannerImage from "@/assets/services/partner/banner.jpg";
 import ArticleLayout from "@/components/shared/ArticleLayout";
-import FedexImage from "@/assets/home/blog_1.jpg";
+import FedexImage from "@/assets/services/partner/image-1.png";
 import SubFooter from "@/components/shared/SubFooter";
 
 const article = {

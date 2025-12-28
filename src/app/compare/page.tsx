@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { fetchDiamondById } from "@/services/diamondService";
 import { Diamond } from "@/interface/diamondInterface";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, X, Diamond as DiamondIcon } from "lucide-react";
+import { ArrowLeft, X, Gem } from "lucide-react";
 import Image from "next/image";
 
 // Define the row configuration to ensure alignment
@@ -13,6 +13,40 @@ type RowConfig = {
     label: string;
     key?: keyof Diamond;
     getValue?: (d: Diamond) => string | number | React.ReactNode;
+};
+
+export const DiamondImage = ({
+    src,
+    showdefault,
+}: {
+    src?: string;
+    showdefault?: boolean;
+}) => {
+    const [error, setError] = useState(false);
+
+    if (!src || error) {
+        if (showdefault) {
+            return (
+                <div className="w-full h-full flex items-center justify-center text-gray-300">
+                    <Gem className="text-gray-500 w-6 " strokeWidth={1.5} />
+                </div>
+            );
+        }
+        return (
+            <div className="w-full h-full flex items-center justify-center text-gray-400">
+                <span className="text-sm font-medium">No Image</span>
+            </div>
+        );
+    }
+
+    return (
+        <img
+            src={src}
+            alt="diamond"
+            className="max-h-full max-w-full object-contain mix-blend-multiply p-4"
+            onError={() => setError(true)}
+        />
+    );
 };
 
 function CompareContent() {
@@ -190,9 +224,9 @@ function CompareContent() {
 
             <div className="flex overflow-x-auto pb-8 gap-2">
                 {/* Labels Column */}
-                <div className="min-w-[200px] flex flex-col shrink-0">
+                <div className="min-w-[200px] flex flex-col shrink-0 sticky left-0 z-20 bg-white">
                     {/* Spacer for Image area */}
-                    <div className="h-[250px] mb-2 flex items-center justify-center">
+                    <div className="h-[250px] mb-2 border-primary-yellow-3 border rounded-lg flex items-center justify-center">
                         {/* Placeholder for logo if needed */}
                         {/* Header Row */}
                         <Image
@@ -226,25 +260,17 @@ function CompareContent() {
                 {diamonds.map((diamond, index) => (
                     <div
                         key={diamond._id}
-                        className="w-[250px] flex flex-col shrink-0"
+                        className="min-w-[250px] flex-1 flex flex-col"
                     >
                         {/* Image Area */}
-                        <div className="h-[250px] mb-2 relative border border-gray-100 rounded-lg bg-gray-50 flex items-center justify-center group">
+                        <div className="h-[250px] mb-2 relative border border-primary-yellow-3 rounded-lg bg-gray-50 flex items-center justify-center group">
                             <button
                                 onClick={() => removeDiamond(diamond.certiNo)}
                                 className="absolute top-2 right-2 p-1 bg-white/80 hover:bg-white rounded-full z-10 shadow-sm border border-gray-200"
                             >
                                 <X className="w-4 h-4 text-gray-500" />
                             </button>
-                            {diamond.webLink ? (
-                                <img
-                                    src={diamond.webLink}
-                                    alt="diamond"
-                                    className="max-h-full max-w-full object-contain mix-blend-multiply p-4"
-                                />
-                            ) : (
-                                <DiamondIcon className="w-24 h-24 text-gray-200" />
-                            )}
+                            <DiamondImage src={diamond.webLink} />
                         </div>
 
                         {/* Header Row (A, B, C...) */}

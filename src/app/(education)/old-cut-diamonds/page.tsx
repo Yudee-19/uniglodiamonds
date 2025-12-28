@@ -1,7 +1,7 @@
 import BannerSection from "@/components/shared/BannerSection";
 import ArticleLayout from "@/components/shared/ArticleLayout";
 import React from "react";
-import BannerImage from "@/assets/diamond-shape/banner.png";
+import BannerImage from "@/assets/old-diamonds/banner.jpg";
 import Image from "next/image";
 
 // Replace with your actual image paths
@@ -9,7 +9,7 @@ import SingleCutDiagram from "@/assets/old-diamonds/single-cut-diagram.png";
 import SingleCutImage from "@/assets/old-diamonds/single-cut-diagram.png";
 import RoseCutImage from "@/assets/old-diamonds/single-cut.png";
 import OldMineCutImage from "@/assets/old-diamonds/old-mine-cut.png";
-import OldEuropeanCutImage from "@/assets/old-diamonds/old-mine-cut.png";
+import OldEuropeanCutImage from "@/assets/old-diamonds/old-european-cut.png";
 import ModernRoundBrilliantImage from "@/assets/old-diamonds/modern-round-brilliant.jpg";
 import SubFooter from "@/components/shared/SubFooter";
 

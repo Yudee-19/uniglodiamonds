@@ -1,11 +1,11 @@
 import BannerSection from "@/components/shared/BannerSection";
 import ArticleLayout from "@/components/shared/ArticleLayout";
 import React from "react";
-import BannerImage from "@/assets/services/banner.png";
+import BannerImage from "@/assets/ethical-diamonds/banner.jpg";
 import Image from "next/image";
 
 // Replace with your actual image paths
-import ConflictFreeDiamondsImg from "@/assets/home/blog_1.jpg";
+import ConflictFreeDiamondsImg from "@/assets/ethical-diamonds/image-1.jpg";
 import TrustBannerBg from "@/assets/services/diamond-financing-options/banner3.png";
 import SubFooter from "@/components/shared/SubFooter";
 

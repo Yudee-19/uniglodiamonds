@@ -17,13 +17,13 @@ const BannerSection: React.FC<BannerSectionProps> = ({
     imageClassName,
 }) => (
     <section>
-        <div className="relative">
+        <div className="relative max-h-[500px] overflow-hidden">
             <Image
                 src={image || bannerImage}
                 alt="Banner"
                 width={1200}
                 height={100}
-                className={cn("w-full", imageClassName)}
+                className={cn("w-full h-", imageClassName)}
             />
             <h1
                 className={cn(

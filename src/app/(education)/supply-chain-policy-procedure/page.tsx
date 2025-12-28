@@ -1,8 +1,8 @@
 import React from "react";
 import BannerSection from "@/components/shared/BannerSection";
-import BannerImage from "@/assets/services/the-best-price-for-your-diamonds/banner1.png";
+import BannerImage from "@/assets/supply-chain/banner.jpg";
 import ArticleLayout from "@/components/shared/ArticleLayout";
-import FedexImage from "@/assets/home/blog_3.jpg";
+import FedexImage from "@/assets/supply-chain/image-1.png";
 import Image from "next/image";
 
 const page = () => {
@@ -11,7 +11,7 @@ const page = () => {
             <BannerSection
                 image={BannerImage}
                 text="Supply Chain Policy & Procedure"
-                textClassName="left-10 top-90 text-4xl"
+                textClassName="right-10 top-90 text-4xl"
                 imageClassName="h-100 object-cover"
             />
             <section className="max-w-7xl mx-auto px-10 my-20 pb-20">

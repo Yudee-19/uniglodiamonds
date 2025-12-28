@@ -1,7 +1,6 @@
 // services/diamondService.ts
 import { Diamond, DiamondParams } from "@/interface/diamondInterface";
-
-const API_BASE_URL = "https://uniglow-service-dev.onrender.com/api";
+import apiClient from "@/lib/api";
 
 interface ApiResponse {
     success: boolean;
@@ -142,20 +141,10 @@ export const fetchDiamonds = async (
                 params.maxDepthPercent.toString()
             );
 
-        const url = `${API_BASE_URL}/diamonds?${queryParams.toString()}`;
-
-        const response = await fetch(url, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result: ApiResponse = await response.json();
+        const response = await apiClient.get<ApiResponse>(
+            `/diamonds?${queryParams.toString()}`
+        );
+        const result = response.data;
 
         if (!result.success) {
             throw new Error(result.message || "Failed to fetch diamonds");
@@ -297,20 +286,10 @@ export const searchDiamonds = async (
                 params.maxDepthPercent.toString()
             );
 
-        const url = `${API_BASE_URL}/diamonds/search?${queryParams.toString()}`;
-
-        const response = await fetch(url, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result: ApiResponse = await response.json();
+        const response = await apiClient.get<ApiResponse>(
+            `/diamonds/search?${queryParams.toString()}`
+        );
+        const result = response.data;
 
         if (!result.success) {
             throw new Error(result.message || "Failed to search diamonds");
@@ -334,21 +313,10 @@ export const searchDiamonds = async (
 // Function to fetch a single diamond by ID
 export const fetchDiamondById = async (id: string): Promise<Diamond> => {
     try {
-        const response = await fetch(
-            `${API_BASE_URL}/diamonds/search?searchTerm=${id}`,
-            {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            }
+        const response = await apiClient.get<ApiResponse>(
+            `/diamonds/search?searchTerm=${id}`
         );
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
+        const result = response.data;
 
         if (!result.success) {
             throw new Error(result.message || "Failed to fetch diamond");
