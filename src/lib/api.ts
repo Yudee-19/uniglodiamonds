@@ -27,15 +27,15 @@ apiClient.interceptors.response.use(
     },
     (error: AxiosError<ApiErrorResponse>) => {
         if (error.response && error.response.status === 401) {
-            if (window.location.pathname === "/login") {
-                return Promise.reject(error);
-            }
+            // if (window.location.pathname === "/login") {
+            //     return Promise.reject(error);
+            // }
 
             console.log("Unauthorized! Redirecting to login...");
-            toast.error(
-                error.response?.data?.message ||
-                    "Session expired. Please log in again."
-            );
+            // toast.error(
+            //     error.response?.data?.message ||
+            //         "Session expired. Please log in again."
+            // );
 
             if (window.location.pathname !== "/login") {
                 window.location.href = "/login";
