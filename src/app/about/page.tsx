@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import bannerImage from "@/assets/banner_2.jpg";
+import bannerImage from "@/assets/about/banner2.png";
 import UniglowFamilySection from "@/components/shared/UniglowFamilySection";
 import CertificatesMarqueeSection from "@/components/shared/CertificatesMarqueeSection";
 import Antwerpimage1 from "@/assets/about/antwerp_2.jpg";
@@ -38,7 +38,11 @@ const Page = () => {
     return (
         <div className="min-h-screen ">
             {/* Banner section */}
-            <BannerSection image={bannerImage} text="About us" />
+            <BannerSection
+                image={bannerImage}
+                text="About us"
+                textClassName="text-black "
+            />
             {/* Uniglow Family Section */}
             <UniglowFamilySection />
             {/* History Section */}
@@ -115,26 +119,6 @@ const Page = () => {
                 <div className="max-w-5xl mx-auto px-4 md:px-8">
                     <div className="flex flex-col md:flex-row  gap-7">
                         <div className="flex flex-col justify-center items-center md:w-1/2  ">
-                            <div>
-                                <span className="text-primary text-sm uppercase font-cormorantGaramond tracking-widest mb-4 block">
-                                    OPERATING WORLDWIDE
-                                </span>
-                                <h2 className="text-6xl font-cormorantGaramond font-semibold text-black mb-10">
-                                    Situated in
-                                    <br />
-                                    <span className="sm:pl-40">Antwerp</span>
-                                </h2>
-                            </div>
-                            <Image
-                                src={Antwerpimage1} // Replace with your diamond image path
-                                alt="Diamond"
-                                width={300}
-                                height={400}
-                                className="sm:w-full h-auto object-cover shadow-md"
-                            />
-                        </div>
-                        <div className="flex flex-col justify-center items-center md:w-1/2 ">
-                            {" "}
                             <Image
                                 src={Antwerpimage2} // Replace with your Antwerp image path
                                 alt="Antwerp"
@@ -142,7 +126,17 @@ const Page = () => {
                                 height={400}
                                 className="sm:w-full h-auto object-cover shadow-md"
                             />
-                            <div className="w-full  mt-10">
+                        </div>
+                        <div className="flex flex-col justify-center items-center md:w-1/2 ">
+                            <div>
+                                <span className="text-primary text-sm uppercase font-cormorantGaramond tracking-widest mb-4 block">
+                                    OPERATING WORLDWIDE
+                                </span>
+                                <h2 className="text-6xl font-cormorantGaramond font-semibold text-black ">
+                                    Situated in Antwerp
+                                </h2>
+                            </div>{" "}
+                            <div className="w-full  mt-5">
                                 <p className="text-slate-700 font-lora text-base">
                                     Situated in Antwerp, Belgium, Uniglo
                                     Diamonds strives hard to bring you the best

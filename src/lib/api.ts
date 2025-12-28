@@ -37,9 +37,9 @@ apiClient.interceptors.response.use(
             //         "Session expired. Please log in again."
             // );
 
-            if (window.location.pathname !== "/login") {
-                window.location.href = "/login";
-            }
+            // if (window.location.pathname !== "/login") {
+            //     window.location.href = "/login";
+            // }
         }
         return Promise.reject(error);
     }

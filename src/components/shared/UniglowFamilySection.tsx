@@ -12,8 +12,8 @@ import Image from "next/image";
 import { Button } from "../ui/button";
 
 const carouselImages = [
-    "/uniglow-family/about_1.jpg", // Replace with your image paths
-    "/uniglow-family/about_2.jpg",
+    "/uniglow-family/about1.jpeg", // Replace with your image paths
+    "/uniglow-family/about.jpg",
 ];
 
 const UniglowFamilySection = () => {
