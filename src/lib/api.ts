@@ -33,7 +33,7 @@ apiClient.interceptors.response.use(
 
             console.log("Unauthorized! Redirecting to login...");
             toast.error(
-                error.response?.data?.error ||
+                error.response?.data?.message ||
                     "Session expired. Please log in again."
             );
 
