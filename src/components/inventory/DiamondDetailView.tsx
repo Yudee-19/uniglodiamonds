@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation"; // Removed useParams as we use props now
+import { useRouter } from "next/navigation";
 import { fetchDiamondById } from "@/services/diamondService";
 import { Diamond, getShapeFullName } from "@/interface/diamondInterface";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,10 @@ import {
     Palette,
     Eye,
     Star,
+    Loader2,
 } from "lucide-react";
+import { addToCart, holdDiamond } from "@/services/cartService";
+import { toast } from "sonner";
 
 interface DiamondDetailViewProps {
     diamondId: string;
@@ -23,7 +26,6 @@ interface DiamondDetailViewProps {
 export default function DiamondDetailView({
     diamondId,
 }: DiamondDetailViewProps) {
-    // const params = useParams(); // Removed
     const router = useRouter();
     const [diamond, setDiamond] = useState<Diamond | null>(null);
     const [loading, setLoading] = useState(true);
@@ -31,10 +33,11 @@ export default function DiamondDetailView({
     const [activeTab, setActiveTab] = useState<
         "IMAGE" | "VIDEO" | "CERTIFICATE"
     >("IMAGE");
+    const [holdLoading, setHoldLoading] = useState(false);
+    const [cartLoading, setCartLoading] = useState(false);
 
     useEffect(() => {
         const loadDiamond = async () => {
-            // Changed params.diamondId to the prop diamondId
             if (diamondId) {
                 try {
                     setLoading(true);
@@ -43,7 +46,7 @@ export default function DiamondDetailView({
                     setDiamond(data);
                 } catch (err) {
                     setError(
-                        "Failed to load diamond details. Please try again."
+                        "Failed to load diamond details. Please try again.",
                     );
                     console.error(err);
                 } finally {
@@ -52,7 +55,41 @@ export default function DiamondDetailView({
             }
         };
         loadDiamond();
-    }, [diamondId]); // Dependency changed to the prop
+    }, [diamondId]);
+
+    const handleHoldDiamond = async () => {
+        if (!diamond?.stockRef) {
+            toast.error("Stock reference not available");
+            return;
+        }
+
+        try {
+            setHoldLoading(true);
+            const response = await holdDiamond(diamond.stockRef);
+            toast.success(response.message || "Diamond held successfully");
+        } catch (error: any) {
+            toast.error(error || "Failed to hold diamond");
+        } finally {
+            setHoldLoading(false);
+        }
+    };
+
+    const handleAddToCart = async () => {
+        if (!diamond?._id) {
+            toast.error("Diamond ID not available");
+            return;
+        }
+
+        try {
+            setCartLoading(true);
+            const response = await addToCart([diamond._id]);
+            toast.success(response.message);
+        } catch (error: any) {
+            toast.error(error || "Failed to add diamond to cart");
+        } finally {
+            setCartLoading(false);
+        }
+    };
 
     if (loading) {
         return (
@@ -297,12 +334,27 @@ export default function DiamondDetailView({
                             </Button>
                             <Button
                                 variant="outline"
-                                className="flex-1 h-12 border-gray-300 text-gray-700 font-semibold uppercase tracking-wide hover:bg-gray-50 rounded-sm"
+                                className="flex-1 h-12 border-gray-300 text-gray-700 font-semibold uppercase tracking-wide hover:bg-gray-50 rounded-sm disabled:opacity-50"
+                                onClick={handleHoldDiamond}
+                                disabled={holdLoading}
                             >
-                                Enquiry
+                                {holdLoading ? (
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                    "Enquiry"
+                                )}
                             </Button>
-                            <Button className="flex-1 h-12  text-white font-semibold uppercase  border-none gold-reveal-btn  font-cormorantGaramond ">
-                                <span>Add to Cart</span>
+                            <Button
+                                className="flex-1 h-12  text-white font-semibold uppercase  border-none gold-reveal-btn  font-cormorantGaramond disabled:opacity-50"
+                                onClick={handleAddToCart}
+                                disabled={cartLoading}
+                            >
+                                <span className="flex items-center gap-2">
+                                    {cartLoading && (
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                    )}
+                                    Add to Cart
+                                </span>
                             </Button>
                         </div>
                     </div>
@@ -351,7 +403,7 @@ export default function DiamondDetailView({
                             {
                                 label: "Ratio",
                                 value: (diamond.length / diamond.width).toFixed(
-                                    2
+                                    2,
                                 ),
                             },
                             {

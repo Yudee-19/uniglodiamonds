@@ -12,6 +12,7 @@ interface BaseGuardProps {
 
 interface RoleGuardProps extends BaseGuardProps {
     allowedRoles: string[];
+    redirectTo?: string; // Optional redirect path
 }
 
 interface StatusGuardProps extends BaseGuardProps {
@@ -99,18 +100,37 @@ export const GuestGuard = ({ children }: { children: React.ReactNode }) => {
 /**
  * RoleGuard
  * Restricts access based on user role.
- * Does NOT redirect, but renders a fallback (or nothing) if role doesn't match.
+ * Can either render a fallback or redirect to a different page.
  */
 export const RoleGuard = ({
     children,
     allowedRoles,
     fallback = null,
+    redirectTo,
 }: RoleGuardProps) => {
     const { user, loading } = useAuth();
+    const router = useRouter();
 
-    if (loading) return null;
+    useEffect(() => {
+        if (!loading && user && !allowedRoles.includes(user.role)) {
+            if (redirectTo) {
+                router.push(redirectTo);
+            }
+        }
+    }, [user, loading, allowedRoles, redirectTo, router]);
+
+    if (loading) {
+        return (
+            <div className="flex h-screen w-full items-center justify-center bg-white">
+                <Loader2 className="h-10 w-10 animate-spin text-primary-yellow-1" />
+            </div>
+        );
+    }
 
     if (!user || !allowedRoles.includes(user.role)) {
+        if (redirectTo) {
+            return null; // Will redirect via useEffect
+        }
         return <>{fallback}</>;
     }
 

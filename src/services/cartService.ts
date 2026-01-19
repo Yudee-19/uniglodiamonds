@@ -12,13 +12,19 @@ export interface AddToCartResponseData {
     cartItem: CartItem;
 }
 
+export interface HoldDiamondResponseData {
+    message: string;
+    stockRef: string;
+}
+
 export const getCart = async (): Promise<
     ApiSuccessResponse<CartResponseData>
 > => {
     try {
-        const response = await apiClient.get<
-            ApiSuccessResponse<CartResponseData>
-        >("/diamonds/cart");
+        const response =
+            await apiClient.get<ApiSuccessResponse<CartResponseData>>(
+                "/diamonds/cart",
+            );
         return response.data;
     } catch (error) {
         const axiosError = error as AxiosError<ApiErrorResponse>;
@@ -30,7 +36,7 @@ export const getCart = async (): Promise<
 };
 
 export const addToCart = async (
-    diamondId: string[]
+    diamondId: string[],
 ): Promise<ApiSuccessResponse<AddToCartResponseData>> => {
     try {
         const response = await apiClient.post<
@@ -42,5 +48,24 @@ export const addToCart = async (
     } catch (error) {
         const axiosError = error as AxiosError<ApiErrorResponse>;
         throw axiosError.response?.data?.message;
+    }
+};
+
+export const holdDiamond = async (
+    stockRef: string,
+): Promise<ApiSuccessResponse<HoldDiamondResponseData>> => {
+    try {
+        const response = await apiClient.post<
+            ApiSuccessResponse<HoldDiamondResponseData>
+        >("/diamonds/hold", {
+            stockRef,
+        });
+        return response.data;
+    } catch (error) {
+        const axiosError = error as AxiosError<ApiErrorResponse>;
+        throw (
+            axiosError.response?.data?.message ||
+            "Failed to hold diamond. Please try again."
+        );
     }
 };

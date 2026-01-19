@@ -2,10 +2,14 @@ import { ApiErrorResponse } from "@/services/authServices";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "sonner";
 
+const BASE_URL =
+    process.env.ENV === "production"
+        ? process.env.NEXT_PUBLIC_LIVE_API_BASE_URL
+        : process.env.NEXT_PUBLIC_LOCAL_API_BASE_URL;
 const apiClient = axios.create({
     // The base URL of your backend
-    baseURL: "https://uniglow-service-dev.onrender.com/api",
-
+    // baseURL: "https://uniglow-service-dev.onrender.com/api",
+    baseURL: BASE_URL,
     // timeout: 40000, // 10 seconds timeout
     withCredentials: true,
 
@@ -42,7 +46,7 @@ apiClient.interceptors.response.use(
             // }
         }
         return Promise.reject(error);
-    }
+    },
 );
 
 export default apiClient;

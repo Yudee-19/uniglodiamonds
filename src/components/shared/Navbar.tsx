@@ -18,6 +18,8 @@ import {
     X,
     UserIcon,
     LogOut,
+    ShoppingCart,
+    Users,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import Image from "next/image";
@@ -90,12 +92,27 @@ const NAV_LINKS = [
     },
 ];
 
+const ADMIN_NAV_LINKS = [
+    { name: "Members Management", href: "/members-management", icon: Users },
+];
+
+const USER_NAV_LINKS = [{ name: "My Cart", href: "/cart", icon: ShoppingCart }];
+
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { scrollY } = useScroll();
     const [lastScrollY, setLastScrollY] = useState(0);
     const { user, logout, isAuthenticated } = useAuth();
+
+    // Get role-specific nav links
+    const getRoleNavLinks = () => {
+        if (!user) return [];
+        if (user.role === "ADMIN" || user.role === "SUPER_ADMIN")
+            return ADMIN_NAV_LINKS;
+        if (user.role === "USER") return USER_NAV_LINKS;
+        return [];
+    };
 
     // 2. Listen to scroll changes using the Motion hook (Replacing native event listener)
     useMotionValueEvent(scrollY, "change", (latest: number) => {
@@ -108,6 +125,8 @@ export default function Navbar() {
         }
         setLastScrollY(latest);
     });
+
+    const roleNavLinks = getRoleNavLinks();
 
     return (
         <>
@@ -122,7 +141,7 @@ export default function Navbar() {
                         opacity: isScrolled ? 1 : 1,
                     }}
                     transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }} // Smooth cubic-bezier
-                    className="overflow-hidden  border-b border-slate-800 hidden md:block"
+                    className="  border-b border-slate-800 hidden md:block"
                 >
                     {/* BRAND BAR: Logo & Primary Buttons */}
                     <div className=" px-4 md:px-8 py-4 bg-brand-gradient  border-b border-white/70">
@@ -141,7 +160,6 @@ export default function Navbar() {
                                     <span>Contact</span>
                                 </Button>
                             </div>
-                            ``
                             {/* Center Logo */}
                             <div className="w-full md:w-1/3 flex justify-center items-center gap-3">
                                 {/* Logo Icon Mock */}
@@ -159,12 +177,56 @@ export default function Navbar() {
                             <div className="hidden md:flex gap-3 w-1/3 justify-end">
                                 {isAuthenticated && user ? (
                                     <>
-                                        <Button className="gold-reveal-btn font-cormorantGaramond uppercase flex items-center gap-2">
-                                            <span className="flex items-center gap-1">
-                                                <UserIcon size={16} />
-                                                <span>{user.username}</span>
-                                            </span>
-                                        </Button>
+                                        {/* Profile Button with Dropdown */}
+                                        <div className="relative group">
+                                            <Button className="gold-reveal-btn font-cormorantGaramond uppercase flex items-center gap-2">
+                                                <span className="flex items-center gap-1">
+                                                    <UserIcon size={16} />
+                                                    <span>{user.username}</span>
+                                                    <ChevronDown
+                                                        size={14}
+                                                        className="group-hover:rotate-180 transition-transform duration-300"
+                                                    />
+                                                </span>
+                                            </Button>
+
+                                            {/* Dropdown Menu */}
+                                            {roleNavLinks.length > 0 && (
+                                                <div className="absolute top-full right-0 mt-0 w-56 bg-white border-t-2 border-[#c5a059] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 shadow-xl transform group-hover:translate-y-0 translate-y-2 z-60">
+                                                    <div className="flex flex-col text-black font-cormorantGaramond text-base normal-case tracking-normal">
+                                                        {roleNavLinks.map(
+                                                            (link) => (
+                                                                <Link
+                                                                    key={
+                                                                        link.name
+                                                                    }
+                                                                    href={
+                                                                        link.href
+                                                                    }
+                                                                    className="p-3 slide-down-link flex items-center gap-2"
+                                                                >
+                                                                    <span className="flex items-center gap-2">
+                                                                        {link.icon && (
+                                                                            <link.icon
+                                                                                size={
+                                                                                    16
+                                                                                }
+                                                                            />
+                                                                        )}
+                                                                        {
+                                                                            link.name
+                                                                        }
+                                                                    </span>
+                                                                </Link>
+                                                            ),
+                                                        )}
+                                                        {/* Divider */}
+                                                        <div className="border-t border-gray-200"></div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+
                                         <Button
                                             onClick={logout}
                                             className="gold-reveal-btn font-cormorantGaramond uppercase flex items-center gap-2"
@@ -272,7 +334,7 @@ export default function Navbar() {
                                                                     }
                                                                 </span>
                                                             </a>
-                                                        )
+                                                        ),
                                                     )}
                                                 </div>
                                             </div>
@@ -302,6 +364,23 @@ export default function Navbar() {
                                             {link.name}
                                         </a>
                                     ))}
+                                    {/* Role-specific links for mobile */}
+                                    {isAuthenticated &&
+                                        roleNavLinks.map((link) => (
+                                            <Link
+                                                key={link.name}
+                                                href={link.href}
+                                                className="text-slate-300 text-sm uppercase tracking-wider py-2 border-b border-slate-800 font-cormorantGaramond flex items-center gap-2"
+                                                onClick={() =>
+                                                    setIsMobileMenuOpen(false)
+                                                }
+                                            >
+                                                {link.icon && (
+                                                    <link.icon size={16} />
+                                                )}
+                                                {link.name}
+                                            </Link>
+                                        ))}
                                     <div className="flex gap-2 mt-4">
                                         <button className="flex-1 py-3 bg-primary-yellow-1 font-cormorantGaramond text-black text-lg font-bold uppercase">
                                             Inventory
