@@ -4,7 +4,7 @@ import { Cart, CartItem } from "@/interface/diamondInterface";
 import { AxiosError } from "axios";
 
 export interface CartResponseData {
-    cart: Cart;
+    cart: Cart | null;
     totalItems: number;
 }
 
@@ -15,6 +15,11 @@ export interface AddToCartResponseData {
 export interface HoldDiamondResponseData {
     message: string;
     stockRef: string;
+}
+
+export interface RemoveFromCartResponseData {
+    message: string;
+    cart: Cart | null;
 }
 
 export const getCart = async (): Promise<
@@ -48,6 +53,41 @@ export const addToCart = async (
     } catch (error) {
         const axiosError = error as AxiosError<ApiErrorResponse>;
         throw axiosError.response?.data?.message;
+    }
+};
+
+export const removeFromCart = async (
+    diamondId: string,
+): Promise<ApiSuccessResponse<RemoveFromCartResponseData>> => {
+    try {
+        const response = await apiClient.delete<
+            ApiSuccessResponse<RemoveFromCartResponseData>
+        >(`/diamonds/cart/${diamondId}`);
+        return response.data;
+    } catch (error) {
+        const axiosError = error as AxiosError<ApiErrorResponse>;
+        throw (
+            axiosError.response?.data?.message ||
+            "Failed to remove item from cart. Please try again."
+        );
+    }
+};
+
+export const clearCart = async (): Promise<
+    ApiSuccessResponse<RemoveFromCartResponseData>
+> => {
+    try {
+        const response =
+            await apiClient.delete<
+                ApiSuccessResponse<RemoveFromCartResponseData>
+            >("/diamonds/cart");
+        return response.data;
+    } catch (error) {
+        const axiosError = error as AxiosError<ApiErrorResponse>;
+        throw (
+            axiosError.response?.data?.message ||
+            "Failed to clear cart. Please try again."
+        );
     }
 };
 

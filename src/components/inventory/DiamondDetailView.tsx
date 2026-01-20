@@ -15,9 +15,22 @@ import {
     Eye,
     Star,
     Loader2,
+    Clock,
 } from "lucide-react";
 import { addToCart, holdDiamond } from "@/services/cartService";
 import { toast } from "sonner";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogMedia,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface DiamondDetailViewProps {
     diamondId: string;
@@ -35,6 +48,7 @@ export default function DiamondDetailView({
     >("IMAGE");
     const [holdLoading, setHoldLoading] = useState(false);
     const [cartLoading, setCartLoading] = useState(false);
+    const [showHoldDialog, setShowHoldDialog] = useState(false);
 
     useEffect(() => {
         const loadDiamond = async () => {
@@ -57,7 +71,7 @@ export default function DiamondDetailView({
         loadDiamond();
     }, [diamondId]);
 
-    const handleHoldDiamond = async () => {
+    const handleHoldDiamondConfirm = async () => {
         if (!diamond?.stockRef) {
             toast.error("Stock reference not available");
             return;
@@ -67,6 +81,7 @@ export default function DiamondDetailView({
             setHoldLoading(true);
             const response = await holdDiamond(diamond.stockRef);
             toast.success(response.message || "Diamond held successfully");
+            setShowHoldDialog(false);
         } catch (error: any) {
             toast.error(error || "Failed to hold diamond");
         } finally {
@@ -287,9 +302,6 @@ export default function DiamondDetailView({
                                 <span className="text-3xl font-bold text-gray-900">
                                     ${diamond.priceListUSD.toLocaleString()} USD
                                 </span>
-                                {/* <span className="text-lg text-gray-400 line-through">
-                                    ${(totalPrice * 1.1).toLocaleString()} USD
-                                </span> */}
                             </div>
                         </div>
 
@@ -326,24 +338,69 @@ export default function DiamondDetailView({
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                            <Button
-                                variant="outline"
-                                className="flex-1 h-12 border-gray-300 text-gray-700 font-semibold uppercase tracking-wide hover:bg-gray-50 rounded-sm"
-                            >
-                                Old Stone
+                            <Button className="flex-1 h-12  text-white font-semibold uppercase  border-none gold-reveal-btn  font-cormorantGaramond disabled:opacity-50">
+                                <span className="flex items-center gap-2">
+                                    Enquiry
+                                </span>
                             </Button>
-                            <Button
-                                variant="outline"
-                                className="flex-1 h-12 border-gray-300 text-gray-700 font-semibold uppercase tracking-wide hover:bg-gray-50 rounded-sm disabled:opacity-50"
-                                onClick={handleHoldDiamond}
-                                disabled={holdLoading}
+
+                            <AlertDialog
+                                open={showHoldDialog}
+                                onOpenChange={setShowHoldDialog}
                             >
-                                {holdLoading ? (
-                                    <Loader2 className="w-4 h-4 animate-spin" />
-                                ) : (
-                                    "Enquiry"
-                                )}
-                            </Button>
+                                <AlertDialogTrigger asChild>
+                                    <Button
+                                        className="flex-1 h-12  text-white font-semibold uppercase  border-none gold-reveal-btn  font-cormorantGaramond disabled:opacity-50"
+                                        disabled={holdLoading}
+                                    >
+                                        <span className="flex items-center gap-2">
+                                            {holdLoading ? (
+                                                <Loader2 className="w-4 h-4 animate-spin" />
+                                            ) : (
+                                                "Hold Diamond"
+                                            )}
+                                        </span>
+                                    </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogMedia>
+                                            <Clock className="text-primary-purple" />
+                                        </AlertDialogMedia>
+                                        <AlertDialogTitle>
+                                            Hold this diamond?
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            This will reserve the diamond for
+                                            you temporarily. You can view all
+                                            your held diamonds in the enquiry
+                                            section.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel
+                                            disabled={holdLoading}
+                                        >
+                                            Cancel
+                                        </AlertDialogCancel>
+                                        <AlertDialogAction
+                                            onClick={handleHoldDiamondConfirm}
+                                            disabled={holdLoading}
+                                            className="rounded-sm"
+                                        >
+                                            {holdLoading ? (
+                                                <>
+                                                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                                                    Holding...
+                                                </>
+                                            ) : (
+                                                "Hold Diamond"
+                                            )}
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+
                             <Button
                                 className="flex-1 h-12  text-white font-semibold uppercase  border-none gold-reveal-btn  font-cormorantGaramond disabled:opacity-50"
                                 onClick={handleAddToCart}
@@ -435,7 +492,7 @@ export default function DiamondDetailView({
                         rows={[
                             { label: "Eye Clean", value: diamond.eyeClean },
                             { label: "Heart & Arrow", value: diamond.handA },
-                            { label: "Brilliancy", value: "-" }, // Not in interface
+                            { label: "Brilliancy", value: "-" },
                             { label: "Milky", value: diamond.milky },
                             {
                                 label: "Black Inclusion",

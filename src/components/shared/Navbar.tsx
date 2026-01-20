@@ -20,6 +20,7 @@ import {
     LogOut,
     ShoppingCart,
     Users,
+    FileStack,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import Image from "next/image";
@@ -94,6 +95,11 @@ const NAV_LINKS = [
 
 const ADMIN_NAV_LINKS = [
     { name: "Members Management", href: "/members-management", icon: Users },
+    {
+        name: "Enquiry Management",
+        href: "/enquiry-management",
+        icon: FileStack,
+    },
 ];
 
 const USER_NAV_LINKS = [{ name: "My Cart", href: "/cart", icon: ShoppingCart }];
@@ -103,7 +109,7 @@ export default function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { scrollY } = useScroll();
     const [lastScrollY, setLastScrollY] = useState(0);
-    const { user, logout, isAuthenticated } = useAuth();
+    const { user, logout, isAuthenticated, loading } = useAuth();
 
     // Get role-specific nav links
     const getRoleNavLinks = () => {
@@ -148,17 +154,26 @@ export default function Navbar() {
                         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
                             {/* Left Actions */}
                             <div className="hidden md:flex gap-3 w-1/3">
-                                <Button
-                                    asChild
-                                    className="gold-reveal-btn  font-cormorantGaramond uppercase"
-                                >
-                                    <Link href="/inventory">
-                                        <span>Inventory</span>
-                                    </Link>
-                                </Button>
-                                <Button className="gold-reveal-btn font-cormorantGaramond uppercase">
-                                    <span>Contact</span>
-                                </Button>
+                                {loading ? (
+                                    <>
+                                        <div className="h-10 w-32 bg-gray-200/50 animate-pulse " />
+                                        <div className="h-10 w-24 bg-gray-200/50 animate-pulse " />
+                                    </>
+                                ) : (
+                                    <>
+                                        <Button
+                                            asChild
+                                            className="gold-reveal-btn  font-cormorantGaramond uppercase"
+                                        >
+                                            <Link href="/inventory">
+                                                <span>Inventory</span>
+                                            </Link>
+                                        </Button>
+                                        <Button className="gold-reveal-btn font-cormorantGaramond uppercase">
+                                            <span>Contact</span>
+                                        </Button>
+                                    </>
+                                )}
                             </div>
                             {/* Center Logo */}
                             <div className="w-full md:w-1/3 flex justify-center items-center gap-3">
@@ -175,7 +190,12 @@ export default function Navbar() {
                             </div>
                             {/* Right Actions */}
                             <div className="hidden md:flex gap-3 w-1/3 justify-end">
-                                {isAuthenticated && user ? (
+                                {loading ? (
+                                    <>
+                                        <div className="h-10 w-32 bg-gray-200/50 animate-pulse " />
+                                        <div className="h-10 w-24 bg-gray-200/50 animate-pulse " />
+                                    </>
+                                ) : isAuthenticated && user ? (
                                     <>
                                         {/* Profile Button with Dropdown */}
                                         <div className="relative group">
@@ -382,9 +402,14 @@ export default function Navbar() {
                                             </Link>
                                         ))}
                                     <div className="flex gap-2 mt-4">
-                                        <button className="flex-1 py-3 bg-primary-yellow-1 font-cormorantGaramond text-black text-lg font-bold uppercase">
-                                            Inventory
-                                        </button>
+                                        <Button
+                                            asChild
+                                            className="gold-reveal-btn  font-cormorantGaramond uppercase w-1/2 py-7 text-lg font-bold "
+                                        >
+                                            <Link href="/inventory">
+                                                <span>Inventory</span>
+                                            </Link>
+                                        </Button>
                                         {isAuthenticated ? (
                                             <button
                                                 onClick={() => {

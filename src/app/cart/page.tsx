@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getCart } from "@/services/cartService";
+import { getCart, removeFromCart, clearCart } from "@/services/cartService";
 import { CartItem } from "@/interface/diamondInterface";
 import {
     Trash2,
@@ -11,9 +11,24 @@ import {
     Loader2,
     ChevronLeft,
     ChevronRight,
+    AlertTriangle,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogMedia,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 // Helper to calculate total price
 const calculateTotal = (weight: number, pricePerCts: number) => {
@@ -34,26 +49,29 @@ const formatCurrency = (value: number) => {
 };
 
 export default function CartPage() {
+    const router = useRouter();
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
+    const [removing, setRemoving] = useState(false);
+    const [showClearDialog, setShowClearDialog] = useState(false);
+
+    const fetchCart = async () => {
+        try {
+            setLoading(true);
+            const response = await getCart();
+            if (response.success) {
+                setCartItems(response.data.cart?.items || []);
+            }
+        } catch (err: any) {
+            setError(err.message || "Failed to load cart");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchCart = async () => {
-            try {
-                setLoading(true);
-                const response = await getCart();
-                if (response.success) {
-                    setCartItems(response.data.cart.items);
-                }
-            } catch (err: any) {
-                setError(err.message || "Failed to load cart");
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchCart();
     }, []);
 
@@ -71,6 +89,57 @@ export default function CartPage() {
         } else {
             setSelectedIds([...selectedIds, id]);
         }
+    };
+
+    const handleRemoveSelected = async () => {
+        if (selectedIds.length === 0) return;
+
+        try {
+            setRemoving(true);
+
+            // Remove all selected items
+            await Promise.all(selectedIds.map((id) => removeFromCart(id)));
+
+            toast.success(`${selectedIds.length} item(s) removed from cart`);
+            setSelectedIds([]);
+            await fetchCart();
+        } catch (err: any) {
+            toast.error(err || "Failed to remove items from cart");
+        } finally {
+            setRemoving(false);
+        }
+    };
+
+    const handleClearCartConfirm = async () => {
+        try {
+            setRemoving(true);
+            await clearCart();
+            toast.success("Cart cleared successfully");
+            setSelectedIds([]);
+            await fetchCart();
+            setShowClearDialog(false);
+        } catch (err: any) {
+            toast.error(err || "Failed to clear cart");
+        } finally {
+            setRemoving(false);
+        }
+    };
+
+    const handleCompare = () => {
+        if (selectedIds.length < 2) {
+            toast.warning("Please select at least 2 diamonds to compare");
+            return;
+        }
+
+        // Get selected diamonds and create query string
+        const selectedDiamonds = cartItems.filter((item) =>
+            selectedIds.includes(item.diamond._id),
+        );
+        const queryString = selectedDiamonds
+            .map((item) => item.diamond.certiNo)
+            .join(",");
+
+        router.push(`/compare?ids=${queryString}`);
     };
 
     const isAllSelected =
@@ -95,34 +164,88 @@ export default function CartPage() {
 
     return (
         <div className="min-h-screen bg-white p-4 md:p-8 font-lato">
-            <h1 className="text-4xl font-cormorantGaramond font-bold text-[#26062b] mb-8">
-                My Cart
-            </h1>
+            <div className="flex justify-between items-center mb-8">
+                <h1 className="text-4xl font-cormorantGaramond font-bold text-[#26062b]">
+                    My Cart
+                </h1>
+            </div>
 
             {/* Toolbar */}
             <div className="flex flex-wrap gap-6 mb-6 text-sm text-gray-500 font-medium">
                 <button
                     className="flex items-center gap-2 hover:text-[#bb923a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    disabled={selectedIds.length === 0}
+                    disabled={selectedIds.length === 0 || removing}
+                    onClick={handleRemoveSelected}
                 >
-                    <Trash2 className="w-4 h-4" />
+                    {removing ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                        <Trash2 className="w-4 h-4" />
+                    )}
                     <span>Remove from cart</span>
-                </button>
-                <button className="flex items-center gap-2 hover:text-[#bb923a] transition-colors">
-                    <Download className="w-4 h-4" />
-                    <span>Export to excel</span>
                 </button>
                 <button
                     className="flex items-center gap-2 hover:text-[#bb923a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={selectedIds.length < 2}
+                    onClick={handleCompare}
                 >
                     <GitCompare className="w-4 h-4" />
-                    <span>Compare stone</span>
+                    <span>
+                        Compare stone{" "}
+                        {selectedIds.length > 0 && `(${selectedIds.length})`}
+                    </span>
                 </button>
-                <button className="flex items-center gap-2 hover:text-[#bb923a] transition-colors">
-                    <Mail className="w-4 h-4" />
-                    <span>Enquire</span>
-                </button>
+
+                <AlertDialog
+                    open={showClearDialog}
+                    onOpenChange={setShowClearDialog}
+                >
+                    <AlertDialogTrigger asChild>
+                        <button
+                            className="flex items-center gap-1 hover:text-[#bb923a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled={cartItems.length === 0 || removing}
+                        >
+                            {removing ? (
+                                <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                            ) : (
+                                <Trash2 className="w-4 h-4 mr-1" />
+                            )}
+                            Clear Cart
+                        </button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogMedia>
+                                <AlertTriangle className="text-amber-600" />
+                            </AlertDialogMedia>
+                            <AlertDialogTitle>
+                                Clear entire cart?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action will remove all items from your
+                                cart. This cannot be undone.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                                variant="destructive"
+                                onClick={handleClearCartConfirm}
+                                disabled={removing}
+                                className="rounded-sm "
+                            >
+                                {removing ? (
+                                    <>
+                                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                                        Clearing...
+                                    </>
+                                ) : (
+                                    "Clear Cart"
+                                )}
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </div>
 
             {/* Table Container */}
@@ -138,6 +261,7 @@ export default function CartPage() {
                                         className="w-4 h-4 accent-[#bb923a] cursor-pointer"
                                         checked={isAllSelected}
                                         onChange={handleSelectAll}
+                                        disabled={cartItems.length === 0}
                                     />
                                 </th>
                                 <th className="p-4 text-left">Image</th>
@@ -196,7 +320,7 @@ export default function CartPage() {
                                                     type="checkbox"
                                                     className="w-4 h-4 accent-[#bb923a] cursor-pointer"
                                                     checked={selectedIds.includes(
-                                                        d._id
+                                                        d._id,
                                                     )}
                                                     onChange={() =>
                                                         handleSelectOne(d._id)
@@ -218,7 +342,7 @@ export default function CartPage() {
                                                                 (
                                                                     e.target as HTMLImageElement
                                                                 ).nextElementSibling?.classList.remove(
-                                                                    "hidden"
+                                                                    "hidden",
                                                                 );
                                                             }}
                                                         />
@@ -234,8 +358,13 @@ export default function CartPage() {
                                                     </span>
                                                 </div>
                                             </td>
-                                            <td className="p-4 font-semibold text-[#26062b]">
-                                                {d.stockRef}
+                                            <td className="p-4">
+                                                <Link
+                                                    href={`/inventory?view=${d.certiNo}`}
+                                                    className="font-semibold text-[#26062b] hover:text-[#bb923a] underline transition-colors"
+                                                >
+                                                    {d.stockRef}
+                                                </Link>
                                             </td>
                                             <td className="p-4">
                                                 {d.city || d.country || "MU"}
@@ -267,7 +396,7 @@ export default function CartPage() {
                                             <td className="p-4 text-right font-bold text-[#bb923a]">
                                                 {calculateTotal(
                                                     d.weight,
-                                                    d.pricePerCts
+                                                    d.pricePerCts,
                                                 )}
                                             </td>
                                         </tr>
@@ -277,30 +406,6 @@ export default function CartPage() {
                         </tbody>
                     </table>
                 </div>
-
-                {/* Pagination */}
-                {/* {cartItems.length > 0 && (
-                    <div className="p-4 border-t border-[#e7d7b4] flex items-center gap-2">
-                        <button className="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-500">
-                            <ChevronLeft className="w-4 h-4" />
-                        </button>
-                        <button className="w-8 h-8 flex items-center justify-center rounded bg-[#26062b] text-white text-sm font-medium">
-                            1
-                        </button>
-                        <button className="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-600 text-sm font-medium">
-                            2
-                        </button>
-                        <button className="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-600 text-sm font-medium">
-                            3
-                        </button>
-                        <button className="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-600 text-sm font-medium">
-                            4
-                        </button>
-                        <button className="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-600 text-sm font-medium">
-                            <ChevronRight className="w-4 h-4" />
-                        </button>
-                    </div>
-                )} */}
             </div>
         </div>
     );

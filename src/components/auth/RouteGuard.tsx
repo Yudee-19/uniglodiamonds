@@ -17,7 +17,7 @@ const protectedRoutes = [
 const guestRoutes = ["/login", "/register", "/forgot-password"];
 
 // 3. Admin-only routes
-const adminRoutes = ["/members-management"];
+const adminRoutes = ["/members-management", "/enquiry-management"];
 
 export default function RouteGuard({
     children,

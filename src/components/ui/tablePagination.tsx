@@ -80,7 +80,7 @@ const TablePagination: React.FC<TablePaginationProps> = ({
     return (
         <div className="flex flex-wrap items-center justify-center sm:justify-between gap-2 mt-3 text-xs text-gray-600">
             {/* Rows per page */}
-            <div className="flex gap-5 items-center">
+            <div className="hidden md:flex gap-5 items-center">
                 <div className="flex items-center gap-1">
                     <span className="hidden sm:inline">Rows:</span>
                     <Select
@@ -137,7 +137,7 @@ const TablePagination: React.FC<TablePaginationProps> = ({
                             >
                                 {p}
                             </Button>
-                        )
+                        ),
                     )}
                 </div>
 
@@ -152,7 +152,7 @@ const TablePagination: React.FC<TablePaginationProps> = ({
                 </Button>
 
                 {/* Jump to page */}
-                <div className="flex items-center gap-1">
+                <div className="hidden md:flex items-center gap-1">
                     <input
                         type="number"
                         value={inputPage}
