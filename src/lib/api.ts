@@ -4,8 +4,10 @@ import { toast } from "sonner";
 
 const BASE_URL =
     process.env.ENV === "production"
-        ? process.env.NEXT_PUBLIC_LIVE_API_BASE_URL
-        : process.env.NEXT_PUBLIC_LOCAL_API_BASE_URL;
+        ? "https://uniglow-service-dev.onrender.com/api"
+        : "http://localhost:5000/api";
+// ? process.env.NEXT_PUBLIC_LIVE_API_BASE_URL
+// : process.env.NEXT_PUBLIC_LOCAL_API_BASE_URL;
 const apiClient = axios.create({
     // The base URL of your backend
     // baseURL: "https://uniglow-service-dev.onrender.com/api",
