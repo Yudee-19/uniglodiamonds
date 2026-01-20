@@ -22,7 +22,7 @@ export default function DiamondGrid({ data, onViewDetails }: DiamondGridProps) {
     }
 
     return (
-        <div className="bg-brand-gradient grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 font-lato pb-2 ">
+        <div className="bg-brand-gradient grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 font-lato pb-2 w-full px-1 ">
             {data.map((item) => (
                 <div
                     key={item._id}
@@ -75,7 +75,7 @@ export default function DiamondGrid({ data, onViewDetails }: DiamondGridProps) {
                     <div className="mt-auto flex justify-center">
                         <Button
                             onClick={() => onViewDetails(item)}
-                            className="bg-primary-yellow-3 hover:bg-[#B5952F] text-white text-xs  px-6 h-8 rounded-[2] uppercase tracking-wider w-fit shadow-sm"
+                            className="bg-primary-yellow-3 hover:bg-[#B5952F] text-white text-xs  sm:px-6 h-8 rounded-[2] uppercase tracking-wider w-fit shadow-sm"
                         >
                             View Details
                         </Button>

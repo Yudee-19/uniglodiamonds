@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
+import { ChevronDown, Filter } from "lucide-react";
 import {
     DiamondShape,
     DiamondColor,
@@ -37,6 +38,7 @@ interface DiamondFiltersProps {
     filters: FilterState;
     setFilters: React.Dispatch<React.SetStateAction<FilterState>>;
     onReset: () => void;
+    variant?: "default" | "sidebar";
 }
 
 // --- Constants ---
@@ -115,6 +117,79 @@ const LAB_OPTIONS = ["GIA", "HRD", "IGI", "OTHERS"];
 
 // --- Helper Components ---
 
+interface DiamondFilterSectionProps {
+    title: string;
+    children: React.ReactNode;
+    variant?: "default" | "sidebar";
+    className?: string; // Content class
+    wrapperClassName?: string;
+}
+
+const DiamondFilterSection: React.FC<DiamondFilterSectionProps> = ({
+    title,
+    children,
+    variant = "default",
+    className,
+    wrapperClassName,
+}) => {
+    const [isOpen, setIsOpen] = React.useState(false);
+
+    if (variant === "default") {
+        return (
+            <Card
+                className={cn(
+                    "p-0 overflow-hidden border-none shadow-sm gap-0",
+                    wrapperClassName,
+                )}
+            >
+                <div className="bg-primary-purple2 text-white p-2 font-semibold text-sm">
+                    {title}
+                </div>
+                <div
+                    className={cn(
+                        "p-3 bg-white border-primary-yellow-2 border rounded-b-lg",
+                        className,
+                    )}
+                >
+                    {children}
+                </div>
+            </Card>
+        );
+    }
+
+    return (
+        <div
+            className={cn(
+                "border rounded-md border-primary-yellow-3 mx-2 my-1 overflow-hidden  ",
+                wrapperClassName,
+            )}
+        >
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full flex items-center justify-between px-4 py-2 text-sm font-medium text-gray-900 bg-gray-50 hover:bg-gray-100 transition-colors focus:outline-none rounded-t-md "
+            >
+                {title}
+                <ChevronDown
+                    className={cn(
+                        "h-4 w-4 text-gray-500 transition-transform duration-200",
+                        isOpen && "rotate-180",
+                    )}
+                />
+            </button>
+            <div
+                className={cn(
+                    "overflow-hidden transition-all duration-300 ease-in-out rounded-md",
+                    isOpen ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0",
+                )}
+            >
+                <div className={cn("p-4 bg-white pt-2", className)}>
+                    {children}
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const ToggleButton = ({
     active,
     onClick,
@@ -133,7 +208,7 @@ const ToggleButton = ({
             active
                 ? "bg-primary-yellow-2 text-black  font-medium"
                 : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50",
-            className
+            className,
         )}
     >
         {label}
@@ -148,6 +223,7 @@ const RangeSliderWithInputs = ({
     maxLimit,
     step = 0.01,
     unit = "",
+    variant = "default",
 }: {
     label: string;
     value: [number, number];
@@ -156,52 +232,57 @@ const RangeSliderWithInputs = ({
     maxLimit: number;
     step?: number;
     unit?: string;
+    variant?: "default" | "sidebar";
 }) => {
     return (
-        <Card className="p-0  border-none shadow-sm h-full flex flex-col justify-start gap-0">
-            <h4 className="text-sm  font-semibold text-white  bg-primary-purple2  p-2 rounded-t-md">
-                {label}
-            </h4>
-            <div className="px-2 border border-primary-yellow-2 rounded-b-lg w-full h-full flex flex-col gap-3 py-3">
-                <div className="">
-                    <Slider
-                        defaultValue={[minLimit, maxLimit]}
-                        value={[value[0], value[1]]}
-                        min={minLimit}
-                        max={maxLimit}
-                        step={step}
-                        onValueChange={(vals) => onChange([vals[0], vals[1]])}
-                        className=""
-                    />
-                    <div className="flex justify-between text-[10px] text-gray-800 mt-1">
-                        <span>{minLimit}</span>
-                        <span>{maxLimit}</span>
-                    </div>
-                </div>
-
-                <div className="flex gap-2 items-center">
-                    <Input
-                        type="number"
-                        className="h-8 text-xs border-primary-yellow-2 border rounded-lg"
-                        value={value[0]}
-                        onChange={(e) =>
-                            onChange([Number(e.target.value), value[1]])
-                        }
-                        step={step}
-                    />
-                    <span className="text-gray-800 text-xs">To</span>
-                    <Input
-                        type="number"
-                        className="h-8 text-xs border-primary-yellow-2 border rounded-lg"
-                        value={value[1]}
-                        onChange={(e) =>
-                            onChange([value[0], Number(e.target.value)])
-                        }
-                        step={step}
-                    />
+        <DiamondFilterSection
+            title={label}
+            variant={variant}
+            className="flex flex-col gap-3 py-3"
+            wrapperClassName={
+                variant === "default"
+                    ? "h-full flex flex-col justify-start"
+                    : ""
+            }
+        >
+            <div>
+                <Slider
+                    defaultValue={[minLimit, maxLimit]}
+                    value={[value[0], value[1]]}
+                    min={minLimit}
+                    max={maxLimit}
+                    step={step}
+                    onValueChange={(vals) => onChange([vals[0], vals[1]])}
+                    className=""
+                />
+                <div className="flex justify-between text-[10px] text-gray-800 mt-1">
+                    <span>{minLimit}</span>
+                    <span>{maxLimit}</span>
                 </div>
             </div>
-        </Card>
+
+            <div className="flex gap-2 items-center">
+                <Input
+                    type="number"
+                    className="h-8 text-xs border-primary-yellow-2 border rounded-lg"
+                    value={value[0]}
+                    onChange={(e) =>
+                        onChange([Number(e.target.value), value[1]])
+                    }
+                    step={step}
+                />
+                <span className="text-gray-800 text-xs">To</span>
+                <Input
+                    type="number"
+                    className="h-8 text-xs border-primary-yellow-2 border rounded-lg"
+                    value={value[1]}
+                    onChange={(e) =>
+                        onChange([value[0], Number(e.target.value)])
+                    }
+                    step={step}
+                />
+            </div>
+        </DiamondFilterSection>
     );
 };
 
@@ -209,12 +290,13 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
     filters,
     setFilters,
     onReset,
+    variant = "default",
 }) => {
     // Generic toggle helper
     const toggleFilter = <T extends string>(
         currentList: T[],
         item: T,
-        key: keyof FilterState
+        key: keyof FilterState,
     ) => {
         const newList = currentList.includes(item)
             ? currentList.filter((i) => i !== item)
@@ -222,443 +304,448 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
         setFilters((prev) => ({ ...prev, [key]: newList }));
     };
 
+    const ShapesContent = ({ variant }: { variant: boolean }) => {
+        return (
+            <div
+                className={`grid ${variant ? "grid-cols-2  sm:grid-cols-4 " : "grid-cols-5"} gap-2`}
+            >
+                {SHAPES.map((shape) => (
+                    <button
+                        key={shape.value}
+                        onClick={() =>
+                            toggleFilter(filters.shapes, shape.value, "shapes")
+                        }
+                        className={cn(
+                            "flex flex-col items-center justify-center p-2 rounded border transition-colors aspect-square",
+                            filters.shapes.includes(shape.value)
+                                ? "bg-[#d4b98c] text-black border-[#d4b98c] font-medium"
+                                : " border-primary-yellow-2 border",
+                        )}
+                    >
+                        <Image
+                            src={shape.icon}
+                            width={54}
+                            height={54}
+                            alt={shape.label}
+                            className=" aspect-square object-contain "
+                        />
+                    </button>
+                ))}
+            </div>
+        );
+    };
+
+    const caratContent = (
+        <>
+            <Slider
+                value={[filters.caratRange[0], filters.caratRange[1]]}
+                min={0}
+                max={10.99}
+                step={0.01}
+                onValueChange={(vals) =>
+                    setFilters((prev) => ({
+                        ...prev,
+                        caratRange: [vals[0], vals[1]],
+                    }))
+                }
+                className="mb-2"
+            />
+            <div className="flex justify-between text-xs text-stone-800 mb-4">
+                <span>0.00</span>
+                <span>10.99</span>
+            </div>
+
+            <div className="flex gap-2 mb-4">
+                <Input
+                    type="number"
+                    className="h-8 text-xs border-primary-yellow-2 border rounded-lg"
+                    value={filters.caratRange[0]}
+                    onChange={(e) =>
+                        setFilters((prev) => ({
+                            ...prev,
+                            caratRange: [
+                                Number(e.target.value),
+                                prev.caratRange[1],
+                            ],
+                        }))
+                    }
+                />
+                <span className="self-center text-sm text-gray-400">To</span>
+                <Input
+                    type="number"
+                    className="h-8 text-xs border-primary-yellow-2 border rounded-lg"
+                    value={filters.caratRange[1]}
+                    onChange={(e) =>
+                        setFilters((prev) => ({
+                            ...prev,
+                            caratRange: [
+                                prev.caratRange[0],
+                                Number(e.target.value),
+                            ],
+                        }))
+                    }
+                />
+            </div>
+
+            <div className="flex flex-wrap gap-1 mx-auto">
+                {CARAT_RANGES.map((range, idx) => (
+                    <button
+                        key={idx}
+                        onClick={() =>
+                            setFilters((prev) => ({
+                                ...prev,
+                                caratRange: [range.min, range.max],
+                            }))
+                        }
+                        className="px-1 py-0 text-[12px] bg-transparent hover:bg-primary-yellow-2/50  text-gray-700 border-primary-yellow-2/50 border rounded-sm"
+                    >
+                        {range.label}
+                    </button>
+                ))}
+            </div>
+        </>
+    );
+
+    const colorContent = (
+        <div className="flex flex-wrap gap-1">
+            {COLORS.map((color) => (
+                <ToggleButton
+                    key={color}
+                    label={color}
+                    active={filters.colors.includes(color)}
+                    onClick={() =>
+                        toggleFilter(filters.colors, color, "colors")
+                    }
+                    className="w-6 h-5 flex items-center justify-center p-0 border border-primary-yellow-2 "
+                />
+            ))}
+        </div>
+    );
+
+    const clarityContent = (
+        <div className="flex flex-wrap gap-1">
+            {CLARITIES.map((clarity) => (
+                <ToggleButton
+                    key={clarity}
+                    label={clarity}
+                    active={filters.clarities.includes(clarity)}
+                    onClick={() =>
+                        toggleFilter(filters.clarities, clarity, "clarities")
+                    }
+                    className="min-w-[10] text-center border border-primary-yellow-2 px-2 py-1 "
+                />
+            ))}
+        </div>
+    );
+
+    const finishContent = (
+        <div className="space-y-3">
+            <div className="flex justify-center gap-2">
+                <ToggleButton
+                    label="EX+"
+                    active={false}
+                    onClick={() => {
+                        setFilters((prev) => ({
+                            ...prev,
+                            cuts: ["EX"],
+                            symmetry: ["EX"],
+                            polish: ["EX"],
+                        }));
+                    }}
+                    className="px-4 py-2 bg-primary-purple2 text-white border-primary-purple2 hover:bg-primary-purple2/90"
+                />
+                <ToggleButton
+                    label="EX-"
+                    active={false}
+                    onClick={() => {
+                        setFilters((prev) => ({
+                            ...prev,
+                            cuts: ["EX", "VG"],
+                            symmetry: ["EX", "VG"],
+                            polish: ["EX", "VG"],
+                        }));
+                    }}
+                    className="px-4 py-2 bg-primary-purple2 text-white border-primary-purple2 hover:bg-primary-purple2/90"
+                />
+                <ToggleButton
+                    label="VG+"
+                    active={false}
+                    onClick={() => {
+                        setFilters((prev) => ({
+                            ...prev,
+                            cuts: ["VG"],
+                            symmetry: ["VG"],
+                            polish: ["VG"],
+                        }));
+                    }}
+                    className="px-4 py-2 bg-primary-purple2 text-white border-primary-purple2 hover:bg-primary-purple2/90"
+                />
+                <ToggleButton
+                    label="VG-"
+                    active={false}
+                    onClick={() => {
+                        setFilters((prev) => ({
+                            ...prev,
+                            cuts: ["VG", "G"],
+                            symmetry: ["VG", "G"],
+                            polish: ["VG", "G"],
+                        }));
+                    }}
+                    className="px-4 py-2 bg-primary-purple2 text-white border-primary-purple2 hover:bg-primary-purple2/90"
+                />
+            </div>
+            {/* Cut */}
+            <div className="flex items-center gap-2">
+                <span className="w-16 text-sm font-semibold text-white bg-primary-purple2 py-1 px-2 rounded-sm text-center">
+                    Cut
+                </span>
+                <div className="flex flex-1 gap-1">
+                    {CUT_OPTIONS.map((opt) => (
+                        <ToggleButton
+                            key={`cut-${opt}`}
+                            label={opt}
+                            active={filters.cuts.includes(opt)}
+                            onClick={() =>
+                                toggleFilter(filters.cuts, opt, "cuts")
+                            }
+                            className="flex-1 border border-primary-yellow-2"
+                        />
+                    ))}
+                </div>
+            </div>
+
+            {/* Symmetry */}
+            <div className="flex items-center gap-2">
+                <span className="w-16 text-sm font-semibold text-white bg-primary-purple2 py-1 px-2 rounded-sm text-center">
+                    Symm.
+                </span>
+                <div className="flex flex-1 gap-1">
+                    {CUT_OPTIONS.map((opt) => (
+                        <ToggleButton
+                            key={`symm-${opt}`}
+                            label={opt}
+                            active={filters.symmetry.includes(opt)}
+                            onClick={() =>
+                                toggleFilter(filters.symmetry, opt, "symmetry")
+                            }
+                            className="flex-1 border border-primary-yellow-2"
+                        />
+                    ))}
+                </div>
+            </div>
+
+            {/* Polish */}
+            <div className="flex items-center gap-2">
+                <span className="w-16 text-sm font-semibold text-white bg-primary-purple2 py-1 px-2 rounded-sm text-center">
+                    Polish
+                </span>
+                <div className="flex flex-1 gap-1">
+                    {CUT_OPTIONS.map((opt) => (
+                        <ToggleButton
+                            key={`pol-${opt}`}
+                            label={opt}
+                            active={filters.polish.includes(opt)}
+                            onClick={() =>
+                                toggleFilter(filters.polish, opt, "polish")
+                            }
+                            className="flex-1 border border-primary-yellow-2"
+                        />
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+
+    const fluorescenceContent = (
+        <div className="flex flex-wrap gap-1">
+            {FLUORESCENCE_OPTIONS.map((fluor) => (
+                <ToggleButton
+                    key={fluor}
+                    label={fluor}
+                    active={filters.fluorescence.includes(fluor)}
+                    onClick={() =>
+                        toggleFilter(
+                            filters.fluorescence,
+                            fluor,
+                            "fluorescence",
+                        )
+                    }
+                    className="border border-primary-yellow-2"
+                />
+            ))}
+        </div>
+    );
+
+    const labContent = (
+        <div className="flex flex-wrap gap-1">
+            {LAB_OPTIONS.map((lab) => (
+                <ToggleButton
+                    key={lab}
+                    label={lab}
+                    active={filters.lab.includes(lab)}
+                    onClick={() => toggleFilter(filters.lab, lab, "lab")}
+                    className="min-w-[12] border border-primary-yellow-2 rounded-sm"
+                />
+            ))}
+        </div>
+    );
+
+    // Sliders
+    const sliderGroup = (
+        <>
+            <RangeSliderWithInputs
+                label="Price"
+                value={filters.priceRange}
+                onChange={(val) =>
+                    setFilters((prev) => ({ ...prev, priceRange: val }))
+                }
+                minLimit={0}
+                maxLimit={1000000}
+                step={100}
+                variant={variant}
+            />
+
+            <RangeSliderWithInputs
+                label="Length"
+                value={filters.lengthRange}
+                onChange={(val) =>
+                    setFilters((prev) => ({
+                        ...prev,
+                        lengthRange: val,
+                    }))
+                }
+                minLimit={0}
+                maxLimit={20}
+                variant={variant}
+            />
+
+            <RangeSliderWithInputs
+                label="Width"
+                value={filters.widthRange}
+                onChange={(val) =>
+                    setFilters((prev) => ({ ...prev, widthRange: val }))
+                }
+                minLimit={0}
+                maxLimit={20}
+                variant={variant}
+            />
+
+            <RangeSliderWithInputs
+                label="Depth"
+                value={filters.depthRange}
+                onChange={(val) =>
+                    setFilters((prev) => ({ ...prev, depthRange: val }))
+                }
+                minLimit={0}
+                maxLimit={20}
+                variant={variant}
+            />
+
+            <RangeSliderWithInputs
+                label="Depth %"
+                value={filters.depthPercentRange}
+                onChange={(val) =>
+                    setFilters((prev) => ({
+                        ...prev,
+                        depthPercentRange: val,
+                    }))
+                }
+                minLimit={40}
+                maxLimit={90}
+                variant={variant}
+            />
+
+            <RangeSliderWithInputs
+                label="Table %"
+                value={filters.tablePercentRange}
+                onChange={(val) =>
+                    setFilters((prev) => ({
+                        ...prev,
+                        tablePercentRange: val,
+                    }))
+                }
+                minLimit={40}
+                maxLimit={90}
+                variant={variant}
+            />
+        </>
+    );
+
+    if (variant === "sidebar") {
+        return (
+            <div className="w-full bg-white font-lato flex flex-col">
+                <DiamondFilterSection title="Shapes" variant="sidebar">
+                    {<ShapesContent variant={true} />}
+                </DiamondFilterSection>
+                <DiamondFilterSection title="Carat" variant="sidebar">
+                    {caratContent}
+                </DiamondFilterSection>
+                <DiamondFilterSection title="Color" variant="sidebar">
+                    {colorContent}
+                </DiamondFilterSection>
+                <DiamondFilterSection title="Clarity" variant="sidebar">
+                    {clarityContent}
+                </DiamondFilterSection>
+                {/* Finish (Cut, Polish, Symm) */}
+                <DiamondFilterSection title="Finish" variant="sidebar">
+                    {finishContent}
+                </DiamondFilterSection>
+                <DiamondFilterSection title="Fluorescence" variant="sidebar">
+                    {fluorescenceContent}
+                </DiamondFilterSection>
+                <DiamondFilterSection title="Lab" variant="sidebar">
+                    {labContent}
+                </DiamondFilterSection>
+
+                {/* Sliders - RangeSliderWithInputs already returns DiamondFilterSection! 
+                     But in sidebar mode, it returns an accordion item. 
+                     So we can just render them directly.
+                 */}
+                <div className="flex flex-col">{sliderGroup}</div>
+            </div>
+        );
+    }
+
     return (
         <div className="w-full bg-white p-2 rounded-lg font-lato">
             <div className="grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-1 gap-2">
                 {/* --- Left Column (Shapes, Carat, Color) --- */}
                 <div className="lg:col-span-4  flex flex-col gap-2 ">
-                    {/* Shapes */}
-                    <Card className="p-0 overflow-hidden border-none shadow-sm gap-0">
-                        <div className="bg-primary-purple2 text-white p-2 font-semibold text-sm">
-                            Shapes
-                        </div>
-                        <div className="p-3 grid grid-cols-5 gap-2 bg-white border-primary-yellow-2 border rounded-b-lg">
-                            {SHAPES.map((shape) => (
-                                <button
-                                    key={shape.value}
-                                    onClick={() =>
-                                        toggleFilter(
-                                            filters.shapes,
-                                            shape.value,
-                                            "shapes"
-                                        )
-                                    }
-                                    className={cn(
-                                        "flex flex-col items-center justify-center p-2 rounded border transition-colors aspect-square",
-                                        filters.shapes.includes(shape.value)
-                                            ? "bg-[#d4b98c] text-black border-[#d4b98c] font-medium"
-                                            : " border-primary-yellow-2 border"
-                                    )}
-                                >
-                                    <Image
-                                        src={shape.icon}
-                                        width={54}
-                                        height={54}
-                                        alt={shape.label}
-                                        className=" aspect-square object-contain "
-                                    />
-                                    {/* <span className="text-[9px] uppercase">
-                                        {shape.label}
-                                    </span> */}
-                                </button>
-                            ))}
-                        </div>
-                    </Card>
+                    <DiamondFilterSection title="Shapes">
+                        {<ShapesContent variant={false} />}
+                    </DiamondFilterSection>
 
-                    {/* Carat */}
-                    <Card className="p-0 overflow-hidden border-none shadow-sm">
-                        <div className="bg-primary-purple2 text-white p-2 font-semibold text-sm">
-                            Carat
-                        </div>
-                        <div className="p-2 py-3 bg-white border-primary-yellow-2 border rounded-b-lg">
-                            <Slider
-                                value={[
-                                    filters.caratRange[0],
-                                    filters.caratRange[1],
-                                ]}
-                                min={0}
-                                max={10.99}
-                                step={0.01}
-                                onValueChange={(vals) =>
-                                    setFilters((prev) => ({
-                                        ...prev,
-                                        caratRange: [vals[0], vals[1]],
-                                    }))
-                                }
-                                className="mb-2"
-                            />
-                            <div className="flex justify-between text-xs text-stone-800 mb-4">
-                                <span>0.00</span>
-                                <span>10.99</span>
-                            </div>
+                    <DiamondFilterSection title="Carat">
+                        {caratContent}
+                    </DiamondFilterSection>
 
-                            <div className="flex gap-2 mb-4">
-                                <Input
-                                    type="number"
-                                    className="h-8 text-xs border-primary-yellow-2 border rounded-lg"
-                                    value={filters.caratRange[0]}
-                                    onChange={(e) =>
-                                        setFilters((prev) => ({
-                                            ...prev,
-                                            caratRange: [
-                                                Number(e.target.value),
-                                                prev.caratRange[1],
-                                            ],
-                                        }))
-                                    }
-                                />
-                                <span className="self-center text-sm text-gray-400">
-                                    To
-                                </span>
-                                <Input
-                                    type="number"
-                                    className="h-8 text-xs border-primary-yellow-2 border rounded-lg"
-                                    value={filters.caratRange[1]}
-                                    onChange={(e) =>
-                                        setFilters((prev) => ({
-                                            ...prev,
-                                            caratRange: [
-                                                prev.caratRange[0],
-                                                Number(e.target.value),
-                                            ],
-                                        }))
-                                    }
-                                />
-                            </div>
-
-                            <div className="flex flex-wrap gap-1 mx-auto">
-                                {CARAT_RANGES.map((range, idx) => (
-                                    <button
-                                        key={idx}
-                                        onClick={() =>
-                                            setFilters((prev) => ({
-                                                ...prev,
-                                                caratRange: [
-                                                    range.min,
-                                                    range.max,
-                                                ],
-                                            }))
-                                        }
-                                        className="px-1 py-0 text-[12px] bg-transparent hover:bg-primary-yellow-2/50  text-gray-700 border-primary-yellow-2/50 border rounded-sm"
-                                    >
-                                        {range.label}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    </Card>
-
-                    {/* Color */}
-                    <Card className="p-0 overflow-hidden border-none shadow-sm">
-                        <div className="bg-primary-purple2 text-white p-2 font-semibold text-sm ">
-                            Color
-                        </div>
-                        <div className="p-3 bg-white flex flex-wrap gap-1 border-primary-yellow-2 border rounded-b-lg">
-                            {COLORS.map((color) => (
-                                <ToggleButton
-                                    key={color}
-                                    label={color}
-                                    active={filters.colors.includes(color)}
-                                    onClick={() =>
-                                        toggleFilter(
-                                            filters.colors,
-                                            color,
-                                            "colors"
-                                        )
-                                    }
-                                    className="w-6 h-5 flex items-center justify-center p-0 border border-primary-yellow-2 "
-                                />
-                            ))}
-                        </div>
-                    </Card>
+                    <DiamondFilterSection title="Color">
+                        {colorContent}
+                    </DiamondFilterSection>
                 </div>
 
                 {/* --- Middle Column (Clarity, Finish, Fluorescence, Lab) --- */}
                 <div className="lg:col-span-4  flex flex-col gap-2">
-                    {/* Clarity */}
-                    <Card className="p-0 overflow-hidden border-none shadow-sm">
-                        <div className="bg-primary-purple2 text-white p-2 font-semibold text-sm">
-                            Clarity
-                        </div>
-                        <div className="p-3 bg-white flex flex-wrap gap-1 border border-primary-yellow-2 rounded-b-lg">
-                            {CLARITIES.map((clarity) => (
-                                <ToggleButton
-                                    key={clarity}
-                                    label={clarity}
-                                    active={filters.clarities.includes(clarity)}
-                                    onClick={() =>
-                                        toggleFilter(
-                                            filters.clarities,
-                                            clarity,
-                                            "clarities"
-                                        )
-                                    }
-                                    className="min-w-[10] text-center border border-primary-yellow-2 px-2 py-1 "
-                                />
-                            ))}
-                        </div>
-                    </Card>
+                    <DiamondFilterSection title="Clarity">
+                        {clarityContent}
+                    </DiamondFilterSection>
 
-                    {/* Finish */}
-                    <Card className="p-0 overflow-hidden border-none shadow-sm">
-                        <div className="bg-primary-purple2 text-white p-2 font-semibold text-sm">
-                            Finish
-                        </div>
-                        <div className="px-3 py-3 bg-white space-y-3 border border-primary-yellow-2 rounded-b-lg">
-                            <div className="flex justify-center gap-2">
-                                <ToggleButton
-                                    label="EX+"
-                                    active={false}
-                                    onClick={() => {
-                                        // Handle EX+ click
-                                        setFilters((prev) => ({
-                                            ...prev,
-                                            cuts: ["EX"],
-                                            symmetry: ["EX"],
-                                            polish: ["EX"],
-                                        }));
-                                    }}
-                                    className="px-4 py-2 bg-primary-purple2 text-white border-primary-purple2 hover:bg-primary-purple2/90"
-                                />
-                                <ToggleButton
-                                    label="EX-"
-                                    active={false}
-                                    onClick={() => {
-                                        // Handle EX- click
-                                        setFilters((prev) => ({
-                                            ...prev,
-                                            cuts: ["EX", "VG"],
-                                            symmetry: ["EX", "VG"],
-                                            polish: ["EX", "VG"],
-                                        }));
-                                    }}
-                                    className="px-4 py-2 bg-primary-purple2 text-white border-primary-purple2 hover:bg-primary-purple2/90"
-                                />
-                                <ToggleButton
-                                    label="VG+"
-                                    active={false}
-                                    onClick={() => {
-                                        // Handle VG+ click
-                                        setFilters((prev) => ({
-                                            ...prev,
-                                            cuts: ["VG"],
-                                            symmetry: ["VG"],
-                                            polish: ["VG"],
-                                        }));
-                                    }}
-                                    className="px-4 py-2 bg-primary-purple2 text-white border-primary-purple2 hover:bg-primary-purple2/90"
-                                />
-                                <ToggleButton
-                                    label="VG-"
-                                    active={false}
-                                    onClick={() => {
-                                        // Handle VG- click
-                                        setFilters((prev) => ({
-                                            ...prev,
-                                            cuts: ["VG", "G"],
-                                            symmetry: ["VG", "G"],
-                                            polish: ["VG", "G"],
-                                        }));
-                                    }}
-                                    className="px-4 py-2 bg-primary-purple2 text-white border-primary-purple2 hover:bg-primary-purple2/90"
-                                />
-                            </div>
-                            {/* Cut */}
-                            <div className="flex items-center gap-2">
-                                <span className="w-16 text-sm font-semibold text-white bg-primary-purple2 py-1 px-2 rounded-sm text-center">
-                                    Cut
-                                </span>
-                                <div className="flex flex-1 gap-1">
-                                    {CUT_OPTIONS.map((opt) => (
-                                        <ToggleButton
-                                            key={`cut-${opt}`}
-                                            label={opt}
-                                            active={filters.cuts.includes(opt)}
-                                            onClick={() =>
-                                                toggleFilter(
-                                                    filters.cuts,
-                                                    opt,
-                                                    "cuts"
-                                                )
-                                            }
-                                            className="flex-1 border border-primary-yellow-2"
-                                        />
-                                    ))}
-                                </div>
-                            </div>
+                    <DiamondFilterSection title="Finish">
+                        {finishContent}
+                    </DiamondFilterSection>
 
-                            {/* Symmetry */}
-                            <div className="flex items-center gap-2">
-                                <span className="w-16 text-sm font-semibold text-white bg-primary-purple2 py-1 px-2 rounded-sm text-center">
-                                    Symm.
-                                </span>
-                                <div className="flex flex-1 gap-1">
-                                    {CUT_OPTIONS.map((opt) => (
-                                        <ToggleButton
-                                            key={`symm-${opt}`}
-                                            label={opt}
-                                            active={filters.symmetry.includes(
-                                                opt
-                                            )}
-                                            onClick={() =>
-                                                toggleFilter(
-                                                    filters.symmetry,
-                                                    opt,
-                                                    "symmetry"
-                                                )
-                                            }
-                                            className="flex-1 border border-primary-yellow-2"
-                                        />
-                                    ))}
-                                </div>
-                            </div>
+                    <DiamondFilterSection title="Fluorescence">
+                        {fluorescenceContent}
+                    </DiamondFilterSection>
 
-                            {/* Polish */}
-                            <div className="flex items-center gap-2">
-                                <span className="w-16 text-sm font-semibold text-white bg-primary-purple2 py-1 px-2 rounded-sm text-center">
-                                    Polish
-                                </span>
-                                <div className="flex flex-1 gap-1">
-                                    {CUT_OPTIONS.map((opt) => (
-                                        <ToggleButton
-                                            key={`pol-${opt}`}
-                                            label={opt}
-                                            active={filters.polish.includes(
-                                                opt
-                                            )}
-                                            onClick={() =>
-                                                toggleFilter(
-                                                    filters.polish,
-                                                    opt,
-                                                    "polish"
-                                                )
-                                            }
-                                            className="flex-1 border border-primary-yellow-2"
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </Card>
-
-                    {/* Fluorescence */}
-                    <Card className="p-0 overflow-hidden border-none shadow-sm">
-                        <div className="bg-primary-purple2 text-white p-2 font-semibold text-sm">
-                            Fluorescence
-                        </div>
-                        <div className="p-3 bg-white flex flex-wrap gap-1 border border-primary-yellow-2 rounded-b-lg">
-                            {FLUORESCENCE_OPTIONS.map((fluor) => (
-                                <ToggleButton
-                                    key={fluor}
-                                    label={fluor}
-                                    active={filters.fluorescence.includes(
-                                        fluor
-                                    )}
-                                    onClick={() =>
-                                        toggleFilter(
-                                            filters.fluorescence,
-                                            fluor,
-                                            "fluorescence"
-                                        )
-                                    }
-                                    className="border border-primary-yellow-2"
-                                />
-                            ))}
-                        </div>
-                    </Card>
-
-                    {/* Lab */}
-                    <Card className="p-0 overflow-hidden border-none shadow-sm">
-                        <div className="bg-primary-purple2 text-white p-2 font-semibold text-sm">
-                            Lab
-                        </div>
-                        <div className="p-3 bg-white flex flex-wrap gap-1 border border-primary-yellow-2 rounded-b-lg">
-                            {LAB_OPTIONS.map((lab) => (
-                                <ToggleButton
-                                    key={lab}
-                                    label={lab}
-                                    active={filters.lab.includes(lab)}
-                                    onClick={() =>
-                                        toggleFilter(filters.lab, lab, "lab")
-                                    }
-                                    className="min-w-[12] border border-primary-yellow-2 rounded-sm"
-                                />
-                            ))}
-                        </div>
-                    </Card>
+                    <DiamondFilterSection title="Lab">
+                        {labContent}
+                    </DiamondFilterSection>
                 </div>
 
                 {/* --- Right Column (Price & Measurements) --- */}
                 <div className="lg:col-span-4 grid grid-cols-2 gap-2">
-                    <RangeSliderWithInputs
-                        label="Price"
-                        value={filters.priceRange}
-                        onChange={(val) =>
-                            setFilters((prev) => ({ ...prev, priceRange: val }))
-                        }
-                        minLimit={0}
-                        maxLimit={1000000}
-                        step={100}
-                    />
-
-                    <RangeSliderWithInputs
-                        label="Length"
-                        value={filters.lengthRange}
-                        onChange={(val) =>
-                            setFilters((prev) => ({
-                                ...prev,
-                                lengthRange: val,
-                            }))
-                        }
-                        minLimit={0}
-                        maxLimit={20}
-                    />
-
-                    <RangeSliderWithInputs
-                        label="Width"
-                        value={filters.widthRange}
-                        onChange={(val) =>
-                            setFilters((prev) => ({ ...prev, widthRange: val }))
-                        }
-                        minLimit={0}
-                        maxLimit={20}
-                    />
-
-                    <RangeSliderWithInputs
-                        label="Depth"
-                        value={filters.depthRange}
-                        onChange={(val) =>
-                            setFilters((prev) => ({ ...prev, depthRange: val }))
-                        }
-                        minLimit={0}
-                        maxLimit={20}
-                    />
-
-                    <RangeSliderWithInputs
-                        label="Depth %"
-                        value={filters.depthPercentRange}
-                        onChange={(val) =>
-                            setFilters((prev) => ({
-                                ...prev,
-                                depthPercentRange: val,
-                            }))
-                        }
-                        minLimit={40}
-                        maxLimit={90}
-                    />
-
-                    <RangeSliderWithInputs
-                        label="Table %"
-                        value={filters.tablePercentRange}
-                        onChange={(val) =>
-                            setFilters((prev) => ({
-                                ...prev,
-                                tablePercentRange: val,
-                            }))
-                        }
-                        minLimit={40}
-                        maxLimit={90}
-                    />
+                    {sliderGroup}
                 </div>
             </div>
 

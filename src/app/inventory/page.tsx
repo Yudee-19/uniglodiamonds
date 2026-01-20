@@ -1,6 +1,16 @@
 "use client";
 import React, { useState, useEffect, useCallback, Suspense } from "react";
-import { List, LayoutGrid } from "lucide-react";
+import {
+    List,
+    LayoutGrid,
+    Filter,
+    X,
+    Search, // New
+    RotateCcw, // New (for Reset)
+    ShoppingCart, // New (for Cart)
+    Hand, // New (for Inquiry/Hand icon)
+    GitCompare,
+} from "lucide-react";
 import DataTable from "@/components/ui/table";
 import DiamondGrid from "@/components/ui/diamondGrid";
 import TablePagination from "@/components/ui/tablePagination";
@@ -41,13 +51,14 @@ function InventoryContent() {
     // Pagination & Sort State
     const [page, setPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(25);
-    const [sortBy, setSortBy] = useState("weight");
+    const [sortBy, setSortBy] = useState("createdAt");
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
     // State for selected diamonds
     // const [selectedDiamondIds, setSelectedDiamondIds] = useState<string[]>([]);
     const [selectedDiamonds, setSelectedDiamonds] = useState<Diamond[]>([]);
     const [addingToCart, setAddingToCart] = useState(false);
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
 
     // Filter State
     const [filterState, setFilterState] = useState({
@@ -214,7 +225,7 @@ function InventoryContent() {
                 setLoading(false);
             }
         },
-        [page, rowsPerPage, sortBy, sortOrder, filterState, viewId]
+        [page, rowsPerPage, sortBy, sortOrder, filterState, viewId],
     );
 
     // Auto-load data whenever filters, pagination, or sorting changes
@@ -324,15 +335,103 @@ function InventoryContent() {
                     </Button>
                 </div>
             </div>
-            <DiamondFilters
-                filters={filterState}
-                setFilters={setFilterState}
-                onReset={handleReset}
-            />
-            <div className="w-full bg-white rounded-lg px-2 py-1">
+            <div className="hidden lg:block">
+                <DiamondFilters
+                    filters={filterState}
+                    setFilters={setFilterState}
+                    onReset={handleReset}
+                />
+            </div>
+            {/* mobile actions row */}
+            <div className="flex lg:hidden items-center justify-between gap-2 bg-white p-2 rounded-lg mb-4 shadow-sm">
+                {/* 1. View Toggle (List/Grid) */}
+                <button
+                    onClick={() => setView(view === "list" ? "grid" : "list")}
+                    className="p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                    {view === "list" ? (
+                        <LayoutGrid size={20} />
+                    ) : (
+                        <List size={20} />
+                    )}
+                </button>
+
+                {/* 2. Search Bar */}
+                <div className="flex-1 relative min-w-20">
+                    <Input
+                        type="text"
+                        placeholder="Diamond ID"
+                        className="h-10 w-full rounded-full bg-gray-50 border-gray-200 pl-4 pr-10 text-sm focus-visible:ring-1 focus-visible:ring-primary-purple2"
+                    />
+                    <button className="absolute right-1 top-1/2 -translate-y-1/2 p-1.5 bg-black text-white rounded-full hover:bg-gray-800 transition-colors">
+                        <Search size={14} />
+                    </button>
+                </div>
+
+                {/* 3. Action Icons Group */}
+                <div className="flex items-center gap-1.5">
+                    {/* Reset */}
+                    <button
+                        onClick={handleReset}
+                        className="p-2 text-gray-500 hover:bg-gray-100 rounded-full border border-gray-100 bg-white"
+                        title="Reset Filters"
+                    >
+                        <RotateCcw size={18} />
+                    </button>
+
+                    {/* Cart */}
+                    <button
+                        onClick={handleAddToCart}
+                        className={`p-2 rounded-full border border-gray-100 bg-gray-100 ${
+                            selectedDiamonds.length > 0
+                                ? "text-primary-purple2 bg-purple-50"
+                                : "text-gray-500"
+                        }`}
+                    >
+                        <ShoppingCart size={18} />
+                    </button>
+
+                    {/* Hand / Inquiry (Visual match for image) */}
+                    <button
+                        className="p-2 text-gray-500 bg-gray-200 hover:bg-gray-300 rounded-full"
+                        title="Inquiry"
+                    >
+                        <Hand size={18} />
+                    </button>
+
+                    {/* Compare / Transfer (Visual match for image) */}
+                    <button
+                        onClick={handleCompare}
+                        className="p-2 text-gray-500 bg-gray-200 hover:bg-gray-300 rounded-full"
+                        title="Compare"
+                    >
+                        <GitCompare size={18} />
+                    </button>
+
+                    {/* Filter (Solid Black) */}
+                    <button
+                        onClick={() => setIsFilterOpen(!isFilterOpen)}
+                        className={`p-2 rounded-full text-white transition-colors ${
+                            hasActiveFilters()
+                                ? "bg-primary-purple2"
+                                : "bg-black hover:bg-gray-800"
+                        }`}
+                    >
+                        <Filter size={18} />
+                    </button>
+                </div>
+            </div>
+            {/* Laptop Actions Row */}
+            <div className="w-full hidden lg:block bg-white rounded-lg px-2 py-1">
                 <div className="flex items-center justify-between gap-4">
                     {/* Left side - Action buttons */}
                     <div className="flex items-center gap-1">
+                        <button
+                            className="lg:hidden p-1.5 rounded-sm border border-gray-200  "
+                            onClick={() => setIsFilterOpen((prev) => !prev)}
+                        >
+                            <Filter size={15} />
+                        </button>
                         {/* List/Grid toggle buttons */}
                         <div className="flex items-center gap-0 rounded-md border border-gray-200 bg-white  w-fit">
                             {/* List View Button */}
@@ -414,48 +513,79 @@ function InventoryContent() {
             {/* 2. TABLE CARD */}
             <Card className="shadow-md rounded-lg overflow-hidden bg-white p-0 border-none">
                 <CardContent className="p-0">
-                    {loading ? (
-                        <div className="p-4">
-                            <ShimmerTable
-                                rowCount={rowsPerPage}
-                                columnCount={12}
-                            />
-                        </div>
-                    ) : (
-                        <div className="w-full overflow-x-auto">
-                            {data.length > 0 ? (
-                                view === "grid" ? (
-                                    <DiamondGrid
-                                        data={data}
-                                        onViewDetails={handleViewDetails}
-                                    />
-                                ) : (
-                                    <DataTable
-                                        data={data}
-                                        columns={getDiamondColumns(
-                                            handleViewDetails
-                                        )}
-                                        columnStyles={{
-                                            weight: "font-bold",
-                                        }}
-                                        enableSelection={true}
-                                        selectedDiamonds={selectedDiamonds}
-                                        onSelectionChange={setSelectedDiamonds}
-                                    />
-                                )
-                            ) : (
-                                <div className="text-center py-12 text-gray-500">
-                                    <p className="text-lg font-medium">
-                                        No diamonds found
-                                    </p>
-                                    <p className="text-sm mt-2">
-                                        Try adjusting your filters or search
-                                        criteria
-                                    </p>
+                    <div className="w-full max-h-100vh overflow-x-auto flex overflow-y-scroll ">
+                        {/* Move sidebar outside the loading condition */}
+                        {isFilterOpen && (
+                            <div className="-50 flex lg:hidden">
+                                <div
+                                    className=" bg-black/50 backdrop-blur-sm transition-opacity"
+                                    onClick={() => setIsFilterOpen(false)}
+                                />
+                                <div className="relative w-[300px] max-w-[40vw] rounded-lg h-full  shadow-xl flex flex-col animate-in slide-in-from-left slide-out-to-right duration-200">
+                                    <div className="px-4 py-2 border-b flex items-center justify-between bg-primary-purple2 text-white rounded-t-md">
+                                        <span className="font-semibold">
+                                            Filters
+                                        </span>
+                                        <button
+                                            onClick={() =>
+                                                setIsFilterOpen(false)
+                                            }
+                                        >
+                                            <X className="h-5 w-5" />
+                                        </button>
+                                    </div>
+                                    <div className="flex-1 overflow-y-auto">
+                                        <DiamondFilters
+                                            filters={filterState}
+                                            setFilters={setFilterState}
+                                            onReset={handleReset}
+                                            variant="sidebar"
+                                        />
+                                    </div>
                                 </div>
-                            )}
-                        </div>
-                    )}
+                            </div>
+                        )}
+
+                        {/* Loading state only affects table/grid content */}
+                        {loading ? (
+                            <div className="w-full p-4">
+                                <ShimmerTable
+                                    rowCount={rowsPerPage}
+                                    columnCount={12}
+                                />
+                            </div>
+                        ) : data.length > 0 ? (
+                            view === "grid" ? (
+                                <DiamondGrid
+                                    data={data}
+                                    onViewDetails={handleViewDetails}
+                                />
+                            ) : (
+                                <DataTable
+                                    data={data}
+                                    columns={getDiamondColumns(
+                                        handleViewDetails,
+                                    )}
+                                    columnStyles={{
+                                        weight: "font-bold",
+                                    }}
+                                    enableSelection={true}
+                                    selectedDiamonds={selectedDiamonds}
+                                    onSelectionChange={setSelectedDiamonds}
+                                />
+                            )
+                        ) : (
+                            <div className="text-center py-12 text-gray-500 w-full">
+                                <p className="text-lg font-medium">
+                                    No diamonds found
+                                </p>
+                                <p className="text-sm mt-2">
+                                    Try adjusting your filters or search
+                                    criteria
+                                </p>
+                            </div>
+                        )}
+                    </div>
 
                     {/* 3. PAGINATION */}
                     {!loading && data.length > 0 && (
