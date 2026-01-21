@@ -433,14 +433,6 @@ function InventoryContent() {
                         <ShoppingCart size={18} />
                     </button>
 
-                    {/* Hand / Inquiry (Visual match for image) */}
-                    <button
-                        className="p-2 text-gray-500 bg-gray-200 hover:bg-gray-300 rounded-full"
-                        title="Inquiry"
-                    >
-                        <Hand size={18} />
-                    </button>
-
                     {/* Compare / Transfer (Visual match for image) */}
                     <button
                         onClick={handleCompare}
@@ -512,9 +504,7 @@ function InventoryContent() {
                         <Button variant="outline" className="text-sm">
                             Advanced Filters
                         </Button>
-                        <Button variant="outline" className="text-sm">
-                            Inquiry
-                        </Button>
+
                         <Button
                             variant="outline"
                             className="text-sm"

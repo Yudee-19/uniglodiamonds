@@ -1,5 +1,5 @@
 // components/inventory/DiamondFilters.tsx
-import React from "react";
+import React, { useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -304,36 +304,43 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
         setFilters((prev) => ({ ...prev, [key]: newList }));
     };
 
-    const ShapesContent = ({ variant }: { variant: boolean }) => {
-        return (
-            <div
-                className={`grid ${variant ? "grid-cols-2  sm:grid-cols-4 " : "grid-cols-5"} gap-2`}
-            >
-                {SHAPES.map((shape) => (
-                    <button
-                        key={shape.value}
-                        onClick={() =>
-                            toggleFilter(filters.shapes, shape.value, "shapes")
-                        }
-                        className={cn(
-                            "flex flex-col items-center justify-center p-2 rounded border transition-colors aspect-square",
-                            filters.shapes.includes(shape.value)
-                                ? "bg-[#d4b98c] text-black border-[#d4b98c] font-medium"
-                                : " border-primary-yellow-2 border",
-                        )}
-                    >
-                        <Image
-                            src={shape.icon}
-                            width={54}
-                            height={54}
-                            alt={shape.label}
-                            className=" aspect-square object-contain "
-                        />
-                    </button>
-                ))}
-            </div>
-        );
-    };
+    const ShapesContent = useCallback(
+        ({ variant }: { variant: boolean }) => {
+            return (
+                <div
+                    className={`grid ${variant ? "grid-cols-2  sm:grid-cols-4 " : "grid-cols-5"} gap-2`}
+                >
+                    {SHAPES.map((shape) => (
+                        <button
+                            key={shape.value}
+                            onClick={() =>
+                                toggleFilter(
+                                    filters.shapes,
+                                    shape.value,
+                                    "shapes",
+                                )
+                            }
+                            className={cn(
+                                "flex flex-col items-center justify-center p-2 rounded border transition-colors aspect-square",
+                                filters.shapes.includes(shape.value)
+                                    ? "bg-[#d4b98c] text-black border-[#d4b98c] font-medium"
+                                    : " border-primary-yellow-2 border",
+                            )}
+                        >
+                            <Image
+                                src={shape.icon}
+                                width={54}
+                                height={54}
+                                alt={shape.label}
+                                className=" aspect-square object-contain "
+                            />
+                        </button>
+                    ))}
+                </div>
+            );
+        },
+        [filters.shapes],
+    );
 
     const caratContent = (
         <>

@@ -16,8 +16,10 @@ import {
     Star,
     Loader2,
     Clock,
+    MessageSquare,
 } from "lucide-react";
 import { addToCart, holdDiamond } from "@/services/cartService";
+import { createDiamondInquiry } from "@/services/inquiryService";
 import { toast } from "sonner";
 import {
     AlertDialog,
@@ -31,6 +33,16 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 interface DiamondDetailViewProps {
     diamondId: string;
@@ -49,6 +61,11 @@ export default function DiamondDetailView({
     const [holdLoading, setHoldLoading] = useState(false);
     const [cartLoading, setCartLoading] = useState(false);
     const [showHoldDialog, setShowHoldDialog] = useState(false);
+
+    // Inquiry states
+    const [showInquiryDialog, setShowInquiryDialog] = useState(false);
+    const [inquiryText, setInquiryText] = useState("");
+    const [inquiryLoading, setInquiryLoading] = useState(false);
 
     useEffect(() => {
         const loadDiamond = async () => {
@@ -103,6 +120,33 @@ export default function DiamondDetailView({
             toast.error(error || "Failed to add diamond to cart");
         } finally {
             setCartLoading(false);
+        }
+    };
+
+    const handleSubmitInquiry = async () => {
+        if (!diamond?.stockRef) {
+            toast.error("Stock reference not available");
+            return;
+        }
+
+        if (!inquiryText.trim()) {
+            toast.error("Please enter your inquiry");
+            return;
+        }
+
+        try {
+            setInquiryLoading(true);
+            const response = await createDiamondInquiry({
+                stockRef: diamond.stockRef,
+                query: inquiryText,
+            });
+            toast.success(response.message || "Inquiry submitted successfully");
+            setShowInquiryDialog(false);
+            setInquiryText(""); // Clear the textarea
+        } catch (error: any) {
+            toast.error(error || "Failed to submit inquiry");
+        } finally {
+            setInquiryLoading(false);
         }
     };
 
@@ -338,12 +382,74 @@ export default function DiamondDetailView({
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                            <Button className="flex-1 h-12  text-white font-semibold uppercase  border-none gold-reveal-btn  font-cormorantGaramond disabled:opacity-50">
-                                <span className="flex items-center gap-2">
-                                    Enquiry
-                                </span>
-                            </Button>
+                            {/* Inquiry Dialog */}
+                            <Dialog
+                                open={showInquiryDialog}
+                                onOpenChange={setShowInquiryDialog}
+                            >
+                                <DialogTrigger asChild>
+                                    <Button className="flex-1 h-12  text-white font-semibold uppercase  border-none gold-reveal-btn  font-cormorantGaramond disabled:opacity-50">
+                                        <span className="flex items-center gap-2">
+                                            <MessageSquare className="w-4 h-4" />
+                                            Enquiry
+                                        </span>
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>
+                                            Diamond Inquiry
+                                        </DialogTitle>
+                                        <DialogDescription>
+                                            Submit your inquiry about this
+                                            diamond. Stock Ref:{" "}
+                                            {diamond.stockRef}
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="py-4">
+                                        <Textarea
+                                            placeholder="Type your inquiry here... (e.g., Is this diamond available for immediate purchase?)"
+                                            value={inquiryText}
+                                            onChange={(e) =>
+                                                setInquiryText(e.target.value)
+                                            }
+                                            rows={6}
+                                            className="resize-none"
+                                        />
+                                    </div>
+                                    <DialogFooter>
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => {
+                                                setShowInquiryDialog(false);
+                                                setInquiryText("");
+                                            }}
+                                            disabled={inquiryLoading}
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            onClick={handleSubmitInquiry}
+                                            disabled={
+                                                inquiryLoading ||
+                                                !inquiryText.trim()
+                                            }
+                                            className="rounded-sm"
+                                        >
+                                            {inquiryLoading ? (
+                                                <>
+                                                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                                                    Sending...
+                                                </>
+                                            ) : (
+                                                "Send Enquiry"
+                                            )}
+                                        </Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
 
+                            {/* Hold Diamond AlertDialog */}
                             <AlertDialog
                                 open={showHoldDialog}
                                 onOpenChange={setShowHoldDialog}
@@ -401,6 +507,7 @@ export default function DiamondDetailView({
                                 </AlertDialogContent>
                             </AlertDialog>
 
+                            {/* Add to Cart Button */}
                             <Button
                                 className="flex-1 h-12  text-white font-semibold uppercase  border-none gold-reveal-btn  font-cormorantGaramond disabled:opacity-50"
                                 onClick={handleAddToCart}
