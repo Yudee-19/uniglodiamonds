@@ -31,16 +31,16 @@ import { useAuth } from "@/context/AuthContext";
 
 const NAV_LINKS = [
     { name: "About", href: "/about" },
-    {
-        name: "Buy Diamonds",
-        href: "#",
-        hasDropdown: true,
-        submenuItems: [
-            { name: "Round Cut", href: "#" },
-            { name: "Princess Cut", href: "#" },
-            { name: "Oval Cut", href: "#" },
-        ],
-    },
+    // {
+    //     name: "Buy Diamonds",
+    //     href: "#",
+    //     hasDropdown: true,
+    //     submenuItems: [
+    //         { name: "Round Cut", href: "#" },
+    //         { name: "Princess Cut", href: "#" },
+    //         { name: "Oval Cut", href: "#" },
+    //     ],
+    // },
     { name: "Sell Diamonds", href: "/sell-your-diamonds" },
     {
         name: "Services",
@@ -81,16 +81,16 @@ const NAV_LINKS = [
         ],
     },
     { name: "Blog", href: "/blogs" },
-    {
-        name: "Guides",
-        href: "#",
-        hasDropdown: true,
-        submenuItems: [
-            { name: "Investment Guide", href: "#" },
-            { name: "Buying Guide", href: "#" },
-            { name: "Size Guide", href: "#" },
-        ],
-    },
+    // {
+    //     name: "Guides",
+    //     href: "#",
+    //     hasDropdown: true,
+    //     submenuItems: [
+    //         { name: "Investment Guide", href: "#" },
+    //         { name: "Buying Guide", href: "#" },
+    //         { name: "Size Guide", href: "#" },
+    //     ],
+    // },
 ];
 
 const ADMIN_NAV_LINKS = [

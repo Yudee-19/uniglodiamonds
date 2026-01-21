@@ -7,7 +7,7 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel";
-import banner1 from "@/assets/Banner-01.jpg";
+import banner1 from "@/assets/Banner-1.jpeg";
 import banner2 from "@/assets/Banner-02.jpg";
 import Autoplay from "embla-carousel-autoplay";
 import { Button } from "@/components/ui/button";
@@ -209,7 +209,7 @@ export default function Home() {
                                     </span>
                                 </div>
                             </div>
-                            <div className="absolute  bottom-12 md:bottom-70 right-20  z-20">
+                            <div className="absolute  bottom-12 md:bottom-10 right-20  z-20">
                                 <Button
                                     className="purple-reveal-btn px-10 py-8 font-cormorantGaramond text-xl uppercase"
                                     size="lg"
