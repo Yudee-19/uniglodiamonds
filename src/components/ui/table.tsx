@@ -2,6 +2,11 @@ import React, { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Diamond } from "@/interface/diamondInterface";
 import { Column } from "@/components/columns/DiamondColumns";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface DataTableProps<T extends { _id: string }> {
     data: Diamond[];
@@ -51,26 +56,57 @@ function DataTable<T extends { _id: string }>({
         updateSelection(newSelection);
     };
 
+    const getCellContent = (col: Column<T>, row: Diamond) => {
+        if (col.render) {
+            return col.render(row);
+        }
+        const value = row[col.key as keyof Diamond];
+
+        // Handle empty/null/undefined values
+        if (value === null || value === undefined || value === "") {
+            return <span className="text-gray-800">N/A</span>;
+        }
+
+        return value as React.ReactNode;
+    };
+
+    const getTextContent = (content: React.ReactNode): string => {
+        if (typeof content === "string") return content;
+        if (typeof content === "number") return content.toString();
+        if (React.isValidElement(content)) {
+            // Cast to an element that specifically has children in its props
+            const element = content as React.ReactElement<{
+                children?: React.ReactNode;
+            }>;
+
+            // Use optional chaining just in case children don't exist
+            return getTextContent(element.props.children);
+        }
+
+        if (Array.isArray(content)) {
+            return content.map(getTextContent).join("");
+        }
+        return "";
+    };
+
     return (
         <div
             className="w-full h-full overflow-auto  rounded "
             data-slot="table-container"
         >
-            <table
-                data-slot="table"
-                className="min-w-[70vh] w-full text-xs text-left"
-            >
-                <thead className="sticky top-0 z-10 bg-gray-200 border-b border-gray-200">
-                    <tr className=" hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors ">
+            <table data-slot="table" className="min-w-[70vh] w-full  text-left">
+                <thead className="sticky top-0 z-10 bg-primary-purple-dark border-b border-gray-200">
+                    <tr className="  data-[state=selected]:bg-muted border-b transition-colors ">
                         {enableSelection && (
-                            <th className="p-2 pl-5  h-10 text-left table-10px align-middle whitespace-nowrap font-semibold text-gray-900">
+                            <th className="p-2 pl-5  h-10 text-left table-10px align-middle whitespace-nowrap font-semibold text-white">
                                 <Checkbox
+                                    className="border-white"
                                     checked={
                                         allSelected
                                             ? true
                                             : someSelected
-                                            ? "indeterminate"
-                                            : false
+                                              ? "indeterminate"
+                                              : false
                                     }
                                     onCheckedChange={toggleSelectAll}
                                 />
@@ -79,10 +115,10 @@ function DataTable<T extends { _id: string }>({
                         {columns.map((col) => (
                             <th
                                 key={col.key.toString()}
-                                className={`p-2 pl-5 h-10 text-left table-10px align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 *:[[role=checkbox]]:translate-y-0.5  text-xs", ${
+                                className={`p-2 pl-5 h-10 text-left table-10px align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 *:[[role=checkbox]]:translate-y-0.5  text-sm", ${
                                     col.key === "id" || col.key === "userId"
-                                        ? "font-bold text-gray-900"
-                                        : "font-semibold text-gray-900"
+                                        ? "font-bold text-white"
+                                        : "font-semibold text-white"
                                 }  cursor-pointer`}
                             >
                                 {col.header}
@@ -98,7 +134,7 @@ function DataTable<T extends { _id: string }>({
                                 colSpan={
                                     columns.length + (enableSelection ? 1 : 0)
                                 }
-                                className="text-center p-4 text-gray-500"
+                                className="text-center  p-4 text-gray-500"
                             >
                                 No data available
                             </td>
@@ -107,7 +143,7 @@ function DataTable<T extends { _id: string }>({
                         data.map((row) => (
                             <tr
                                 key={row._id}
-                                className="hover:bg-gray-50 cursor-pointer bg-white"
+                                className=" cursor-pointer bg-white even:bg-primary-yellow-1/10 transition-colors"
                                 onClick={() => onRowClick?.(row)}
                             >
                                 {enableSelection && (
@@ -120,27 +156,47 @@ function DataTable<T extends { _id: string }>({
                                         />
                                     </td>
                                 )}
-                                {columns.map((col) => (
-                                    <td
-                                        key={col.key.toString()}
-                                        className={`p-2 pl-5 whitespace-nowrap border-b t hover:bg-gray-50 font-lato ${
-                                            col.cellClassName
-                                                ? col.cellClassName(row)
-                                                : ""
-                                        } ${
-                                            columnStyles?.[
-                                                col.key.toString()
-                                            ] || "text-gray-800"
-                                        }`}
-                                        data-slot="table-cell"
-                                    >
-                                        {col.render
-                                            ? col.render(row)
-                                            : (row[
-                                                  col.key as keyof Diamond
-                                              ] as React.ReactNode)}
-                                    </td>
-                                ))}
+                                {columns.map((col) => {
+                                    const cellContent = getCellContent(
+                                        col,
+                                        row,
+                                    );
+                                    const textContent =
+                                        getTextContent(cellContent);
+                                    const shouldShowTooltip =
+                                        textContent.length > 30;
+
+                                    return (
+                                        <td
+                                            key={col.key.toString()}
+                                            className={`p-2 pl-5 whitespace-nowrap border-b t hover:bg-gray-50/60 font-lato ${
+                                                col.cellClassName
+                                                    ? col.cellClassName(row)
+                                                    : ""
+                                            } ${
+                                                columnStyles?.[
+                                                    col.key.toString()
+                                                ] || "text-gray-800 text-sm"
+                                            }`}
+                                            data-slot="table-cell"
+                                        >
+                                            {shouldShowTooltip ? (
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <div className="truncate max-w-[200px]">
+                                                            {cellContent}
+                                                        </div>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        {textContent}
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            ) : (
+                                                cellContent
+                                            )}
+                                        </td>
+                                    );
+                                })}
                             </tr>
                         ))
                     )}

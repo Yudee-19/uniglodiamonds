@@ -23,6 +23,7 @@ import {
     DiamondColor,
     DiamondClarity,
     DiamondCut,
+    DiamondColorType,
 } from "@/interface/diamondInterface";
 import { Card, CardContent } from "@/components/ui/card";
 import ShimmerTable from "@/components/ui/shimmerTable";
@@ -78,6 +79,12 @@ function InventoryContent() {
         depthPercentRange: [40, 90] as [number, number],
         tablePercentRange: [40, 90] as [number, number],
     });
+
+    // New state variables for diamond type and color type
+    const [isNatural, setIsNatural] = useState<boolean | undefined>(true); // Default to Natural
+    const [colorType, setColorType] = useState<DiamondColorType | undefined>(
+        "white",
+    ); // Default to White
 
     // Check if any filters are applied
     const hasActiveFilters = useCallback(() => {
@@ -162,7 +169,7 @@ function InventoryContent() {
                             ? filterState.caratRange[0]
                             : undefined,
                     maxCarat:
-                        filterState.caratRange[1] < 30
+                        filterState.caratRange[1] < 10.99
                             ? filterState.caratRange[1]
                             : undefined,
                     minLength:
@@ -207,6 +214,8 @@ function InventoryContent() {
                             : undefined,
                     sortBy,
                     sortOrder,
+                    isNatural, // Add these new params
+                    colorType, // Add these new params
                 };
 
                 // Use search API if filters are applied, otherwise use regular fetch
@@ -225,7 +234,15 @@ function InventoryContent() {
                 setLoading(false);
             }
         },
-        [page, rowsPerPage, sortBy, sortOrder, filterState, viewId],
+        [
+            page,
+            rowsPerPage,
+            sortBy,
+            sortOrder,
+            filterState,
+            isNatural,
+            colorType,
+        ],
     );
 
     // Auto-load data whenever filters, pagination, or sorting changes
@@ -257,6 +274,8 @@ function InventoryContent() {
         });
         setPage(1);
         setSelectedDiamonds([]); // Clear selection on reset
+        setIsNatural(true); // Reset to Natural
+        setColorType("white"); // Reset to White
     };
 
     const handleCompare = () => {
@@ -312,26 +331,49 @@ function InventoryContent() {
                 <div className="bg-primary-purple2 flex justify-start items-center gap-2">
                     <Button
                         variant={"ghost"}
-                        className="text-white hover:text-white"
+                        onClick={() => setIsNatural(true)}
+                        className={`text-white my-1 rounded-md ml-1 hover:text-white transition-all ${
+                            isNatural === true
+                                ? "border-2 border-primary-yellow-1  font-semibold"
+                                : "hover:bg-white/10"
+                        }`}
                     >
                         Natural Diamonds
                     </Button>
                     <Button
                         variant={"ghost"}
-                        className="text-white hover:text-white"
+                        onClick={() => setIsNatural(false)}
+                        className={`text-white my-1 rounded-md hover:text-white transition-all ${
+                            isNatural === false
+                                ? "border-2 border-primary-yellow-1 font-semibold"
+                                : "hover:bg-white/10"
+                        }`}
                     >
                         Lab Diamonds
                     </Button>
                 </div>
                 <div className="bg-white flex justify-start items-center gap-2">
-                    <Button variant={"ghost"} className="text-black">
+                    <Button
+                        variant={"ghost"}
+                        onClick={() => setColorType("white")}
+                        className={`text-black my-1 rounded-md ml-1 transition-all ${
+                            colorType === "white"
+                                ? "border-2 border-primary-yellow-1 font-semibold"
+                                : "hover:bg-gray-100"
+                        }`}
+                    >
                         White Diamonds
                     </Button>
-                    <Button variant={"ghost"} className="text-black">
+                    <Button
+                        variant={"ghost"}
+                        onClick={() => setColorType("fancy")}
+                        className={`text-black my-1 rounded-md transition-all ${
+                            colorType === "fancy"
+                                ? "border-2 border-primary-yellow-1 font-semibold"
+                                : "hover:bg-gray-100"
+                        }`}
+                    >
                         Fancy Color
-                    </Button>
-                    <Button variant={"ghost"} className="text-black">
-                        Melee Diamonds
                     </Button>
                 </div>
             </div>

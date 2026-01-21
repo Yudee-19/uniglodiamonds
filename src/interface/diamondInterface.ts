@@ -53,7 +53,7 @@ export type DiamondClarity =
 export type DiamondCut = "EX" | "VG" | "G" | "F" | "I" | "NA";
 export type DiamondLab = "GIA" | "IGI" | "HRD" | "OTHERS";
 export type DiamondAvailability = "A" | "M" | "H" | "S"; // Available, Memo, Hold, Sold
-
+export type DiamondColorType = "fancy" | "white";
 export interface Diamond {
     // --- Identity & Meta ---
     _id: string;
@@ -177,6 +177,8 @@ export interface DiamondParams {
     maxTable?: number;
     minDepthPercent?: number;
     maxDepthPercent?: number;
+    isNatural?: boolean;
+    colorType?: DiamondColorType;
 }
 
 // Helper function to get full shape name from code
@@ -203,7 +205,7 @@ export const getShapeFullName = (shapeCode: DiamondShape | string): string => {
 
 // Helper function to get availability status display text
 export const getAvailabilityText = (
-    availability: DiamondAvailability | string
+    availability: DiamondAvailability | string,
 ): string => {
     const availabilityMap: Record<DiamondAvailability, string> = {
         A: "AVAILABLE",
@@ -219,7 +221,7 @@ export const getAvailabilityText = (
 // Helper function to calculate total price
 export const calculateTotalPrice = (
     weight: number,
-    pricePerCts: number
+    pricePerCts: number,
 ): number => {
     return weight * pricePerCts;
 };

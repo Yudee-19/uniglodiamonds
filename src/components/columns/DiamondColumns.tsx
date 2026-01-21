@@ -18,36 +18,113 @@ export interface Column<T> {
 }
 
 export const getDiamondColumns = (
-    onViewDetails: (diamond: Diamond) => void
+    onViewDetails: (diamond: Diamond) => void,
 ): Column<Diamond>[] => [
     {
-        key: "webLink",
-        header: "Image",
+        key: "stockRef",
+        header: "Stock Ref",
         render: (row: Diamond) => (
             <div
-                className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden border cursor-pointer hover:ring-2 hover:ring-primary-purple2 transition-all"
+                className="flex items-center gap-2 cursor-pointer text-primary-purple hover:underline hover:text-primary-yellow-1 font-bold p-0"
                 onClick={() => onViewDetails(row)}
             >
-                <DiamondImage src={row.webLink} showdefault />
+                {row.stockRef}
             </div>
         ),
     },
-    { key: "country", header: "Loc." },
+    {
+        key: "availability",
+        header: "Status",
+        render: (row: Diamond) => {
+            const color =
+                row.availability === "A"
+                    ? "bg-primary-purple text-white"
+                    : row.availability === "S"
+                      ? "bg-red-100 text-red-700"
+                      : "bg-yellow-100 text-primary-purple";
+            return (
+                <Badge className={`${color} text-xs rounded-[2] px-2 py-1`}>
+                    {row.availability ? row.availability : "UNKNOWN"}
+                </Badge>
+            );
+        },
+    },
+
+    // --- Basic Specs ---
+    {
+        key: "shape",
+        header: "Shape",
+        render: (row: Diamond) => getShapeFullName(row.shape),
+    },
     { key: "weight", header: "Carat", cellClassName: () => "font-normal" },
     { key: "color", header: "Color" },
     { key: "clarity", header: "Clarity" },
+    { key: "shade", header: "Shade" },
+
+    // --- Cut & Finish ---
     { key: "cutGrade", header: "Cut" },
-    { key: "fluorescenceIntensity", header: "Fluor" },
-    { key: "lab", header: "Lab" },
+    { key: "polish", header: "Polish" },
+    { key: "symmetry", header: "Symmetry" },
+
+    // --- Fluorescence ---
+    { key: "fluorescenceIntensity", header: "Fluor Intensity" },
+    { key: "fluorescenceColor", header: "Fluor Color" },
+
+    // --- Dimensions & Proportions ---
     {
         key: "measurements",
         header: "Measurement",
         render: (row: Diamond) =>
             row.length && row.width && row.height
                 ? `${row.length.toFixed(2)} x ${row.width.toFixed(
-                      2
+                      2,
                   )} x ${row.height.toFixed(2)}`
                 : row.measurements,
+    },
+    { key: "length", header: "Length" },
+    { key: "width", header: "Width" },
+    { key: "height", header: "Height" },
+    { key: "depthPerc", header: "Depth %" },
+    { key: "tablePerc", header: "Table %" },
+    { key: "crownAngle", header: "Crown Angle" },
+    { key: "crownHeight", header: "Crown Height" },
+    { key: "pavalionAngle", header: "Pavilion Angle" },
+    { key: "pavalionDepth", header: "Pavilion Depth" },
+
+    // --- Girdle & Culet ---
+    { key: "girdle", header: "Girdle" },
+    { key: "girdleThin", header: "Girdle Thin" },
+    { key: "girdlePerc", header: "Girdle %" },
+    { key: "girdleCondition", header: "Girdle Condition" },
+    { key: "culetSize", header: "Culet Size" },
+    { key: "culetCondition", header: "Culet Condition" },
+
+    // --- Certification & Lab ---
+    { key: "lab", header: "Lab" },
+    { key: "certiNo", header: "Cert No" },
+    {
+        key: "certIssueDate",
+        header: "Cert Issue Date",
+        render: (row: Diamond) =>
+            row.certIssueDate
+                ? new Date(row.certIssueDate).toLocaleDateString()
+                : "N/A",
+    },
+    { key: "certComment", header: "Cert Comment" },
+    { key: "laserInscription", header: "Laser Inscription" },
+
+    // --- Pricing ---
+    {
+        key: "priceListUSD",
+        header: "List Price",
+        render: (row: Diamond) =>
+            `$${row.priceListUSD ? row.priceListUSD.toLocaleString() : "N/A"}`,
+    },
+    {
+        key: "pricePerCts",
+        header: "Price/ct",
+        render: (row: Diamond) =>
+            `$${row.pricePerCts ? row.pricePerCts.toLocaleString() : "N/A"}`,
     },
     {
         key: "discPerc",
@@ -60,11 +137,12 @@ export const getDiamondColumns = (
             </span>
         ),
     },
+    { key: "cashDiscPerc", header: "Cash Disc %" },
     {
-        key: "pricePerCts",
-        header: "Price/ct",
+        key: "cashDiscPrice",
+        header: "Cash Disc Price",
         render: (row: Diamond) =>
-            `$${row.pricePerCts ? row.pricePerCts.toLocaleString() : "N/A"}`,
+            `$${row.cashDiscPrice ? row.cashDiscPrice.toLocaleString() : "N/A"}`,
     },
     {
         key: "totalPrice",
@@ -78,34 +156,39 @@ export const getDiamondColumns = (
             );
         },
     },
+
+    // --- Inclusions & Comments ---
     {
-        key: "availability",
-        header: "Status",
-        render: (row: Diamond) => {
-            const statusText = getAvailabilityText(row.availability);
-            const color =
-                row.availability === "A"
-                    ? "bg-primary-purple text-white"
-                    : row.availability === "S"
-                    ? "bg-red-100 text-red-700"
-                    : "bg-yellow-100 text-yellow-700";
-            return (
-                <Badge className={`${color} text-xs rounded-[2] px-2 py-1`}>
-                    {statusText ? statusText : "UNKNOWN"}
-                </Badge>
-            );
-        },
+        key: "keyToSymbols",
+        header: "Key Symbols",
+        render: (row: Diamond) =>
+            row.keyToSymbols?.length > 0 ? row.keyToSymbols.join(", ") : "N/A",
     },
+    { key: "milky", header: "Milky" },
+    { key: "blackinclusion", header: "Black Inclusion" },
+    { key: "eyeClean", header: "Eye Clean" },
+    { key: "memberComment", header: "Comment" },
+    { key: "handA", header: "H&A" },
+    { key: "identificationMarks", header: "ID Marks" },
+    { key: "enhancements", header: "Enhancements" },
+    { key: "treatment", header: "Treatment" },
+
+    // --- Fancy Color Details ---
+    { key: "origin", header: "Origin" },
+    { key: "fancyColor", header: "Fancy Color" },
+    { key: "fancyIntensity", header: "Fancy Intensity" },
+    { key: "fancyOvertone", header: "Fancy Overtone" },
+
+    // --- Location & Logistics ---
+    { key: "city", header: "City" },
+    { key: "state", header: "State" },
+    { key: "country", header: "Country" },
+
+    // --- Pairing ---
+    { key: "pairStockRef", header: "Pair Stock Ref" },
     {
-        key: "actions",
-        header: "View",
-        render: (row: Diamond) => (
-            <ActionButtonWithTooltip
-                icon={<Eye className="w-4 h-4" />}
-                tooltip="View Details"
-                onClick={() => onViewDetails(row)}
-                colorClass="text-primary-purple2 hover:text-primary-purple2"
-            />
-        ),
+        key: "isMatchedPairSeparable",
+        header: "Pair Separable",
+        render: (row: Diamond) => (row.isMatchedPairSeparable ? "Yes" : "No"),
     },
 ];

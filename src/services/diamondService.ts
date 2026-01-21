@@ -19,7 +19,7 @@ interface ApiResponse {
 }
 
 export const fetchDiamonds = async (
-    params: DiamondParams
+    params: DiamondParams,
 ): Promise<{
     data: Diamond[];
     totalCount: number;
@@ -46,21 +46,21 @@ export const fetchDiamonds = async (
         // Shape filters
         if (params.shapes && params.shapes.length > 0) {
             params.shapes.forEach((shape) =>
-                queryParams.append("shapes[]", shape)
+                queryParams.append("shapes[]", shape),
             );
         }
 
         // Color filters
         if (params.colors && params.colors.length > 0) {
             params.colors.forEach((color) =>
-                queryParams.append("colors[]", color)
+                queryParams.append("colors[]", color),
             );
         }
 
         // Clarity filters
         if (params.clarities && params.clarities.length > 0) {
             params.clarities.forEach((clarity) =>
-                queryParams.append("clarities[]", clarity)
+                queryParams.append("clarities[]", clarity),
             );
         }
 
@@ -77,14 +77,14 @@ export const fetchDiamonds = async (
         // Symmetry filters
         if (params.symmetry && params.symmetry.length > 0) {
             params.symmetry.forEach((sym) =>
-                queryParams.append("symmetry[]", sym)
+                queryParams.append("symmetry[]", sym),
             );
         }
 
         // Fluorescence filters
         if (params.fluorescence && params.fluorescence.length > 0) {
             params.fluorescence.forEach((fluor) =>
-                queryParams.append("fluorescence[]", fluor)
+                queryParams.append("fluorescence[]", fluor),
             );
         }
 
@@ -133,16 +133,23 @@ export const fetchDiamonds = async (
         if (params.minDepthPercent !== undefined)
             queryParams.append(
                 "minDepthPercent",
-                params.minDepthPercent.toString()
+                params.minDepthPercent.toString(),
             );
         if (params.maxDepthPercent !== undefined)
             queryParams.append(
                 "maxDepthPercent",
-                params.maxDepthPercent.toString()
+                params.maxDepthPercent.toString(),
             );
 
+        // Natural/Lab filter
+        if (params.isNatural !== undefined)
+            queryParams.append("isNatural", params.isNatural.toString());
+
+        // Color type filter
+        if (params.colorType) queryParams.append("colorType", params.colorType);
+
         const response = await apiClient.get<ApiResponse>(
-            `/diamonds?${queryParams.toString()}`
+            `/diamonds?${queryParams.toString()}`,
         );
         const result = response.data;
 
@@ -166,7 +173,7 @@ export const fetchDiamonds = async (
 
 // Search/Filter API - for advanced filtering
 export const searchDiamonds = async (
-    params: DiamondParams
+    params: DiamondParams,
 ): Promise<{
     data: Diamond[];
     totalCount: number;
@@ -191,21 +198,21 @@ export const searchDiamonds = async (
         // Shape filters - using repeated parameters with &
         if (params.shapes && params.shapes.length > 0) {
             params.shapes.forEach((shape) =>
-                queryParams.append("shape", shape)
+                queryParams.append("shape", shape),
             );
         }
 
         // Color filters - using repeated parameters with &
         if (params.colors && params.colors.length > 0) {
             params.colors.forEach((color) =>
-                queryParams.append("color", color)
+                queryParams.append("color", color),
             );
         }
 
         // Clarity filters - using repeated parameters with &
         if (params.clarities && params.clarities.length > 0) {
             params.clarities.forEach((clarity) =>
-                queryParams.append("clarity", clarity)
+                queryParams.append("clarity", clarity),
             );
         }
 
@@ -222,14 +229,14 @@ export const searchDiamonds = async (
         // Symmetry filters - using repeated parameters with &
         if (params.symmetry && params.symmetry.length > 0) {
             params.symmetry.forEach((sym) =>
-                queryParams.append("symmetry", sym)
+                queryParams.append("symmetry", sym),
             );
         }
 
         // Fluorescence filters - using repeated parameters with &
         if (params.fluorescence && params.fluorescence.length > 0) {
             params.fluorescence.forEach((fluor) =>
-                queryParams.append("fluorescenceIntensity", fluor)
+                queryParams.append("fluorescenceIntensity", fluor),
             );
         }
 
@@ -278,16 +285,23 @@ export const searchDiamonds = async (
         if (params.minDepthPercent !== undefined)
             queryParams.append(
                 "minDepthPerc",
-                params.minDepthPercent.toString()
+                params.minDepthPercent.toString(),
             );
         if (params.maxDepthPercent !== undefined)
             queryParams.append(
                 "maxDepthPerc",
-                params.maxDepthPercent.toString()
+                params.maxDepthPercent.toString(),
             );
 
+        // Natural/Lab filter
+        if (params.isNatural !== undefined)
+            queryParams.append("isNatural", params.isNatural.toString());
+
+        // Color type filter
+        if (params.colorType) queryParams.append("colorType", params.colorType);
+
         const response = await apiClient.get<ApiResponse>(
-            `/diamonds/search?${queryParams.toString()}`
+            `/diamonds/search?${queryParams.toString()}`,
         );
         const result = response.data;
 
@@ -314,7 +328,7 @@ export const searchDiamonds = async (
 export const fetchDiamondById = async (id: string): Promise<Diamond> => {
     try {
         const response = await apiClient.get<ApiResponse>(
-            `/diamonds/search?searchTerm=${id}`
+            `/diamonds/search?searchTerm=${id}`,
         );
         const result = response.data;
 

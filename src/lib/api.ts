@@ -5,7 +5,7 @@ import { toast } from "sonner";
 const BASE_URL =
     process.env.NODE_ENV === "production"
         ? "https://uniglow-service-dev.onrender.com/api"
-        : "https://uniglow-service-dev.onrender.com/api";
+        : "http://localhost:5000/api";
 
 const apiClient = axios.create({
     // The base URL of your backend
