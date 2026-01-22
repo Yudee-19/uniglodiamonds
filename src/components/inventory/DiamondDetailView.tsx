@@ -17,6 +17,7 @@ import {
     Loader2,
     Clock,
     MessageSquare,
+    GemIcon,
 } from "lucide-react";
 import { addToCart, holdDiamond } from "@/services/cartService";
 import { createDiamondInquiry } from "@/services/inquiryService";
@@ -349,7 +350,7 @@ export default function DiamondDetailView({
                             </h3>
                             <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
                                 <InfoCard
-                                    icon={DiamondIcon}
+                                    icon={GemIcon}
                                     title={`${shapeName} Shape`}
                                     subtitle="Classic cut known for maximum sparkle."
                                     desc=""

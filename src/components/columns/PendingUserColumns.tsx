@@ -25,7 +25,7 @@ export const getPendingUserColumns = (
         header: "Contact Name",
         render: (row: PendingUser) => (
             <span className="text-gray-800">
-                {row.customerData.firstName} {row.customerData.lastName}
+                {row.customerData?.firstName} {row.customerData?.lastName}
             </span>
         ),
     },
@@ -34,7 +34,7 @@ export const getPendingUserColumns = (
         header: "Company",
         render: (row: PendingUser) => (
             <span className="text-gray-800">
-                {row.customerData.businessInfo.companyName || row.companyName}
+                {row.customerData?.businessInfo.companyName || row.companyName}
             </span>
         ),
     },
@@ -43,7 +43,7 @@ export const getPendingUserColumns = (
         header: "Phone",
         render: (row: PendingUser) => (
             <span className="text-gray-800">
-                {row.customerData.countryCode} {row.customerData.phoneNumber}
+                {row.customerData?.countryCode} {row.customerData?.phoneNumber}
             </span>
         ),
     },
@@ -52,7 +52,7 @@ export const getPendingUserColumns = (
         header: "Business Type",
         render: (row: PendingUser) => (
             <span className="text-gray-800">
-                {row.customerData.businessInfo.businessType || "N/A"}
+                {row.customerData?.businessInfo.businessType || "N/A"}
             </span>
         ),
     },
@@ -61,8 +61,8 @@ export const getPendingUserColumns = (
         header: "Location",
         render: (row: PendingUser) => (
             <span className="text-gray-800">
-                {row.customerData.address.city},{" "}
-                {row.customerData.address.country}
+                {row.customerData?.address.city},{" "}
+                {row.customerData?.address.country}
             </span>
         ),
     },
@@ -71,7 +71,7 @@ export const getPendingUserColumns = (
         header: "Submitted",
         render: (row: PendingUser) => (
             <span className="text-gray-700">
-                {new Date(row.customerData.submittedAt).toLocaleDateString()}
+                {new Date(row.customerData?.submittedAt).toLocaleDateString()}
             </span>
         ),
     },

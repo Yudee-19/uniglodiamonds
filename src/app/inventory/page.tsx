@@ -9,7 +9,7 @@ import {
     RotateCcw, // New (for Reset)
     ShoppingCart, // New (for Cart)
     Hand, // New (for Inquiry/Hand icon)
-    GitCompare,
+    Scale,
 } from "lucide-react";
 import DataTable from "@/components/ui/table";
 import DiamondGrid from "@/components/ui/diamondGrid";
@@ -455,7 +455,7 @@ function InventoryContent() {
                         className="p-2 text-gray-500 bg-gray-200 hover:bg-gray-300 rounded-full"
                         title="Compare"
                     >
-                        <GitCompare size={18} />
+                        <Scale size={18} />
                     </button>
 
                     {/* Filter (Solid Black) */}
@@ -518,7 +518,7 @@ function InventoryContent() {
                             Reset Filters
                         </Button>
                         <Button variant="outline" className="text-sm">
-                            Advanced Filters
+                            <Filter /> Advanced Filters
                         </Button>
 
                         <Button
@@ -526,7 +526,7 @@ function InventoryContent() {
                             className="text-sm"
                             onClick={handleAddToCart}
                         >
-                            Cart{" "}
+                            <ShoppingCart /> Cart{" "}
                             {selectedDiamonds.length > 0 &&
                                 `(${selectedDiamonds.length})`}
                         </Button>
@@ -536,7 +536,7 @@ function InventoryContent() {
                             onClick={handleCompare}
                             // disabled={selectedDiamonds.length < 2}
                         >
-                            Compare{" "}
+                            <Scale /> Compare{" "}
                             {selectedDiamonds.length > 0 &&
                                 `(${selectedDiamonds.length})`}
                         </Button>

@@ -153,10 +153,10 @@ export default function Navbar() {
                     className="  border-b border-slate-800 hidden md:block"
                 >
                     {/* BRAND BAR: Logo & Primary Buttons */}
-                    <div className=" px-4 md:px-8 py-4 bg-brand-gradient  border-b border-white/70">
-                        <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div className=" px-4 lg:px-8 py-4 bg-brand-gradient  border-b border-white/70">
+                        <div className="lg:container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
                             {/* Left Actions */}
-                            <div className="hidden md:flex gap-3 w-1/3">
+                            <div className="hidden md:flex gap-3 lg:w-1/3 w-fit">
                                 {loading ? (
                                     <>
                                         <div className="h-10 w-32 bg-gray-200/50 animate-pulse " />

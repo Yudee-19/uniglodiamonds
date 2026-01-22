@@ -108,6 +108,25 @@ export interface GetAllCartsParams {
     limit?: number;
 }
 
+export interface GetAllUsersParams {
+    page?: number;
+    limit?: number;
+}
+
+export interface GetAllUsersResponse {
+    success: boolean;
+    message: string;
+    data: PendingUser[];
+    pagination: {
+        currentPage: number;
+        totalPages: number;
+        totalRecords: number;
+        recordsPerPage: number;
+        hasNextPage: boolean;
+        hasPrevPage: boolean;
+    };
+}
+
 // Service Functions
 export const getPendingUsers = async (): Promise<GetPendingUsersResponse> => {
     const response = await apiClient.get("/users/customer-data-pending");
@@ -148,5 +167,24 @@ export const getAllCarts = async (
     const url = `/diamonds/cart/admin/all${queryString ? `?${queryString}` : ""}`;
 
     const response = await apiClient.get<GetAllCartsResponse>(url);
+    return response.data;
+};
+
+export const getAllUsers = async (
+    params?: GetAllUsersParams,
+): Promise<GetAllUsersResponse> => {
+    const queryParams = new URLSearchParams();
+
+    if (params?.page) {
+        queryParams.append("page", params.page.toString());
+    }
+    if (params?.limit) {
+        queryParams.append("limit", params.limit.toString());
+    }
+
+    const queryString = queryParams.toString();
+    const url = `/users${queryString ? `?${queryString}` : ""}`;
+
+    const response = await apiClient.get<GetAllUsersResponse>(url);
     return response.data;
 };
