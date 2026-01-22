@@ -10,6 +10,7 @@ import {
     DiamondColor,
     DiamondClarity,
     DiamondCut,
+    DiamondColorType,
 } from "@/interface/diamondInterface";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -32,6 +33,8 @@ export interface FilterState {
     depthRange: [number, number];
     depthPercentRange: [number, number];
     tablePercentRange: [number, number];
+    isNatural: boolean | undefined;
+    colorType: DiamondColorType | undefined;
 }
 
 interface DiamondFiltersProps {

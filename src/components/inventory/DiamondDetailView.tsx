@@ -334,12 +334,6 @@ export default function DiamondDetailView({
                                             : ""}
                                     </h1>
                                 </div>
-                                <div className="flex items-center gap-1 text-yellow-500">
-                                    <Star className="w-4 h-4 fill-current" />
-                                    <span className="text-sm font-medium text-gray-600">
-                                        5.0 (258 Reviews)
-                                    </span>
-                                </div>
                             </div>
 
                             <div className="flex items-baseline gap-3 mt-2">
