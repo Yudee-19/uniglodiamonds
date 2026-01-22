@@ -102,7 +102,10 @@ const ADMIN_NAV_LINKS = [
     },
 ];
 
-const USER_NAV_LINKS = [{ name: "My Cart", href: "/cart", icon: ShoppingCart }];
+const USER_NAV_LINKS = [
+    { name: "My Cart", href: "/cart", icon: ShoppingCart },
+    { name: "My Enquiries", href: "/enquiries", icon: FileStack },
+];
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);

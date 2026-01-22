@@ -11,6 +11,7 @@ const protectedRoutes = [
     "/profile",
     "/orders",
     "/checkout",
+    "/enquiries", // Added enquiries route
 ];
 
 // 2. Routes that are ONLY for guests (redirect to home if logged in)

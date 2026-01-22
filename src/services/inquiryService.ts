@@ -50,6 +50,14 @@ interface AdminQueriesResponse {
     };
 }
 
+interface UserQueriesResponse {
+    success: boolean;
+    message: string;
+    data: {
+        queries: GroupedQuery[];
+    };
+}
+
 interface CreateInquiryParams {
     stockRef: string;
     query: string;
@@ -100,6 +108,24 @@ export const getAllAdminQueries = async (): Promise<AdminQueriesResponse> => {
         return response.data;
     } catch (error: any) {
         console.error("Error fetching admin queries:", error);
+        throw error.response?.data?.message || "Failed to fetch queries";
+    }
+};
+
+export const getUserQueries = async (): Promise<UserQueriesResponse> => {
+    try {
+        const response =
+            await apiClient.get<UserQueriesResponse>("/diamonds/queries");
+
+        if (!response.data.success) {
+            throw new Error(
+                response.data.message || "Failed to fetch user queries",
+            );
+        }
+
+        return response.data;
+    } catch (error: any) {
+        console.error("Error fetching user queries:", error);
         throw error.response?.data?.message || "Failed to fetch queries";
     }
 };
