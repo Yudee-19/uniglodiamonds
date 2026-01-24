@@ -1,24 +1,29 @@
 import React, { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Diamond } from "@/interface/diamondInterface";
-import { Column } from "@/components/columns/DiamondColumns";
+import { PublicDiamond } from "@/interface/diamondInterface";
+import {
+    PrivateColumn,
+    PublicColumn,
+} from "@/components/columns/DiamondColumns";
 import {
     Tooltip,
     TooltipContent,
+    TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-interface DataTableProps<T extends { _id: string }> {
-    data: Diamond[];
-    columns: Column<T>[];
-    onRowClick?: (row: Diamond) => void;
+interface DataTableProps<T extends { _id?: string; stockRef?: string }> {
+    data: (Diamond | PublicDiamond)[];
+    columns: (PrivateColumn<Diamond> | PublicColumn<PublicDiamond>)[];
+    onRowClick?: (row: Diamond | PublicDiamond) => void;
     enableSelection?: boolean;
     columnStyles?: Record<string, string>;
-    selectedDiamonds?: Diamond[];
-    onSelectionChange?: (diamonds: Diamond[]) => void;
+    selectedDiamonds?: (Diamond | PublicDiamond)[];
+    onSelectionChange?: (diamonds: (Diamond | PublicDiamond)[]) => void;
 }
 
-function DataTable<T extends { _id: string }>({
+function DataTable<T extends { _id?: string; stockRef?: string }>({
     data,
     columns,
     onRowClick,
@@ -27,13 +32,15 @@ function DataTable<T extends { _id: string }>({
     selectedDiamonds,
     onSelectionChange,
 }: DataTableProps<T>) {
-    const [internalSelected, setInternalSelected] = useState<Diamond[]>([]);
+    const [internalSelected, setInternalSelected] = useState<
+        (Diamond | PublicDiamond)[]
+    >([]);
 
     // Determine if we are using controlled (props) or uncontrolled (internal state) mode
     const selected =
         selectedDiamonds !== undefined ? selectedDiamonds : internalSelected;
 
-    const updateSelection = (newSelection: Diamond[]) => {
+    const updateSelection = (newSelection: (Diamond | PublicDiamond)[]) => {
         if (onSelectionChange) {
             onSelectionChange(newSelection);
         } else {
@@ -49,18 +56,40 @@ function DataTable<T extends { _id: string }>({
         else updateSelection(data.map((r) => r));
     };
 
-    const toggleRow = (diamond: Diamond) => {
+    const toggleRow = (diamond: Diamond | PublicDiamond) => {
         const newSelection = selected.includes(diamond)
             ? selected.filter((x) => x !== diamond)
             : [...selected, diamond];
         updateSelection(newSelection);
     };
 
-    const getCellContent = (col: Column<T>, row: Diamond) => {
+    // Type guard to check if a diamond is a private Diamond
+    const isDiamond = (
+        diamond: Diamond | PublicDiamond,
+    ): diamond is Diamond => {
+        return "_id" in diamond;
+    };
+
+    const getCellContent = (
+        col: PrivateColumn<Diamond> | PublicColumn<PublicDiamond>,
+        row: Diamond | PublicDiamond,
+    ) => {
         if (col.render) {
-            return col.render(row);
+            if (isDiamond(row)) {
+                // This is a Diamond, and col should be PrivateColumn<Diamond>
+                const privateCol = col as PrivateColumn<Diamond>;
+                if (privateCol.render) {
+                    return privateCol.render(row);
+                }
+            } else {
+                // This is a PublicDiamond, and col should be PublicColumn<PublicDiamond>
+                const publicCol = col as PublicColumn<PublicDiamond>;
+                if (publicCol.render) {
+                    return publicCol.render(row);
+                }
+            }
         }
-        const value = row[col.key as keyof Diamond];
+        const value = row[col.key as keyof typeof row];
 
         // Handle empty/null/undefined values
         if (value === null || value === undefined || value === "") {
@@ -91,10 +120,10 @@ function DataTable<T extends { _id: string }>({
 
     return (
         <div
-            className="w-full h-full overflow-auto  rounded "
+            className="w-full h-full overflow-auto rounded"
             data-slot="table-container"
         >
-            <table data-slot="table" className="min-w-[70vh] w-full  text-left">
+            <table data-slot="table" className="min-w-[70vh] w-full text-left">
                 <thead className="sticky top-0 z-10 bg-primary-purple-dark border-b border-gray-200">
                     <tr className="  data-[state=selected]:bg-muted border-b transition-colors ">
                         {enableSelection && (
@@ -142,8 +171,14 @@ function DataTable<T extends { _id: string }>({
                     ) : (
                         data.map((row) => (
                             <tr
-                                key={row._id}
-                                className=" cursor-pointer bg-white even:bg-primary-yellow-1/10 transition-colors"
+                                key={
+                                    "_id" in row
+                                        ? row._id
+                                        : "stockRef" in row
+                                          ? row.stockRef
+                                          : Math.random().toString()
+                                }
+                                className="cursor-pointer bg-white even:bg-primary-yellow-1/10 transition-colors"
                                 onClick={() => onRowClick?.(row)}
                             >
                                 {enableSelection && (
@@ -166,31 +201,50 @@ function DataTable<T extends { _id: string }>({
                                     const shouldShowTooltip =
                                         textContent.length > 30;
 
+                                    // Get cell class name with type guard
+                                    let cellClassName =
+                                        "p-2 pl-5 whitespace-nowrap border-b t hover:bg-gray-50/60 font-lato";
+
+                                    if (col.cellClassName) {
+                                        if (isDiamond(row)) {
+                                            const privateCol =
+                                                col as PrivateColumn<Diamond>;
+                                            cellClassName += ` ${privateCol.cellClassName?.(row) || ""}`;
+                                        } else {
+                                            const publicCol =
+                                                col as PublicColumn<PublicDiamond>;
+                                            cellClassName += ` ${publicCol.cellClassName?.(row) || ""}`;
+                                        }
+                                    }
+
+                                    cellClassName += ` ${columnStyles?.[col.key.toString()] || "text-gray-800 text-sm"}`;
+
                                     return (
                                         <td
                                             key={col.key.toString()}
-                                            className={`p-2 pl-5 whitespace-nowrap border-b t hover:bg-gray-50/60 font-lato ${
-                                                col.cellClassName
-                                                    ? col.cellClassName(row)
-                                                    : ""
-                                            } ${
-                                                columnStyles?.[
-                                                    col.key.toString()
-                                                ] || "text-gray-800 text-sm"
-                                            }`}
+                                            className={cellClassName}
                                             data-slot="table-cell"
                                         >
                                             {shouldShowTooltip ? (
-                                                <Tooltip>
-                                                    <TooltipTrigger asChild>
-                                                        <div className="truncate max-w-[200px]">
-                                                            {cellContent}
-                                                        </div>
-                                                    </TooltipTrigger>
-                                                    <TooltipContent>
-                                                        {textContent}
-                                                    </TooltipContent>
-                                                </Tooltip>
+                                                <TooltipProvider
+                                                    delayDuration={300}
+                                                >
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <div className="truncate max-w-[200px] ">
+                                                                {cellContent}
+                                                            </div>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent
+                                                            side="top"
+                                                            className="max-w-sm"
+                                                        >
+                                                            <p className="text-sm">
+                                                                {textContent}
+                                                            </p>
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>
                                             ) : (
                                                 cellContent
                                             )}

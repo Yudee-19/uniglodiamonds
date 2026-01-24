@@ -239,3 +239,73 @@ export interface Cart {
     createdAt: string;
     updatedAt: string;
 }
+
+// Add new interface for public diamonds (without pricing/sensitive info)
+export interface PublicDiamond {
+    // --- Identity & Meta ---
+    stockRef: string;
+    availability: DiamondAvailability | string;
+    origin: string;
+
+    // --- Basic Specs ---
+    shape: DiamondShape | string;
+    weight: number;
+    color: DiamondColor | string;
+    clarity: DiamondClarity | string;
+    shade: string;
+
+    // --- Cut & Finish ---
+    cutGrade: DiamondCut | string;
+    polish: DiamondCut | string;
+    symmetry: DiamondCut | string;
+
+    // --- Fluorescence ---
+    fluorescenceIntensity: "NON" | "FNT" | "MED" | "STG" | "VSL" | string;
+    fluorescenceColor: string;
+
+    // --- Dimensions & Proportions ---
+    measurements: string;
+    length: number;
+    width: number;
+    height: number;
+    depthPerc: number;
+    tablePerc: number;
+    crownAngle: number;
+    crownHeight: number;
+    pavalionAngle: number;
+    pavalionDepth: number;
+
+    // --- Girdle & Culet ---
+    girdle: string;
+    girdleThin: string;
+    girdlePerc: number;
+    girdleCondition: string;
+    culetSize: string;
+    culetCondition: string;
+
+    // --- Certification & Lab (without cert number) ---
+    lab: DiamondLab | string;
+    certIssueDate: string;
+    certComment: string;
+    laserInscription: string;
+
+    // --- Inclusions & Comments ---
+    keyToSymbols: string[];
+    milky: string;
+    blackinclusion: string;
+    eyeClean: string;
+    enhancements: string;
+    treatment: string;
+
+    // --- Fancy Color Details ---
+    fancyColor: string;
+    fancyIntensity: string;
+    fancyOvertone: string;
+
+    // --- Location ---
+    country: string;
+
+    // --- Media ---
+    webLink: string;
+    videoLink: string;
+}

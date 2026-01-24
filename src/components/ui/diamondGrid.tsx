@@ -1,12 +1,16 @@
 import React from "react";
-import { Diamond, getShapeFullName } from "@/interface/diamondInterface";
+import {
+    Diamond,
+    getShapeFullName,
+    PublicDiamond,
+} from "@/interface/diamondInterface";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
 import { DiamondImage } from "@/app/compare/page";
 
 interface DiamondGridProps {
-    data: Diamond[];
-    onViewDetails: (diamond: Diamond) => void;
+    data: Diamond[] | PublicDiamond[];
+    onViewDetails: (diamond: Diamond | PublicDiamond) => void;
 }
 
 export default function DiamondGrid({ data, onViewDetails }: DiamondGridProps) {
@@ -25,7 +29,7 @@ export default function DiamondGrid({ data, onViewDetails }: DiamondGridProps) {
         <div className="bg-brand-gradient grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 font-lato pb-2 w-full px-1 ">
             {data.map((item) => (
                 <div
-                    key={item._id}
+                    key={item.stockRef} // Changed from item._id to item.stockRef
                     className="bg-white rounded-md shadow-sm border border-gray-100 px-4 pb-3 flex flex-col relative hover:shadow-md transition-all duration-200 group"
                 >
                     {/* Image Container */}

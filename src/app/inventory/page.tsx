@@ -15,8 +15,15 @@ import DataTable from "@/components/ui/table";
 import DiamondGrid from "@/components/ui/diamondGrid";
 import TablePagination from "@/components/ui/tablePagination";
 import { DiamondFilters } from "@/components/inventory/diamonFilter";
-import { getDiamondColumns } from "@/components/columns/DiamondColumns";
-import { fetchDiamonds, searchDiamonds } from "@/services/diamondService";
+import {
+    getDiamondColumns,
+    getPublicDiamondColumns,
+} from "@/components/columns/DiamondColumns";
+import {
+    fetchDiamonds,
+    searchDiamonds,
+    fetchPublicDiamonds,
+} from "@/services/diamondService";
 import {
     Diamond,
     DiamondShape,
@@ -24,6 +31,7 @@ import {
     DiamondClarity,
     DiamondCut,
     DiamondColorType,
+    PublicDiamond,
 } from "@/interface/diamondInterface";
 import { Card, CardContent } from "@/components/ui/card";
 import ShimmerTable from "@/components/ui/shimmerTable";
@@ -33,16 +41,18 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import DiamondDetailView from "@/components/inventory/DiamondDetailView";
 import { toast } from "sonner";
 import { addToCart } from "@/services/cartService";
+import { useAuth } from "@/context/AuthContext";
 
 function InventoryContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();
+    const { isAuthenticated, loading: authLoading } = useAuth();
 
     // 2. Extract the View ID
     const viewId = searchParams.get("view");
 
-    const [data, setData] = useState<Diamond[]>([]);
+    const [data, setData] = useState<(Diamond | PublicDiamond)[]>([]);
     const [loading, setLoading] = useState(false);
     const [totalCount, setTotalCount] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
@@ -56,8 +66,9 @@ function InventoryContent() {
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
     // State for selected diamonds
-    // const [selectedDiamondIds, setSelectedDiamondIds] = useState<string[]>([]);
-    const [selectedDiamonds, setSelectedDiamonds] = useState<Diamond[]>([]);
+    const [selectedDiamonds, setSelectedDiamonds] = useState<
+        (Diamond | PublicDiamond)[]
+    >([]);
     const [addingToCart, setAddingToCart] = useState(false);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
@@ -120,7 +131,6 @@ function InventoryContent() {
 
     const loadData = useCallback(
         async (useSearchApi: boolean = false) => {
-            // OPTIONAL: Don't load list data if we are in detail view
             if (viewId) return;
 
             setLoading(true);
@@ -222,10 +232,17 @@ function InventoryContent() {
                     colorType: filterState.colorType, // Add these new params
                 };
 
-                // Use search API if filters are applied, otherwise use regular fetch
-                const result = useSearchApi
-                    ? await searchDiamonds(params)
-                    : await fetchDiamonds(params);
+                let result;
+
+                if (isAuthenticated) {
+                    // Logged in user - fetch private data
+                    result = useSearchApi
+                        ? await searchDiamonds(params)
+                        : await fetchDiamonds(params);
+                } else {
+                    // Public user - fetch public data
+                    result = await fetchPublicDiamonds(params);
+                }
 
                 setData(result.data);
                 setTotalCount(result.totalCount);
@@ -238,17 +255,27 @@ function InventoryContent() {
                 setLoading(false);
             }
         },
-        [page, rowsPerPage, sortBy, sortOrder, filterState],
+        [
+            page,
+            rowsPerPage,
+            sortBy,
+            sortOrder,
+            filterState,
+            isAuthenticated,
+            viewId,
+        ],
     );
 
-    // Auto-load data whenever filters, pagination, or sorting changes
+    // Wait for auth to load before fetching data
     useEffect(() => {
+        if (authLoading) return;
+
         const timeoutId = setTimeout(() => {
             loadData(hasActiveFilters());
         }, 500);
 
         return () => clearTimeout(timeoutId);
-    }, [loadData, hasActiveFilters]);
+    }, [loadData, hasActiveFilters, authLoading]);
 
     const handleReset = () => {
         setFilterState({
@@ -279,12 +306,17 @@ function InventoryContent() {
             toast.warning("Please select at least 2 diamonds to compare");
             return;
         }
-        // Create a comma-separated string
-        const queryString = selectedDiamonds.map((d) => d.certiNo).join(",");
+        const queryString = selectedDiamonds.map((d) => d.stockRef).join(",");
         router.push(`/compare?ids=${queryString}`);
     };
 
     const handleAddToCart = async () => {
+        if (!isAuthenticated) {
+            toast.error("Please login to add items to cart");
+            router.push("/login");
+            return;
+        }
+
         if (selectedDiamonds.length === 0) {
             toast.warning("Please select diamonds to add to cart");
             return;
@@ -292,31 +324,33 @@ function InventoryContent() {
 
         setAddingToCart(true);
         try {
-            const diamondIds = selectedDiamonds.map((diamond) => diamond._id);
+            const diamondIds = selectedDiamonds
+                .filter((d): d is Diamond => "_id" in d)
+                .map((diamond) => diamond._id);
+
             await addToCart(diamondIds);
             toast.success("Selected diamonds added to cart successfully!");
             setSelectedDiamonds([]);
-            setSelectedDiamonds([]);
         } catch (error) {
-            // console.error("Failed to add to cart", error);
             toast.error(error as string);
         } finally {
             setAddingToCart(false);
         }
     };
-    const handleViewDetails = (diamond: Diamond) => {
-        // 3. UPDATED NAVIGATION: Use Query Parameter
-        if (diamond.certiNo) {
-            // This appends ?view=123 to current URL
-            router.push(`${pathname}?view=${diamond.certiNo}`);
+
+    const handleViewDetails = (diamond: Diamond | PublicDiamond) => {
+        if (diamond.stockRef) {
+            router.push(`${pathname}?view=${diamond.stockRef}`);
         } else {
-            console.error("Diamond missing certificate number");
+            console.error("Diamond missing stock reference");
         }
     };
 
     // 4. CONDITIONAL RENDER: If viewId exists, show Detail View
     if (viewId) {
-        return <DiamondDetailView diamondId={viewId} />;
+        return (
+            <DiamondDetailView diamondId={viewId} isPublic={!isAuthenticated} />
+        );
     }
 
     // Otherwise, show the Inventory List
@@ -437,26 +471,30 @@ function InventoryContent() {
                         <RotateCcw size={18} />
                     </button>
 
-                    {/* Cart */}
-                    <button
-                        onClick={handleAddToCart}
-                        className={`p-2 rounded-full border border-gray-100 bg-gray-100 ${
-                            selectedDiamonds.length > 0
-                                ? "text-primary-purple2 bg-purple-50"
-                                : "text-gray-500"
-                        }`}
-                    >
-                        <ShoppingCart size={18} />
-                    </button>
+                    {/* Cart - Only show for authenticated users */}
+                    {isAuthenticated && (
+                        <button
+                            onClick={handleAddToCart}
+                            className={`p-2 rounded-full border border-gray-100 bg-gray-100 ${
+                                selectedDiamonds.length > 0
+                                    ? "text-primary-purple2 bg-purple-50"
+                                    : "text-gray-500"
+                            }`}
+                        >
+                            <ShoppingCart size={18} />
+                        </button>
+                    )}
 
-                    {/* Compare / Transfer (Visual match for image) */}
-                    <button
-                        onClick={handleCompare}
-                        className="p-2 text-gray-500 bg-gray-200 hover:bg-gray-300 rounded-full"
-                        title="Compare"
-                    >
-                        <Scale size={18} />
-                    </button>
+                    {/* Compare - Only show for authenticated users */}
+                    {isAuthenticated && (
+                        <button
+                            onClick={handleCompare}
+                            className="p-2 text-gray-500 bg-gray-200 hover:bg-gray-300 rounded-full"
+                            title="Compare"
+                        >
+                            <Scale size={18} />
+                        </button>
+                    )}
 
                     {/* Filter (Solid Black) */}
                     <button
@@ -471,6 +509,7 @@ function InventoryContent() {
                     </button>
                 </div>
             </div>
+
             {/* Laptop Actions Row */}
             <div className="w-full hidden lg:block bg-white rounded-lg px-2 py-1">
                 <div className="flex items-center justify-between gap-4">
@@ -489,8 +528,8 @@ function InventoryContent() {
                                 onClick={() => setView("list")}
                                 className={`p-2 rounded-sm transition-all duration-200 ${
                                     view === "list"
-                                        ? "bg-primary-purple2 text-white shadow-sm" // Active State (Deep Purple)
-                                        : "text-gray-500 hover:bg-gray-100" // Inactive State
+                                        ? "bg-primary-purple2 text-white shadow-sm"
+                                        : "text-gray-500 hover:bg-gray-100"
                                 }`}
                             >
                                 <List className="h-5 w-5" />
@@ -521,25 +560,31 @@ function InventoryContent() {
                             <Filter /> Advanced Filters
                         </Button>
 
-                        <Button
-                            variant="outline"
-                            className="text-sm"
-                            onClick={handleAddToCart}
-                        >
-                            <ShoppingCart /> Cart{" "}
-                            {selectedDiamonds.length > 0 &&
-                                `(${selectedDiamonds.length})`}
-                        </Button>
-                        <Button
-                            variant="outline"
-                            className="text-sm"
-                            onClick={handleCompare}
-                            // disabled={selectedDiamonds.length < 2}
-                        >
-                            <Scale /> Compare{" "}
-                            {selectedDiamonds.length > 0 &&
-                                `(${selectedDiamonds.length})`}
-                        </Button>
+                        {/* Cart - Only show for authenticated users */}
+                        {isAuthenticated && (
+                            <Button
+                                variant="outline"
+                                className="text-sm"
+                                onClick={handleAddToCart}
+                            >
+                                <ShoppingCart /> Cart{" "}
+                                {selectedDiamonds.length > 0 &&
+                                    `(${selectedDiamonds.length})`}
+                            </Button>
+                        )}
+
+                        {/* Compare - Only show for authenticated users */}
+                        {isAuthenticated && (
+                            <Button
+                                variant="outline"
+                                className="text-sm"
+                                onClick={handleCompare}
+                            >
+                                <Scale /> Compare{" "}
+                                {selectedDiamonds.length > 0 &&
+                                    `(${selectedDiamonds.length})`}
+                            </Button>
+                        )}
                     </div>
 
                     {/* Right side - Search */}
@@ -611,13 +656,19 @@ function InventoryContent() {
                             ) : (
                                 <DataTable
                                     data={data}
-                                    columns={getDiamondColumns(
-                                        handleViewDetails,
-                                    )}
+                                    columns={
+                                        isAuthenticated
+                                            ? getDiamondColumns(
+                                                  handleViewDetails,
+                                              )
+                                            : getPublicDiamondColumns(
+                                                  handleViewDetails,
+                                              )
+                                    }
                                     columnStyles={{
                                         weight: "font-bold",
                                     }}
-                                    enableSelection={true}
+                                    enableSelection={isAuthenticated}
                                     selectedDiamonds={selectedDiamonds}
                                     onSelectionChange={setSelectedDiamonds}
                                 />

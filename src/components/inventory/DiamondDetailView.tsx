@@ -3,7 +3,11 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { fetchDiamondById } from "@/services/diamondService";
-import { Diamond, getShapeFullName } from "@/interface/diamondInterface";
+import {
+    Diamond,
+    PublicDiamond,
+    getShapeFullName,
+} from "@/interface/diamondInterface";
 import { Button } from "@/components/ui/button";
 import {
     ArrowLeft,
@@ -13,7 +17,6 @@ import {
     Scale,
     Palette,
     Eye,
-    Star,
     Loader2,
     Clock,
     MessageSquare,
@@ -44,16 +47,22 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import Link from "next/link";
+import { DiamondImage } from "@/app/compare/page";
 
 interface DiamondDetailViewProps {
     diamondId: string;
+    isPublic?: boolean;
 }
 
 export default function DiamondDetailView({
     diamondId,
+    isPublic = false,
 }: DiamondDetailViewProps) {
     const router = useRouter();
-    const [diamond, setDiamond] = useState<Diamond | null>(null);
+    const [diamond, setDiamond] = useState<Diamond | PublicDiamond | null>(
+        null,
+    );
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [activeTab, setActiveTab] = useState<
@@ -68,13 +77,18 @@ export default function DiamondDetailView({
     const [inquiryText, setInquiryText] = useState("");
     const [inquiryLoading, setInquiryLoading] = useState(false);
 
+    // Type guard to check if diamond is Diamond (not PublicDiamond)
+    const isDiamond = (d: Diamond | PublicDiamond): d is Diamond => {
+        return "_id" in d;
+    };
+
     useEffect(() => {
         const loadDiamond = async () => {
             if (diamondId) {
                 try {
                     setLoading(true);
                     const id = decodeURIComponent(diamondId as string);
-                    const data = await fetchDiamondById(id);
+                    const data = await fetchDiamondById(id, isPublic);
                     setDiamond(data);
                 } catch (err) {
                     setError(
@@ -87,7 +101,7 @@ export default function DiamondDetailView({
             }
         };
         loadDiamond();
-    }, [diamondId]);
+    }, [diamondId, isPublic]);
 
     const handleHoldDiamondConfirm = async () => {
         if (!diamond?.stockRef) {
@@ -108,7 +122,13 @@ export default function DiamondDetailView({
     };
 
     const handleAddToCart = async () => {
-        if (!diamond?._id) {
+        if (!isDiamond(diamond!)) {
+            toast.error("Please login to add items to cart");
+            router.push("/login");
+            return;
+        }
+
+        if (!diamond._id) {
             toast.error("Diamond ID not available");
             return;
         }
@@ -143,7 +163,7 @@ export default function DiamondDetailView({
             });
             toast.success(response.message || "Inquiry submitted successfully");
             setShowInquiryDialog(false);
-            setInquiryText(""); // Clear the textarea
+            setInquiryText("");
         } catch (error: any) {
             toast.error(error || "Failed to submit inquiry");
         } finally {
@@ -177,7 +197,6 @@ export default function DiamondDetailView({
         );
     }
 
-    const totalPrice = diamond.weight * diamond.pricePerCts;
     const shapeName = getShapeFullName(diamond.shape);
 
     // Helper for the 3-column tables
@@ -198,7 +217,7 @@ export default function DiamondDetailView({
                         key={idx}
                         className="flex border-b border-[#e7d7b4] last:border-0 text-sm"
                     >
-                        <div className="w-1/2 px-4 py-1 font-semibold text-gray-800 border-r border-[#e7d7b4] ">
+                        <div className="w-1/2 px-4 py-1 font-semibold text-gray-800 border-r border-[#e7d7b4]">
                             {row.label}
                         </div>
                         <div className="w-1/2 px-4 py-1 text-gray-700">
@@ -219,7 +238,7 @@ export default function DiamondDetailView({
         value: string | undefined;
     }) => (
         <div className="flex border font-lato border-[#e7d7b4] border-t-0 first:border-t text-sm">
-            <div className="w-[200px] min-w-[150px] px-4 py-1 font-semibold text-gray-800 border-r border-[#e7d7b4] ">
+            <div className="w-[200px] min-w-[150px] px-4 py-1 font-semibold text-gray-800 border-r border-[#e7d7b4]">
                 {label}
             </div>
             <div className="flex-1 px-4 py-1 text-gray-700">{value || "-"}</div>
@@ -247,12 +266,12 @@ export default function DiamondDetailView({
     );
 
     return (
-        <div className="min-h-screen bg-white text-gray-800 font-sans pb-20 pt-5 ">
+        <div className="min-h-screen bg-white text-gray-800 font-sans pb-20 pt-5">
             <div className="max-w-[1400px] mx-auto px-4 md:px-8">
                 {/* Top Navigation & Tabs */}
                 <div className="flex flex-col md:flex-row md:items-center justify-start mb-6 gap-4">
                     <Button
-                        className="gold-reveal-btn  font-cormorantGaramond uppercase shadow-lg"
+                        className="gold-reveal-btn font-cormorantGaramond uppercase shadow-lg"
                         onClick={() => router.back()}
                     >
                         <span className="flex items-center">
@@ -264,9 +283,9 @@ export default function DiamondDetailView({
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab as any)}
-                                className={` px-6 py-2 text-sm font-medium border transition-colors uppercase shadow-lg ${
+                                className={`px-6 py-2 text-sm font-medium border transition-colors uppercase shadow-lg ${
                                     activeTab === tab
-                                        ? "bg-primary-yellow-2 border-0 text-gray-900 "
+                                        ? "bg-primary-yellow-2 border-0 text-gray-900"
                                         : "bg-gray-50 border-transparent text-gray-500 hover:bg-gray-100"
                                 }`}
                             >
@@ -274,25 +293,15 @@ export default function DiamondDetailView({
                             </button>
                         ))}
                     </div>
-                    <div className="w-[100px] hidden md:block"></div>{" "}
-                    {/* Spacer for alignment */}
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-12">
                     {/* Left Column: Media Viewer */}
                     <div className="lg:col-span-5">
-                        <div className="aspect-square  rounded-lg relative flex items-center justify-center border border-gray-100 group">
-                            <button className="absolute left-4 p-2 rounded-full bg-white shadow-md hover:bg-gray-50 z-10 border border-gray-100">
-                                <ChevronLeft className="w-5 h-5 text-gray-600" />
-                            </button>
-
+                        <div className="aspect-square rounded-lg relative flex items-center justify-center border border-gray-100 group">
                             {activeTab === "IMAGE" &&
                                 (diamond.webLink ? (
-                                    <img
-                                        src={diamond.webLink}
-                                        alt="Diamond"
-                                        className="max-w-full max-h-full object-cover mix-blend-multiply "
-                                    />
+                                    <DiamondImage src={diamond.webLink} />
                                 ) : (
                                     <DiamondIcon className="w-48 h-48 text-gray-200" />
                                 ))}
@@ -313,225 +322,271 @@ export default function DiamondDetailView({
                                     Certificate View
                                 </div>
                             )}
-
-                            <button className="absolute right-4 p-2 rounded-full bg-white shadow-md hover:bg-gray-50 z-10 border border-gray-100">
-                                <ChevronRight className="w-5 h-5 text-gray-600" />
-                            </button>
                         </div>
                     </div>
 
                     {/* Right Column: Basic Info */}
-                    <div className="lg:col-span-7 space-y-8 ">
+                    <div className="lg:col-span-7 space-y-8">
                         <div className="border-b border-primary-yellow-2 pb-4">
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <p className="text-gray-500 text-sm mb-1">
-                                        Diamond Details
-                                    </p>
-                                    <h1 className="text-4xl font-serif font-medium text-gray-900 mb-2">
-                                        {shapeName}{" "}
-                                        {diamond.shape !== "RD"
-                                            ? "Modified"
+                                    <p className="text-gray-900 font-lato text-2xl mb-1">
+                                        {shapeName} {diamond.weight}ct{" "}
+                                        {diamond.color} {diamond.clarity}{" "}
+                                        {isDiamond(diamond)
+                                            ? diamond.cutGrade
+                                            : ""}{" "}
+                                        {isDiamond(diamond)
+                                            ? diamond.polish
                                             : ""}
+                                    </p>
+                                    <h1 className="text-md font-cormorantGaramond font-medium text-gray-900 mb-2 flex items-center gap-2">
+                                        Stock ID:{" "}
+                                        <span className="font-bold">
+                                            {diamond.stockRef}
+                                        </span>
                                     </h1>
+                                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                                        <span>Report #: -</span>
+                                        <span>•</span>
+                                        <span>Lab: {diamond.lab}</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="flex items-baseline gap-3 mt-2">
-                                <span className="text-3xl font-bold text-gray-900">
-                                    ${diamond.priceListUSD.toLocaleString()} USD
-                                </span>
-                            </div>
+                            {/* Login Required Banner for Public Users */}
+                            {isPublic && (
+                                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4">
+                                    <p className="text-sm text-yellow-800">
+                                        <span className="font-semibold">
+                                            Login required:
+                                        </span>{" "}
+                                        Please{" "}
+                                        <Link
+                                            href="/login"
+                                            className="underline hover:text-yellow-900"
+                                        >
+                                            login
+                                        </Link>{" "}
+                                        to view pricing information.
+                                    </p>
+                                </div>
+                            )}
+
+                            {/* Show price only for authenticated users */}
+                            {isDiamond(diamond) && (
+                                <div className="flex items-baseline gap-3 mt-4">
+                                    <span className="text-3xl font-bold text-gray-900">
+                                        $
+                                        {diamond.priceListUSD?.toLocaleString()}{" "}
+                                        USD
+                                    </span>
+                                </div>
+                            )}
                         </div>
 
                         <div>
                             <h3 className="font-bold text-gray-900 mb-4 text-lg">
-                                Basic Information
+                                Diamond Specifications
                             </h3>
                             <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
                                 <InfoCard
                                     icon={GemIcon}
-                                    title={`${shapeName} Shape`}
-                                    subtitle="Classic cut known for maximum sparkle."
+                                    title="Shape"
+                                    subtitle={shapeName}
                                     desc=""
                                 />
                                 <InfoCard
                                     icon={Scale}
-                                    title={`${diamond.weight} Carat`}
-                                    subtitle="Measures a diamond's size and weight."
+                                    title="Carat"
+                                    subtitle={`${diamond.weight} ct`}
                                     desc=""
                                 />
                                 <InfoCard
                                     icon={Palette}
-                                    title={`Color ${diamond.color}`}
-                                    subtitle="Grades diamond's whiteness and purity."
+                                    title="Color"
+                                    subtitle={diamond.color}
                                     desc=""
                                 />
                                 <InfoCard
                                     icon={Eye}
-                                    title={`Clarity ${diamond.clarity}`}
-                                    subtitle="Reveals internal and external flaws."
+                                    title="Clarity"
+                                    subtitle={diamond.clarity}
                                     desc=""
                                 />
                             </div>
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                            {/* Inquiry Dialog */}
-                            <Dialog
-                                open={showInquiryDialog}
-                                onOpenChange={setShowInquiryDialog}
-                            >
-                                <DialogTrigger asChild>
-                                    <Button className="flex-1 h-12  text-white font-semibold uppercase  border-none gold-reveal-btn  font-cormorantGaramond disabled:opacity-50">
-                                        <span className="flex items-center gap-2">
-                                            <MessageSquare className="w-4 h-4" />
-                                            Enquiry
-                                        </span>
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                    <DialogHeader>
-                                        <DialogTitle>
-                                            Diamond Inquiry
-                                        </DialogTitle>
-                                        <DialogDescription>
-                                            Submit your inquiry about this
-                                            diamond. Stock Ref:{" "}
-                                            {diamond.stockRef}
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                    <div className="py-4">
-                                        <Textarea
-                                            placeholder="Type your inquiry here... (e.g., Is this diamond available for immediate purchase?)"
-                                            value={inquiryText}
-                                            onChange={(e) =>
-                                                setInquiryText(e.target.value)
-                                            }
-                                            rows={6}
-                                            className="resize-none"
-                                        />
-                                    </div>
-                                    <DialogFooter>
-                                        <Button
-                                            variant="outline"
-                                            onClick={() => {
-                                                setShowInquiryDialog(false);
-                                                setInquiryText("");
-                                            }}
-                                            disabled={inquiryLoading}
-                                        >
-                                            Cancel
+                            {/* Inquiry Dialog - Available for everyone */}
+                            {!isPublic && isDiamond(diamond) && (
+                                <Dialog
+                                    open={showInquiryDialog}
+                                    onOpenChange={setShowInquiryDialog}
+                                >
+                                    <DialogTrigger asChild>
+                                        <Button className="flex-1 h-12 text-white font-semibold uppercase border-none gold-reveal-btn font-cormorantGaramond disabled:opacity-50">
+                                            <span className="flex items-center gap-2">
+                                                <MessageSquare className="w-4 h-4" />
+                                                Enquiry
+                                            </span>
                                         </Button>
+                                    </DialogTrigger>
+                                    <DialogContent>
+                                        <DialogHeader>
+                                            <DialogTitle>
+                                                Diamond Inquiry
+                                            </DialogTitle>
+                                            <DialogDescription>
+                                                Submit your inquiry about this
+                                                diamond. Stock Ref:{" "}
+                                                {diamond.stockRef}
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <div className="py-4">
+                                            <Textarea
+                                                placeholder="Type your inquiry here... (e.g., Is this diamond available for immediate purchase?)"
+                                                value={inquiryText}
+                                                onChange={(e) =>
+                                                    setInquiryText(
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                rows={6}
+                                                className="resize-none"
+                                            />
+                                        </div>
+                                        <DialogFooter>
+                                            <Button
+                                                variant="outline"
+                                                onClick={() => {
+                                                    setShowInquiryDialog(false);
+                                                    setInquiryText("");
+                                                }}
+                                                disabled={inquiryLoading}
+                                            >
+                                                Cancel
+                                            </Button>
+                                            <Button
+                                                onClick={handleSubmitInquiry}
+                                                disabled={
+                                                    inquiryLoading ||
+                                                    !inquiryText.trim()
+                                                }
+                                                className="rounded-sm"
+                                            >
+                                                {inquiryLoading ? (
+                                                    <>
+                                                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                                                        Sending...
+                                                    </>
+                                                ) : (
+                                                    "Send Enquiry"
+                                                )}
+                                            </Button>
+                                        </DialogFooter>
+                                    </DialogContent>
+                                </Dialog>
+                            )}
+                            {/* Hold Diamond - Only for authenticated users */}
+                            {!isPublic && isDiamond(diamond) && (
+                                <AlertDialog
+                                    open={showHoldDialog}
+                                    onOpenChange={setShowHoldDialog}
+                                >
+                                    <AlertDialogTrigger asChild>
                                         <Button
-                                            onClick={handleSubmitInquiry}
-                                            disabled={
-                                                inquiryLoading ||
-                                                !inquiryText.trim()
-                                            }
-                                            className="rounded-sm"
-                                        >
-                                            {inquiryLoading ? (
-                                                <>
-                                                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                                                    Sending...
-                                                </>
-                                            ) : (
-                                                "Send Enquiry"
-                                            )}
-                                        </Button>
-                                    </DialogFooter>
-                                </DialogContent>
-                            </Dialog>
-
-                            {/* Hold Diamond AlertDialog */}
-                            <AlertDialog
-                                open={showHoldDialog}
-                                onOpenChange={setShowHoldDialog}
-                            >
-                                <AlertDialogTrigger asChild>
-                                    <Button
-                                        className="flex-1 h-12  text-white font-semibold uppercase  border-none gold-reveal-btn  font-cormorantGaramond disabled:opacity-50"
-                                        disabled={holdLoading}
-                                    >
-                                        <span className="flex items-center gap-2">
-                                            {holdLoading ? (
-                                                <Loader2 className="w-4 h-4 animate-spin" />
-                                            ) : (
-                                                "Hold Diamond"
-                                            )}
-                                        </span>
-                                    </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogMedia>
-                                            <Clock className="text-primary-purple" />
-                                        </AlertDialogMedia>
-                                        <AlertDialogTitle>
-                                            Hold this diamond?
-                                        </AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            This will reserve the diamond for
-                                            you temporarily. You can view all
-                                            your held diamonds in the enquiry
-                                            section.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel
+                                            className="flex-1 h-12 text-white font-semibold uppercase border-none gold-reveal-btn font-cormorantGaramond disabled:opacity-50"
                                             disabled={holdLoading}
                                         >
-                                            Cancel
-                                        </AlertDialogCancel>
-                                        <AlertDialogAction
-                                            onClick={handleHoldDiamondConfirm}
-                                            disabled={holdLoading}
-                                            className="rounded-sm"
-                                        >
-                                            {holdLoading ? (
-                                                <>
-                                                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                                                    Holding...
-                                                </>
-                                            ) : (
-                                                "Hold Diamond"
-                                            )}
-                                        </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
+                                            <span className="flex items-center gap-2">
+                                                {holdLoading ? (
+                                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                                ) : (
+                                                    "Hold Diamond"
+                                                )}
+                                            </span>
+                                        </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogMedia>
+                                                <Clock className="text-primary-purple" />
+                                            </AlertDialogMedia>
+                                            <AlertDialogTitle>
+                                                Hold this diamond?
+                                            </AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                This will reserve the diamond
+                                                for you temporarily. You can
+                                                view all your held diamonds in
+                                                the enquiry section.
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel
+                                                disabled={holdLoading}
+                                            >
+                                                Cancel
+                                            </AlertDialogCancel>
+                                            <AlertDialogAction
+                                                onClick={
+                                                    handleHoldDiamondConfirm
+                                                }
+                                                disabled={holdLoading}
+                                                className="rounded-sm"
+                                            >
+                                                {holdLoading ? (
+                                                    <>
+                                                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                                                        Holding...
+                                                    </>
+                                                ) : (
+                                                    "Hold Diamond"
+                                                )}
+                                            </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+                            )}
 
-                            {/* Add to Cart Button */}
-                            <Button
-                                className="flex-1 h-12  text-white font-semibold uppercase  border-none gold-reveal-btn  font-cormorantGaramond disabled:opacity-50"
-                                onClick={handleAddToCart}
-                                disabled={cartLoading}
-                            >
-                                <span className="flex items-center gap-2">
-                                    {cartLoading && (
-                                        <Loader2 className="w-4 h-4 animate-spin" />
-                                    )}
-                                    Add to Cart
-                                </span>
-                            </Button>
+                            {/* Add to Cart - Only for authenticated users */}
+                            {!isPublic && isDiamond(diamond) && (
+                                <Button
+                                    className="flex-1 h-12 text-white font-semibold uppercase border-none gold-reveal-btn font-cormorantGaramond disabled:opacity-50"
+                                    onClick={handleAddToCart}
+                                    disabled={cartLoading}
+                                >
+                                    <span className="flex items-center gap-2">
+                                        {cartLoading && (
+                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                        )}
+                                        Add to Cart
+                                    </span>
+                                </Button>
+                            )}
+
+                            {/* Login prompt for public users */}
+                            {isPublic && (
+                                <Button
+                                    className="flex-1 h-12 text-white font-semibold uppercase border-none gold-reveal-btn font-cormorantGaramond"
+                                    onClick={() => router.push("/login")}
+                                >
+                                    <span>Login to Purchase</span>
+                                </Button>
+                            )}
                         </div>
                     </div>
                 </div>
 
-                {/* Bottom Section: Detailed Tables */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-3 ">
+                {/* Bottom Section: Detailed Tables - Show limited info for public */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-3">
                     <TableSection
                         title="Details"
                         rows={[
-                            { label: "Packet No", value: diamond.stockRef },
-                            { label: "Report No", value: diamond.certiNo },
+                            { label: "Stock Ref", value: diamond.stockRef },
                             { label: "Lab", value: diamond.lab },
-                            {
-                                label: "Rap.($)",
-                                value: diamond.priceListUSD?.toLocaleString(),
-                            },
-                            { label: "Shape", value: diamond.shape },
+                            { label: "Shape", value: shapeName },
                             { label: "Carat", value: diamond.weight },
                             { label: "Color", value: diamond.color },
                             { label: "Clarity", value: diamond.clarity },
@@ -543,11 +598,19 @@ export default function DiamondDetailView({
                                 label: "Fluorescence",
                                 value: diamond.fluorescenceIntensity,
                             },
+                            {
+                                label: "Fluor Color",
+                                value: diamond.fluorescenceColor,
+                            },
                         ]}
                     />
                     <TableSection
                         title="Measurements"
                         rows={[
+                            {
+                                label: "Measurement",
+                                value: diamond.measurements,
+                            },
                             {
                                 label: "Table%",
                                 value: diamond.tablePerc?.toFixed(2),
@@ -558,12 +621,15 @@ export default function DiamondDetailView({
                             },
                             { label: "Length", value: diamond.length },
                             { label: "Width", value: diamond.width },
-                            { label: "Depth", value: diamond.height },
+                            { label: "Height", value: diamond.height },
                             {
                                 label: "Ratio",
-                                value: (diamond.length / diamond.width).toFixed(
-                                    2,
-                                ),
+                                value:
+                                    diamond.length && diamond.width
+                                        ? (
+                                              diamond.length / diamond.width
+                                          ).toFixed(2)
+                                        : "-",
                             },
                             {
                                 label: "Crown Angle",
@@ -583,26 +649,31 @@ export default function DiamondDetailView({
                             },
                             { label: "Girdle", value: diamond.girdle },
                             { label: "Culet", value: diamond.culetSize },
+                        ]}
+                    />
+                    <TableSection
+                        title="Additional Info"
+                        rows={[
                             {
                                 label: "Laser Ins.",
                                 value: diamond.laserInscription,
                             },
-                        ]}
-                    />
-                    <TableSection
-                        title="Inclusion Details"
-                        rows={[
-                            { label: "Eye Clean", value: diamond.eyeClean },
-                            { label: "Heart & Arrow", value: diamond.handA },
-                            { label: "Brilliancy", value: "-" },
+                            {
+                                label: "Cert Issue Date",
+                                value: diamond.certIssueDate
+                                    ? new Date(
+                                          diamond.certIssueDate,
+                                      ).toLocaleDateString()
+                                    : "-",
+                            },
+                            { label: "Origin", value: diamond.origin },
+                            { label: "Country", value: diamond.country },
                             { label: "Milky", value: diamond.milky },
                             {
                                 label: "Black Inclusion",
                                 value: diamond.blackinclusion,
                             },
-                            { label: "Origin", value: diamond.origin },
-                            { label: "City", value: diamond.city },
-                            { label: "Country", value: diamond.country },
+                            { label: "Eye Clean", value: diamond.eyeClean },
                             {
                                 label: "Key to Symbols",
                                 value: diamond.keyToSymbols?.length
@@ -613,21 +684,23 @@ export default function DiamondDetailView({
                     />
                 </div>
 
-                {/* Full Width Rows */}
-                <div className="border border-[#e7d7b4] rounded-sm overflow-hidden mb-12">
-                    <FullWidthRow
-                        label="Key to Symbols"
-                        value={diamond.keyToSymbols?.join(", ")}
-                    />
-                    <FullWidthRow
-                        label="Report Comments"
-                        value={diamond.certComment}
-                    />
-                    <FullWidthRow
-                        label="HRC Comments"
-                        value={diamond.memberComment}
-                    />
-                </div>
+                {/* Full Width Rows - Only show for authenticated users */}
+                {isDiamond(diamond) && (
+                    <div className="border border-[#e7d7b4] rounded-sm overflow-hidden mb-12">
+                        <FullWidthRow
+                            label="Key to Symbols"
+                            value={diamond.keyToSymbols?.join(", ")}
+                        />
+                        <FullWidthRow
+                            label="Report Comments"
+                            value={diamond.certComment}
+                        />
+                        <FullWidthRow
+                            label="HRC Comments"
+                            value={diamond.memberComment}
+                        />
+                    </div>
+                )}
             </div>
         </div>
     );

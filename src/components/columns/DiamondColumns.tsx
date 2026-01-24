@@ -2,24 +2,28 @@
 import {
     Diamond,
     getShapeFullName,
-    getAvailabilityText,
     calculateTotalPrice,
 } from "@/interface/diamondInterface";
 import { Badge } from "@/components/ui/badge";
-import { Eye } from "lucide-react";
-import { ActionButtonWithTooltip } from "@/components/ui/actionButtonWithTooltip";
-import { DiamondImage } from "@/app/compare/page";
+import { PublicDiamond } from "@/interface/diamondInterface";
+import Link from "next/link";
 
-export interface Column<T> {
+export interface PrivateColumn<T> {
     key: keyof T | string;
     header: React.ReactNode;
     render?: (row: Diamond) => React.ReactNode;
     cellClassName?: (row: Diamond) => string;
 }
+export interface PublicColumn<T> {
+    key: keyof T | string;
+    header: React.ReactNode;
+    render?: (row: PublicDiamond) => React.ReactNode;
+    cellClassName?: (row: PublicDiamond) => string;
+}
 
 export const getDiamondColumns = (
     onViewDetails: (diamond: Diamond) => void,
-): Column<Diamond>[] => [
+): PrivateColumn<Diamond>[] => [
     {
         key: "stockRef",
         header: "Stock Ref",
@@ -131,7 +135,7 @@ export const getDiamondColumns = (
         header: "Disc %",
         render: (row: Diamond) => (
             <span
-                className={row.discPerc < 0 ? "text-green-600" : "text-red-600"}
+                className={row.discPerc > 0 ? "text-green-600" : "text-red-600"}
             >
                 {row.discPerc}%
             </span>
@@ -190,5 +194,85 @@ export const getDiamondColumns = (
         key: "isMatchedPairSeparable",
         header: "Pair Separable",
         render: (row: Diamond) => (row.isMatchedPairSeparable ? "Yes" : "No"),
+    },
+];
+
+// Add new function for public columns
+export const getPublicDiamondColumns = (
+    onViewDetails: (diamond: PublicDiamond) => void,
+): PublicColumn<PublicDiamond>[] => [
+    {
+        key: "stockRef",
+        header: "Stock Ref",
+        render: (row: PublicDiamond) => (
+            <div
+                className="flex items-center gap-2 cursor-pointer text-primary-purple hover:underline hover:text-primary-yellow-1 font-bold p-0"
+                onClick={() => onViewDetails(row)}
+            >
+                {row.stockRef}
+            </div>
+        ),
+    },
+    {
+        key: "availability",
+        header: "Status",
+        render: (row: PublicDiamond) => {
+            const color =
+                row.availability === "A"
+                    ? "bg-primary-purple text-white"
+                    : row.availability === "S"
+                      ? "bg-red-100 text-red-700"
+                      : "bg-yellow-100 text-primary-purple";
+            return (
+                <Badge className={`${color} text-xs rounded-[2] px-2 py-1`}>
+                    {row.availability ? row.availability : "UNKNOWN"}
+                </Badge>
+            );
+        },
+    },
+    {
+        key: "shape",
+        header: "Shape",
+        render: (row: PublicDiamond) => getShapeFullName(row.shape),
+    },
+    { key: "weight", header: "Carat", cellClassName: () => "font-normal" },
+    { key: "color", header: "Color" },
+    { key: "clarity", header: "Clarity" },
+    { key: "shade", header: "Shade" },
+    { key: "cutGrade", header: "Cut" },
+    { key: "polish", header: "Polish" },
+    { key: "symmetry", header: "Symmetry" },
+    { key: "fluorescenceIntensity", header: "Fluor Intensity" },
+    { key: "fluorescenceColor", header: "Fluor Color" },
+    {
+        key: "measurements",
+        header: "Measurement",
+        render: (row: PublicDiamond) =>
+            row.length && row.width && row.height
+                ? `${row.length.toFixed(2)} x ${row.width.toFixed(
+                      2,
+                  )} x ${row.height.toFixed(2)}`
+                : row.measurements,
+    },
+    { key: "depthPerc", header: "Depth %" },
+    { key: "tablePerc", header: "Table %" },
+    { key: "lab", header: "Lab" },
+    {
+        key: "certIssueDate",
+        header: "Cert Issue Date",
+        render: (row: PublicDiamond) =>
+            row.certIssueDate
+                ? new Date(row.certIssueDate).toLocaleDateString()
+                : "N/A",
+    },
+    { key: "country", header: "Country" },
+    {
+        key: "price",
+        header: "Price",
+        render: () => (
+            <div className="flex items-center gap-2 cursor-pointer text-primary-purple hover:underline hover:text-primary-yellow-1 font-bold p-0">
+                <Link href="/login">Login to view price</Link>
+            </div>
+        ),
     },
 ];

@@ -1,11 +1,32 @@
 // services/diamondService.ts
-import { Diamond, DiamondParams } from "@/interface/diamondInterface";
+import {
+    Diamond,
+    DiamondParams,
+    PublicDiamond,
+} from "@/interface/diamondInterface";
 import apiClient from "@/lib/api";
 
 interface ApiResponse {
     success: boolean;
     message: string;
     data: Diamond[];
+    pagination: {
+        currentPage: number;
+        totalPages: number;
+        totalRecords: number;
+        recordsPerPage: number;
+        hasNextPage: boolean;
+        hasPrevPage: boolean;
+    };
+    appliedFilters?: Record<string, any>;
+    totalFilteredRecords?: number;
+}
+
+// Add new interface for public diamonds
+interface PublicApiResponse {
+    success: boolean;
+    message: string;
+    data: PublicDiamond[];
     pagination: {
         currentPage: number;
         totalPages: number;
@@ -325,10 +346,13 @@ export const searchDiamonds = async (
 };
 
 // Function to fetch a single diamond by ID
-export const fetchDiamondById = async (id: string): Promise<Diamond> => {
+export const fetchDiamondById = async (
+    id: string,
+    isPublic = false,
+): Promise<Diamond> => {
     try {
         const response = await apiClient.get<ApiResponse>(
-            `/diamonds/search?searchTerm=${id}`,
+            `/diamonds${isPublic ? "/safe" : "/search"}?searchTerm=${id}`,
         );
         const result = response.data;
 
@@ -344,6 +368,137 @@ export const fetchDiamondById = async (id: string): Promise<Diamond> => {
         throw new Error("Diamond not found");
     } catch (error) {
         console.error("Error fetching diamond:", error);
+        throw error;
+    }
+};
+
+// Add new function for public diamonds
+export const fetchPublicDiamonds = async (
+    params: DiamondParams,
+): Promise<{
+    data: PublicDiamond[];
+    totalCount: number;
+    currentPage: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+}> => {
+    try {
+        const queryParams = new URLSearchParams();
+
+        // Pagination
+        if (params.page) queryParams.append("page", params.page.toString());
+        if (params.limit) queryParams.append("limit", params.limit.toString());
+
+        // Sorting
+        if (params.sortBy) queryParams.append("sortBy", params.sortBy);
+        if (params.sortOrder) queryParams.append("sortOrder", params.sortOrder);
+
+        // Add all other filter parameters (same as fetchDiamonds)
+        if (params.shapes && params.shapes.length > 0) {
+            params.shapes.forEach((shape) =>
+                queryParams.append("shapes[]", shape),
+            );
+        }
+
+        if (params.colors && params.colors.length > 0) {
+            params.colors.forEach((color) =>
+                queryParams.append("colors[]", color),
+            );
+        }
+
+        if (params.clarities && params.clarities.length > 0) {
+            params.clarities.forEach((clarity) =>
+                queryParams.append("clarities[]", clarity),
+            );
+        }
+
+        if (params.cuts && params.cuts.length > 0) {
+            params.cuts.forEach((cut) => queryParams.append("cuts[]", cut));
+        }
+
+        if (params.polish && params.polish.length > 0) {
+            params.polish.forEach((pol) => queryParams.append("polish[]", pol));
+        }
+
+        if (params.symmetry && params.symmetry.length > 0) {
+            params.symmetry.forEach((sym) =>
+                queryParams.append("symmetry[]", sym),
+            );
+        }
+
+        if (params.fluorescence && params.fluorescence.length > 0) {
+            params.fluorescence.forEach((fluor) =>
+                queryParams.append("fluorescence[]", fluor),
+            );
+        }
+
+        if (params.lab && params.lab.length > 0) {
+            params.lab.forEach((lab) => queryParams.append("lab[]", lab));
+        }
+
+        // Carat range
+        if (params.minCarat !== undefined)
+            queryParams.append("minCarat", params.minCarat.toString());
+        if (params.maxCarat !== undefined)
+            queryParams.append("maxCarat", params.maxCarat.toString());
+
+        // Dimension ranges
+        if (params.minDepth !== undefined)
+            queryParams.append("minDepth", params.minDepth.toString());
+        if (params.maxDepth !== undefined)
+            queryParams.append("maxDepth", params.maxDepth.toString());
+
+        if (params.minWidth !== undefined)
+            queryParams.append("minWidth", params.minWidth.toString());
+        if (params.maxWidth !== undefined)
+            queryParams.append("maxWidth", params.maxWidth.toString());
+
+        if (params.minLength !== undefined)
+            queryParams.append("minLength", params.minLength.toString());
+        if (params.maxLength !== undefined)
+            queryParams.append("maxLength", params.maxLength.toString());
+
+        if (params.minTable !== undefined)
+            queryParams.append("minTable", params.minTable.toString());
+        if (params.maxTable !== undefined)
+            queryParams.append("maxTable", params.maxTable.toString());
+
+        if (params.minDepthPercent !== undefined)
+            queryParams.append(
+                "minDepthPercent",
+                params.minDepthPercent.toString(),
+            );
+        if (params.maxDepthPercent !== undefined)
+            queryParams.append(
+                "maxDepthPercent",
+                params.maxDepthPercent.toString(),
+            );
+
+        if (params.isNatural !== undefined)
+            queryParams.append("isNatural", params.isNatural.toString());
+
+        if (params.colorType) queryParams.append("colorType", params.colorType);
+
+        const response = await apiClient.get<PublicApiResponse>(
+            `/diamonds/safe?${queryParams.toString()}`,
+        );
+        const result = response.data;
+
+        if (!result.success) {
+            throw new Error(result.message || "Failed to fetch diamonds");
+        }
+
+        return {
+            data: result.data,
+            totalCount: result.pagination.totalRecords,
+            currentPage: result.pagination.currentPage,
+            totalPages: result.pagination.totalPages,
+            hasNextPage: result.pagination.hasNextPage,
+            hasPrevPage: result.pagination.hasPrevPage,
+        };
+    } catch (error) {
+        console.error("Error fetching public diamonds:", error);
         throw error;
     }
 };

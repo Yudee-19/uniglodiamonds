@@ -6,12 +6,11 @@ import { AuthGuard, GuestGuard, RoleGuard } from "./AuthGuards";
 // 1. Routes that require the user to be logged in
 const protectedRoutes = [
     "/cart",
-    "/inventory",
     "/compare",
     "/profile",
     "/orders",
     "/checkout",
-    "/enquiries", // Added enquiries route
+    "/enquiries",
 ];
 
 // 2. Routes that are ONLY for guests (redirect to home if logged in)
