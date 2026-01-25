@@ -18,7 +18,7 @@ import Image from "next/image";
 // --- Types & Interfaces ---
 
 export interface FilterState {
-    shapes: DiamondShape[];
+    shape: DiamondShape[];
     caratRange: [number, number];
     color: DiamondColor[];
     clarities: DiamondClarity[];
@@ -322,14 +322,14 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                             key={shape.value}
                             onClick={() =>
                                 toggleFilter(
-                                    filters.shapes,
+                                    filters.shape,
                                     shape.value,
-                                    "shapes",
+                                    "shape",
                                 )
                             }
                             className={cn(
                                 "flex flex-col items-center justify-center p-2 rounded border transition-colors aspect-square",
-                                filters.shapes.includes(shape.value)
+                                filters.shape.includes(shape.value)
                                     ? "bg-[#d4b98c] text-black border-[#d4b98c] font-medium"
                                     : " border-primary-yellow-2 border",
                             )}
@@ -346,7 +346,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                 </div>
             );
         },
-        [filters.shapes],
+        [filters.shape],
     );
 
     const caratContent = (
@@ -454,12 +454,12 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
         <div className="space-y-3">
             <div className="flex justify-center gap-2">
                 <ToggleButton
-                    label="EX+"
+                    label="3EX"
                     active={false}
                     onClick={() => {
                         setFilters((prev) => ({
                             ...prev,
-                            cuts: ["EX"],
+                            cutGrade: ["EX"],
                             symmetry: ["EX"],
                             polish: ["EX"],
                         }));
@@ -472,7 +472,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                     onClick={() => {
                         setFilters((prev) => ({
                             ...prev,
-                            cuts: ["EX", "VG"],
+                            cutGrade: ["EX"],
                             symmetry: ["EX", "VG"],
                             polish: ["EX", "VG"],
                         }));
@@ -485,9 +485,9 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                     onClick={() => {
                         setFilters((prev) => ({
                             ...prev,
-                            cuts: ["VG"],
-                            symmetry: ["VG"],
-                            polish: ["VG"],
+                            cutGrade: ["VG"],
+                            symmetry: ["EX", "VG"],
+                            polish: ["EX", "VG"],
                         }));
                     }}
                     className="px-4 py-2 bg-primary-purple2 text-white border-primary-purple2 hover:bg-primary-purple2/90"
@@ -498,7 +498,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                     onClick={() => {
                         setFilters((prev) => ({
                             ...prev,
-                            cuts: ["VG", "G"],
+                            cutGrade: ["VG"],
                             symmetry: ["VG", "G"],
                             polish: ["VG", "G"],
                         }));

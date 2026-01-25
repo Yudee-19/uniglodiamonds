@@ -42,7 +42,6 @@ import DiamondDetailView from "@/components/inventory/DiamondDetailView";
 import { toast } from "sonner";
 import { addToCart } from "@/services/cartService";
 import { useAuth } from "@/context/AuthContext";
-import { s } from "motion/react-client";
 
 function InventoryContent() {
     const router = useRouter();
@@ -75,7 +74,7 @@ function InventoryContent() {
 
     // Filter State
     const [filterState, setFilterState] = useState({
-        shapes: [] as DiamondShape[],
+        shape: [] as DiamondShape[],
         caratRange: [0, 10.99] as [number, number],
         color: [] as DiamondColor[],
         clarities: [] as DiamondClarity[],
@@ -101,7 +100,7 @@ function InventoryContent() {
     // Check if any filters are applied
     const hasActiveFilters = useCallback(() => {
         return (
-            filterState.shapes.length > 0 ||
+            filterState.shape.length > 0 ||
             filterState.color.length > 0 ||
             filterState.clarities.length > 0 ||
             filterState.cutGrade.length > 0 ||
@@ -137,9 +136,9 @@ function InventoryContent() {
             const params = {
                 page,
                 limit: rowsPerPage,
-                shapes:
-                    filterState.shapes.length > 0
-                        ? filterState.shapes
+                shape:
+                    filterState.shape.length > 0
+                        ? filterState.shape
                         : undefined,
                 color:
                     filterState.color.length > 0
@@ -297,7 +296,7 @@ function InventoryContent() {
 
     const handleReset = () => {
         setFilterState({
-            shapes: [],
+            shape: [],
             caratRange: [0, 10.99],
             color: [],
             clarities: [],

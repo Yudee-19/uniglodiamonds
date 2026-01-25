@@ -449,36 +449,32 @@ export const fetchPublicDiamonds = async (
 
         // Add all other filter parameters (same as fetchDiamonds)
         if (params.shape && params.shape.length > 0) {
-            params.shape.forEach((shape) =>
-                queryParams.append("shape[]", shape),
-            );
+            params.shape.forEach((shape) => queryParams.append("shape", shape));
         }
 
         if (params.color && params.color.length > 0) {
-            params.color.forEach((color) =>
-                queryParams.append("color[]", color),
-            );
+            params.color.forEach((color) => queryParams.append("color", color));
         }
 
         if (params.clarity && params.clarity.length > 0) {
             params.clarity.forEach((clarity) =>
-                queryParams.append("clarity[]", clarity),
+                queryParams.append("clarity", clarity),
             );
         }
 
         if (params.cutGrade && params.cutGrade.length > 0) {
             params.cutGrade.forEach((cut) =>
-                queryParams.append("cutGrade[]", cut),
+                queryParams.append("cutGrade", cut),
             );
         }
 
         if (params.polish && params.polish.length > 0) {
-            params.polish.forEach((pol) => queryParams.append("polish[]", pol));
+            params.polish.forEach((pol) => queryParams.append("polish", pol));
         }
 
         if (params.symmetry && params.symmetry.length > 0) {
             params.symmetry.forEach((sym) =>
-                queryParams.append("symmetry[]", sym),
+                queryParams.append("symmetry", sym),
             );
         }
 
@@ -487,12 +483,12 @@ export const fetchPublicDiamonds = async (
             params.fluorescenceIntensity.length > 0
         ) {
             params.fluorescenceIntensity.forEach((fluor) =>
-                queryParams.append("fluorescenceIntensity[]", fluor),
+                queryParams.append("fluorescenceIntensity", fluor),
             );
         }
 
         if (params.lab && params.lab.length > 0) {
-            params.lab.forEach((lab) => queryParams.append("lab[]", lab));
+            params.lab.forEach((lab) => queryParams.append("lab", lab));
         }
 
         // Carat range
