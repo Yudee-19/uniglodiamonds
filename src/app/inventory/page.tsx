@@ -77,15 +77,16 @@ function InventoryContent() {
     const [filterState, setFilterState] = useState({
         shapes: [] as DiamondShape[],
         caratRange: [0, 10.99] as [number, number],
-        colors: [] as DiamondColor[],
+        color: [] as DiamondColor[],
         clarities: [] as DiamondClarity[],
-        cuts: [] as DiamondCut[],
+        cutGrade: [] as DiamondCut[],
         polish: [] as DiamondCut[],
         symmetry: [] as DiamondCut[],
         fluorescence: [] as string[],
         lab: [] as string[],
         priceRange: [0, 1000000] as [number, number],
         pricePerCaratRange: [0, 1000000] as [number, number],
+        discountRange: [-100, 100] as [number, number],
         lengthRange: [0, 20] as [number, number],
         widthRange: [0, 20] as [number, number],
         heightRange: [0, 20] as [number, number],
@@ -97,19 +98,13 @@ function InventoryContent() {
         searchTerm: undefined as string | undefined,
     });
 
-    // New state variables for diamond type and color type
-    // const [isNatural, setIsNatural] = useState<boolean | undefined>(undefined); // Default to Natural
-    // const [colorType, setColorType] = useState<DiamondColorType | undefined>(
-    //     undefined,
-    // );
-
     // Check if any filters are applied
     const hasActiveFilters = useCallback(() => {
         return (
             filterState.shapes.length > 0 ||
-            filterState.colors.length > 0 ||
+            filterState.color.length > 0 ||
             filterState.clarities.length > 0 ||
-            filterState.cuts.length > 0 ||
+            filterState.cutGrade.length > 0 ||
             filterState.polish.length > 0 ||
             filterState.symmetry.length > 0 ||
             filterState.fluorescence.length > 0 ||
@@ -146,16 +141,18 @@ function InventoryContent() {
                     filterState.shapes.length > 0
                         ? filterState.shapes
                         : undefined,
-                colors:
-                    filterState.colors.length > 0
-                        ? filterState.colors
+                color:
+                    filterState.color.length > 0
+                        ? filterState.color
                         : undefined,
                 clarities:
                     filterState.clarities.length > 0
                         ? filterState.clarities
                         : undefined,
-                cuts:
-                    filterState.cuts.length > 0 ? filterState.cuts : undefined,
+                cutGrade:
+                    filterState.cutGrade.length > 0
+                        ? filterState.cutGrade
+                        : undefined,
                 polish:
                     filterState.polish.length > 0
                         ? filterState.polish
@@ -184,6 +181,14 @@ function InventoryContent() {
                 maxPricePerCarat:
                     filterState.pricePerCaratRange[1] < 1000000
                         ? filterState.pricePerCaratRange[1]
+                        : undefined,
+                minDiscount:
+                    filterState.discountRange[0] > -100
+                        ? filterState.discountRange[0]
+                        : undefined,
+                maxDiscount:
+                    filterState.discountRange[1] < 100
+                        ? filterState.discountRange[1]
                         : undefined,
                 minCarat:
                     filterState.caratRange[0] > 0
@@ -294,15 +299,16 @@ function InventoryContent() {
         setFilterState({
             shapes: [],
             caratRange: [0, 10.99],
-            colors: [],
+            color: [],
             clarities: [],
-            cuts: [],
+            cutGrade: [],
             polish: [],
             symmetry: [],
             fluorescence: [],
             lab: [],
             priceRange: [0, 1000000],
             pricePerCaratRange: [0, 1000000],
+            discountRange: [-100, 100],
             lengthRange: [0, 20],
             widthRange: [0, 20],
             heightRange: [0, 20],

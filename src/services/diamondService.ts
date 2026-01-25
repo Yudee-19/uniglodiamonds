@@ -136,6 +136,12 @@ export const fetchDiamonds = async (
                 "pricePerCts_MAX",
                 params.maxPricePerCarat.toString(),
             );
+
+        // Discount percentage range
+        if (params.minDiscount !== undefined)
+            queryParams.append("discPerc_MIN", params.minDiscount.toString());
+        if (params.maxDiscount !== undefined)
+            queryParams.append("discPerc_MAX", params.maxDiscount.toString());
         // Carat range
         if (params.minCarat !== undefined)
             queryParams.append("weight_MIN", params.minCarat.toString());
@@ -305,6 +311,12 @@ export const searchDiamonds = async (
                 "pricePerCts_MAX",
                 params.maxPricePerCarat.toString(),
             );
+
+        // Discount percentage range
+        if (params.minDiscount !== undefined)
+            queryParams.append("discPerc_MIN", params.minDiscount.toString());
+        if (params.maxDiscount !== undefined)
+            queryParams.append("discPerc_MAX", params.maxDiscount.toString());
 
         // Carat range
         if (params.minCarat !== undefined)
@@ -488,6 +500,12 @@ export const fetchPublicDiamonds = async (
             queryParams.append("weight_MIN", params.minCarat.toString());
         if (params.maxCarat !== undefined)
             queryParams.append("weight_MAX", params.maxCarat.toString());
+
+        // Discount percentage range
+        if (params.minDiscount !== undefined)
+            queryParams.append("discPerc_MIN", params.minDiscount.toString());
+        if (params.maxDiscount !== undefined)
+            queryParams.append("discPerc_MAX", params.maxDiscount.toString());
 
         // Dimension ranges
         if (params.minDepth !== undefined)

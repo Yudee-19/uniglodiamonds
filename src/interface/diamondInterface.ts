@@ -179,6 +179,8 @@ export interface DiamondParams {
     maxHeight?: number;
     minTable?: number;
     maxTable?: number;
+    minDiscount?: number;
+    maxDiscount?: number;
     minDepthPercent?: number;
     maxDepthPercent?: number;
     isNatural?: boolean;

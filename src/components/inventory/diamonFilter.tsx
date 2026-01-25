@@ -20,14 +20,15 @@ import Image from "next/image";
 export interface FilterState {
     shapes: DiamondShape[];
     caratRange: [number, number];
-    colors: DiamondColor[];
+    color: DiamondColor[];
     clarities: DiamondClarity[];
-    cuts: DiamondCut[];
+    cutGrade: DiamondCut[];
     polish: DiamondCut[];
     symmetry: DiamondCut[];
     fluorescence: string[];
     lab: string[];
     priceRange: [number, number];
+    discountRange: [number, number];
     pricePerCaratRange: [number, number];
     lengthRange: [number, number];
     widthRange: [number, number];
@@ -425,10 +426,8 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                 <ToggleButton
                     key={color}
                     label={color}
-                    active={filters.colors.includes(color)}
-                    onClick={() =>
-                        toggleFilter(filters.colors, color, "colors")
-                    }
+                    active={filters.color.includes(color)}
+                    onClick={() => toggleFilter(filters.color, color, "color")}
                     className="w-6 h-5 flex items-center justify-center p-0 border border-primary-yellow-2 "
                 />
             ))}
@@ -517,9 +516,9 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                         <ToggleButton
                             key={`cut-${opt}`}
                             label={opt}
-                            active={filters.cuts.includes(opt)}
+                            active={filters.cutGrade.includes(opt)}
                             onClick={() =>
-                                toggleFilter(filters.cuts, opt, "cuts")
+                                toggleFilter(filters.cutGrade, opt, "cutGrade")
                             }
                             className="flex-1 border border-primary-yellow-2"
                         />
@@ -626,6 +625,17 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                 minLimit={0}
                 maxLimit={1000000}
                 step={100}
+                variant={variant}
+            />
+            <RangeSliderWithInputs
+                label="Discount %"
+                value={filters.discountRange}
+                onChange={(val) =>
+                    setFilters((prev) => ({ ...prev, discountRange: val }))
+                }
+                minLimit={-100}
+                maxLimit={100}
+                step={1}
                 variant={variant}
             />
 
