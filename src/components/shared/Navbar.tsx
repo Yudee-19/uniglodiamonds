@@ -21,6 +21,7 @@ import {
     ShoppingCart,
     Users,
     FileStack,
+    Shield,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import Image from "next/image";
@@ -31,16 +32,6 @@ import { useAuth } from "@/context/AuthContext";
 
 const NAV_LINKS = [
     { name: "About", href: "/about" },
-    // {
-    //     name: "Buy Diamonds",
-    //     href: "#",
-    //     hasDropdown: true,
-    //     submenuItems: [
-    //         { name: "Round Cut", href: "#" },
-    //         { name: "Princess Cut", href: "#" },
-    //         { name: "Oval Cut", href: "#" },
-    //     ],
-    // },
     { name: "Sell Diamonds", href: "/sell-your-diamonds" },
     {
         name: "Services",
@@ -81,16 +72,6 @@ const NAV_LINKS = [
         ],
     },
     { name: "Blog", href: "/blogs" },
-    // {
-    //     name: "Guides",
-    //     href: "#",
-    //     hasDropdown: true,
-    //     submenuItems: [
-    //         { name: "Investment Guide", href: "#" },
-    //         { name: "Buying Guide", href: "#" },
-    //         { name: "Size Guide", href: "#" },
-    //     ],
-    // },
 ];
 
 const ADMIN_NAV_LINKS = [
@@ -100,6 +81,16 @@ const ADMIN_NAV_LINKS = [
         href: "/enquiry-management",
         icon: FileStack,
     },
+];
+
+const SUPER_ADMIN_NAV_LINKS = [
+    { name: "Members Management", href: "/members-management", icon: Users },
+    {
+        name: "Enquiry Management",
+        href: "/enquiry-management",
+        icon: FileStack,
+    },
+    { name: "Admin Management", href: "/admin-management", icon: Shield },
 ];
 
 const USER_NAV_LINKS = [
@@ -117,8 +108,8 @@ export default function Navbar() {
     // Get role-specific nav links
     const getRoleNavLinks = () => {
         if (!user) return [];
-        if (user.role === "ADMIN" || user.role === "SUPER_ADMIN")
-            return ADMIN_NAV_LINKS;
+        if (user.role === "SUPER_ADMIN") return SUPER_ADMIN_NAV_LINKS;
+        if (user.role === "ADMIN") return ADMIN_NAV_LINKS;
         if (user.role === "USER") return USER_NAV_LINKS;
         return [];
     };
@@ -285,9 +276,7 @@ export default function Navbar() {
                     </div>
                 </motion.div>
 
-                {/* NAV BAR 
-            This stays visible always.
-        */}
+                {/* NAV BAR */}
                 <nav
                     className={`bg-brand-gradient py-3 w-full border-b border-white/10 relative z-50 transition-colors duration-300 `}
                 >
