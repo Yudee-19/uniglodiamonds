@@ -96,7 +96,7 @@ const UniglowFamilySection = () => {
                         <div className="pt-4 pb-8 flex justify-center lg:justify-start gap-16 border-b border-gray-200/50">
                             <div className="text-center lg:text-left">
                                 <span className="block text-5xl text-primary">
-                                    100+
+                                    1000+
                                 </span>
                                 <span className="text-sm uppercase tracking-wide mt-1 block">
                                     Clients Served
@@ -104,7 +104,7 @@ const UniglowFamilySection = () => {
                             </div>
                             <div className="text-center lg:text-left">
                                 <span className="block text-5xl  text-primary">
-                                    12+
+                                    25+
                                 </span>
                                 <span className="text-sm uppercase tracking-wide mt-1 block">
                                     Years Experience
