@@ -77,7 +77,7 @@ function InventoryContent() {
         shape: [] as DiamondShape[],
         caratRange: [0, 10.99] as [number, number],
         color: [] as DiamondColor[],
-        clarities: [] as DiamondClarity[],
+        clarity: [] as DiamondClarity[],
         cutGrade: [] as DiamondCut[],
         polish: [] as DiamondCut[],
         symmetry: [] as DiamondCut[],
@@ -102,7 +102,7 @@ function InventoryContent() {
         return (
             filterState.shape.length > 0 ||
             filterState.color.length > 0 ||
-            filterState.clarities.length > 0 ||
+            filterState.clarity.length > 0 ||
             filterState.cutGrade.length > 0 ||
             filterState.polish.length > 0 ||
             filterState.symmetry.length > 0 ||
@@ -144,9 +144,9 @@ function InventoryContent() {
                     filterState.color.length > 0
                         ? filterState.color
                         : undefined,
-                clarities:
-                    filterState.clarities.length > 0
-                        ? filterState.clarities
+                clarity:
+                    filterState.clarity.length > 0
+                        ? filterState.clarity
                         : undefined,
                 cutGrade:
                     filterState.cutGrade.length > 0
@@ -160,7 +160,7 @@ function InventoryContent() {
                     filterState.symmetry.length > 0
                         ? filterState.symmetry
                         : undefined,
-                fluorescence:
+                fluorescenceIntensity:
                     filterState.fluorescence.length > 0
                         ? filterState.fluorescence
                         : undefined,
@@ -299,7 +299,7 @@ function InventoryContent() {
             shape: [],
             caratRange: [0, 10.99],
             color: [],
-            clarities: [],
+            clarity: [],
             cutGrade: [],
             polish: [],
             symmetry: [],
@@ -366,6 +366,22 @@ function InventoryContent() {
             console.error("Diamond missing stock reference");
         }
     };
+
+    const handleSort = useCallback(
+        (columnKey: string) => {
+            setSortBy(columnKey);
+            setSortOrder((prevOrder) => {
+                // If clicking the same column, toggle order
+                if (sortBy === columnKey) {
+                    return prevOrder === "asc" ? "desc" : "asc";
+                }
+                // If clicking a new column, default to ascending
+                return "asc";
+            });
+            setPage(1); // Reset to first page when sorting changes
+        },
+        [sortBy],
+    );
 
     // 4. CONDITIONAL RENDER: If viewId exists, show Detail View
     if (viewId) {
@@ -696,9 +712,15 @@ function InventoryContent() {
                                         isAuthenticated
                                             ? getDiamondColumns(
                                                   handleViewDetails,
+                                                  handleSort, // Pass sort handler
+                                                  sortBy,
+                                                  sortOrder,
                                               )
                                             : getPublicDiamondColumns(
                                                   handleViewDetails,
+                                                  handleSort, // Pass sort handler
+                                                  sortBy,
+                                                  sortOrder,
                                               )
                                     }
                                     columnStyles={{

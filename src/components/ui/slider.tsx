@@ -13,18 +13,18 @@ const Slider = React.forwardRef<
         ref={ref}
         className={cn(
             "relative flex w-full touch-none select-none items-center",
-            className
+            className,
         )}
         {...props}
     >
-        <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-[#67516B]">
+        <SliderPrimitive.Track className="relative cursor-pointer h-2 w-full grow overflow-hidden rounded-full bg-[#67516B]">
             <SliderPrimitive.Range className="absolute h-full bg-[#D1B06B]" />
         </SliderPrimitive.Track>
         {/* Try to render as many thumbs as there are values, default to 1 if not specified but usually handled by Radix */}
         {(props.value || props.defaultValue || [0]).map((_, i) => (
             <SliderPrimitive.Thumb
                 key={i}
-                className="block h-4 w-4 rounded-full border-4 bg-[#D1B06B] border-primary-purple-dark ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                className="block h-4 w-4 rounded-full border-4 bg-[#D1B06B] border-primary-purple-dark ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer"
             />
         ))}
     </SliderPrimitive.Root>

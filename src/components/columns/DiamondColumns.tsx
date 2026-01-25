@@ -7,26 +7,76 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { PublicDiamond } from "@/interface/diamondInterface";
 import Link from "next/link";
+import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 
 export interface PrivateColumn<T> {
     key: keyof T | string;
     header: React.ReactNode;
     render?: (row: Diamond) => React.ReactNode;
     cellClassName?: (row: Diamond) => string;
+    sortable?: boolean; // Add sortable flag
 }
 export interface PublicColumn<T> {
     key: keyof T | string;
     header: React.ReactNode;
     render?: (row: PublicDiamond) => React.ReactNode;
     cellClassName?: (row: PublicDiamond) => string;
+    sortable?: boolean; // Add sortable flag
 }
+
+// Helper component for sortable headers
+const SortableHeader = ({
+    label,
+    columnKey,
+    currentSortBy,
+    currentSortOrder,
+    onSort,
+}: {
+    label: string;
+    columnKey: string;
+    currentSortBy: string;
+    currentSortOrder: "asc" | "desc";
+    onSort: (key: string) => void;
+}) => {
+    const isActive = currentSortBy === columnKey;
+
+    return (
+        <button
+            onClick={() => onSort(columnKey)}
+            className="flex items-center gap-1 cursor-pointer"
+        >
+            <span>{label}</span>
+            {isActive ? (
+                currentSortOrder === "asc" ? (
+                    <ArrowUp className="h-4 w-4" />
+                ) : (
+                    <ArrowDown className="h-4 w-4" />
+                )
+            ) : (
+                <ArrowUpDown className="h-4 w-4 opacity-40" />
+            )}
+        </button>
+    );
+};
 
 export const getDiamondColumns = (
     onViewDetails: (diamond: Diamond) => void,
+    onSort: (columnKey: string) => void,
+    currentSortBy: string,
+    currentSortOrder: "asc" | "desc",
 ): PrivateColumn<Diamond>[] => [
     {
         key: "stockRef",
-        header: "Stock Ref",
+        header: (
+            <SortableHeader
+                label="Stock Ref"
+                columnKey="stockRef"
+                currentSortBy={currentSortBy}
+                currentSortOrder={currentSortOrder}
+                onSort={onSort}
+            />
+        ),
+        sortable: true,
         render: (row: Diamond) => (
             <div
                 className="flex items-center gap-2 cursor-pointer text-primary-purple hover:underline hover:text-primary-yellow-1 font-bold p-0"
@@ -57,10 +107,32 @@ export const getDiamondColumns = (
     // --- Basic Specs ---
     {
         key: "shape",
-        header: "Shape",
+        header: (
+            <SortableHeader
+                label="Shape"
+                columnKey="shape"
+                currentSortBy={currentSortBy}
+                currentSortOrder={currentSortOrder}
+                onSort={onSort}
+            />
+        ),
+        sortable: true,
         render: (row: Diamond) => getShapeFullName(row.shape),
     },
-    { key: "weight", header: "Carat", cellClassName: () => "font-normal" },
+    {
+        key: "weight",
+        header: (
+            <SortableHeader
+                label="Carat"
+                columnKey="weight"
+                currentSortBy={currentSortBy}
+                currentSortOrder={currentSortOrder}
+                onSort={onSort}
+            />
+        ),
+        sortable: true,
+        cellClassName: () => "font-normal",
+    },
     { key: "color", header: "Color" },
     { key: "clarity", header: "Clarity" },
     { key: "shade", header: "Shade" },
@@ -88,12 +160,32 @@ export const getDiamondColumns = (
     { key: "length", header: "Length" },
     { key: "width", header: "Width" },
     { key: "height", header: "Height" },
-    { key: "depthPerc", header: "Depth %" },
-    { key: "tablePerc", header: "Table %" },
-    { key: "crownAngle", header: "Crown Angle" },
-    { key: "crownHeight", header: "Crown Height" },
-    { key: "pavalionAngle", header: "Pavilion Angle" },
-    { key: "pavalionDepth", header: "Pavilion Depth" },
+    {
+        key: "depthPerc",
+        header: (
+            <SortableHeader
+                label="Depth %"
+                columnKey="depthPerc"
+                currentSortBy={currentSortBy}
+                currentSortOrder={currentSortOrder}
+                onSort={onSort}
+            />
+        ),
+        sortable: true,
+    },
+    {
+        key: "tablePerc",
+        header: (
+            <SortableHeader
+                label="Table %"
+                columnKey="tablePerc"
+                currentSortBy={currentSortBy}
+                currentSortOrder={currentSortOrder}
+                onSort={onSort}
+            />
+        ),
+        sortable: true,
+    },
 
     // --- Girdle & Culet ---
     { key: "girdle", header: "Girdle" },
@@ -120,19 +212,46 @@ export const getDiamondColumns = (
     // --- Pricing ---
     {
         key: "priceListUSD",
-        header: "List Price",
+        header: (
+            <SortableHeader
+                label="List Price"
+                columnKey="priceListUSD"
+                currentSortBy={currentSortBy}
+                currentSortOrder={currentSortOrder}
+                onSort={onSort}
+            />
+        ),
+        sortable: true,
         render: (row: Diamond) =>
             `$${row.priceListUSD ? row.priceListUSD.toLocaleString() : "N/A"}`,
     },
     {
         key: "pricePerCts",
-        header: "Price/ct",
+        header: (
+            <SortableHeader
+                label="Price/ct"
+                columnKey="pricePerCts"
+                currentSortBy={currentSortBy}
+                currentSortOrder={currentSortOrder}
+                onSort={onSort}
+            />
+        ),
+        sortable: true,
         render: (row: Diamond) =>
             `$${row.pricePerCts ? row.pricePerCts.toLocaleString() : "N/A"}`,
     },
     {
         key: "discPerc",
-        header: "Disc %",
+        header: (
+            <SortableHeader
+                label="Disc %"
+                columnKey="discPerc"
+                currentSortBy={currentSortBy}
+                currentSortOrder={currentSortOrder}
+                onSort={onSort}
+            />
+        ),
+        sortable: true,
         render: (row: Diamond) => (
             <span
                 className={row.discPerc > 0 ? "text-green-600" : "text-red-600"}
@@ -195,10 +314,22 @@ export const getDiamondColumns = (
 // Add new function for public columns
 export const getPublicDiamondColumns = (
     onViewDetails: (diamond: PublicDiamond) => void,
+    onSort: (columnKey: string) => void,
+    currentSortBy: string,
+    currentSortOrder: "asc" | "desc",
 ): PublicColumn<PublicDiamond>[] => [
     {
         key: "stockRef",
-        header: "Stock Ref",
+        header: (
+            <SortableHeader
+                label="Stock Ref"
+                columnKey="stockRef"
+                currentSortBy={currentSortBy}
+                currentSortOrder={currentSortOrder}
+                onSort={onSort}
+            />
+        ),
+        sortable: true,
         render: (row: PublicDiamond) => (
             <div
                 className="flex items-center gap-2 cursor-pointer text-primary-purple hover:underline hover:text-primary-yellow-1 font-bold p-0"
@@ -227,16 +358,98 @@ export const getPublicDiamondColumns = (
     },
     {
         key: "shape",
-        header: "Shape",
+        header: (
+            <SortableHeader
+                label="Shape"
+                columnKey="shape"
+                currentSortBy={currentSortBy}
+                currentSortOrder={currentSortOrder}
+                onSort={onSort}
+            />
+        ),
+        sortable: true,
         render: (row: PublicDiamond) => getShapeFullName(row.shape),
     },
-    { key: "weight", header: "Carat", cellClassName: () => "font-normal" },
-    { key: "color", header: "Color" },
-    { key: "clarity", header: "Clarity" },
+    {
+        key: "weight",
+        header: (
+            <SortableHeader
+                label="Carat"
+                columnKey="weight"
+                currentSortBy={currentSortBy}
+                currentSortOrder={currentSortOrder}
+                onSort={onSort}
+            />
+        ),
+        sortable: true,
+        cellClassName: () => "font-normal",
+    },
+    {
+        key: "color",
+        header: (
+            <SortableHeader
+                label="Color"
+                columnKey="color"
+                currentSortBy={currentSortBy}
+                currentSortOrder={currentSortOrder}
+                onSort={onSort}
+            />
+        ),
+        sortable: true,
+    },
+    {
+        key: "clarity",
+        header: (
+            <SortableHeader
+                label="Clarity"
+                columnKey="clarity"
+                currentSortBy={currentSortBy}
+                currentSortOrder={currentSortOrder}
+                onSort={onSort}
+            />
+        ),
+        sortable: true,
+    },
     { key: "shade", header: "Shade" },
-    { key: "cutGrade", header: "Cut" },
-    { key: "polish", header: "Polish" },
-    { key: "symmetry", header: "Symmetry" },
+    {
+        key: "cutGrade",
+        header: (
+            <SortableHeader
+                label="Cut"
+                columnKey="cutGrade"
+                currentSortBy={currentSortBy}
+                currentSortOrder={currentSortOrder}
+                onSort={onSort}
+            />
+        ),
+        sortable: true,
+    },
+    {
+        key: "polish",
+        header: (
+            <SortableHeader
+                label="Polish"
+                columnKey="polish"
+                currentSortBy={currentSortBy}
+                currentSortOrder={currentSortOrder}
+                onSort={onSort}
+            />
+        ),
+        sortable: true,
+    },
+    {
+        key: "symmetry",
+        header: (
+            <SortableHeader
+                label="Symmetry"
+                columnKey="symmetry"
+                currentSortBy={currentSortBy}
+                currentSortOrder={currentSortOrder}
+                onSort={onSort}
+            />
+        ),
+        sortable: true,
+    },
     { key: "fluorescenceIntensity", header: "Fluor Intensity" },
     { key: "fluorescenceColor", header: "Fluor Color" },
     {
@@ -244,9 +457,7 @@ export const getPublicDiamondColumns = (
         header: "Measurement",
         render: (row: PublicDiamond) =>
             row.length && row.width && row.height
-                ? `${row.length.toFixed(2)} x ${row.width.toFixed(
-                      2,
-                  )} x ${row.height.toFixed(2)}`
+                ? `${row.length.toFixed(2)} x ${row.width.toFixed(2)} x ${row.height.toFixed(2)}`
                 : row.measurements,
     },
     { key: "depthPerc", header: "Depth %" },

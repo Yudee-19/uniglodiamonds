@@ -14,6 +14,13 @@ import {
 } from "@/interface/diamondInterface";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useAuth } from "@/context/AuthContext";
 
 // --- Types & Interfaces ---
 
@@ -21,7 +28,7 @@ export interface FilterState {
     shape: DiamondShape[];
     caratRange: [number, number];
     color: DiamondColor[];
-    clarities: DiamondClarity[];
+    clarity: DiamondClarity[];
     cutGrade: DiamondCut[];
     polish: DiamondCut[];
     symmetry: DiamondCut[];
@@ -103,6 +110,29 @@ const COLORS: DiamondColor[] = [
     "X",
     "Y",
     "Z",
+];
+
+const FANCY_COLORS = [
+    "E-F",
+    "FANCY VIVID BLUE",
+    "FBOY",
+    "FIP",
+    "FIY",
+    "FLB",
+    "FLBY",
+    "FVY",
+    "FY",
+    "Fancy Deep Brownish Orangy Yellow*",
+    "Fancy Orange-Brown",
+    "Light Yellow-Green*",
+    "N-O",
+    "OP",
+    "QR",
+    "ST",
+    "UV",
+    "WX",
+    "YZ",
+    "f*",
 ];
 
 const CLARITIES: DiamondClarity[] = [
@@ -211,7 +241,7 @@ const ToggleButton = ({
     <button
         onClick={onClick}
         className={cn(
-            "px-3 py-1.5 text-xs rounded transition-all border",
+            "px-3 py-1.5 cursor-pointer text-xs rounded transition-all border",
             active
                 ? "bg-primary-yellow-2 text-black  font-medium"
                 : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50",
@@ -231,6 +261,7 @@ const RangeSliderWithInputs = ({
     step = 0.01,
     unit = "",
     variant = "default",
+    disabled = false,
 }: {
     label: string;
     value: [number, number];
@@ -240,6 +271,7 @@ const RangeSliderWithInputs = ({
     step?: number;
     unit?: string;
     variant?: "default" | "sidebar";
+    disabled?: boolean;
 }) => {
     return (
         <DiamondFilterSection
@@ -252,7 +284,7 @@ const RangeSliderWithInputs = ({
                     : ""
             }
         >
-            <div>
+            <div className={cn(disabled && "opacity-50 pointer-events-none")}>
                 <Slider
                     defaultValue={[minLimit, maxLimit]}
                     value={[value[0], value[1]]}
@@ -261,6 +293,7 @@ const RangeSliderWithInputs = ({
                     step={step}
                     onValueChange={(vals) => onChange([vals[0], vals[1]])}
                     className=""
+                    disabled={disabled}
                 />
                 <div className="flex justify-between text-[10px] text-gray-800 mt-1">
                     <span>{minLimit}</span>
@@ -277,6 +310,7 @@ const RangeSliderWithInputs = ({
                         onChange([Number(e.target.value), value[1]])
                     }
                     step={step}
+                    disabled={disabled}
                 />
                 <span className="text-gray-800 text-xs">To</span>
                 <Input
@@ -287,8 +321,14 @@ const RangeSliderWithInputs = ({
                         onChange([value[0], Number(e.target.value)])
                     }
                     step={step}
+                    disabled={disabled}
                 />
             </div>
+            {disabled && (
+                <p className="text-xs text-red-500 text-center">
+                    Please login to view prices
+                </p>
+            )}
         </DiamondFilterSection>
     );
 };
@@ -299,6 +339,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
     onReset,
     variant = "default",
 }) => {
+    const { isAuthenticated } = useAuth();
     // Generic toggle helper
     const toggleFilter = <T extends string>(
         currentList: T[],
@@ -328,7 +369,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                                 )
                             }
                             className={cn(
-                                "flex flex-col items-center justify-center p-2 rounded border transition-colors aspect-square",
+                                "flex cursor-pointer flex-col items-center justify-center p-2 rounded border transition-colors aspect-square",
                                 filters.shape.includes(shape.value)
                                     ? "bg-[#d4b98c] text-black border-[#d4b98c] font-medium"
                                     : " border-primary-yellow-2 border",
@@ -402,36 +443,137 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
             </div>
 
             <div className="flex flex-wrap gap-1 mx-auto">
-                {CARAT_RANGES.map((range, idx) => (
-                    <button
-                        key={idx}
-                        onClick={() =>
-                            setFilters((prev) => ({
-                                ...prev,
-                                caratRange: [range.min, range.max],
-                            }))
-                        }
-                        className="px-1 py-0 text-[12px] bg-transparent hover:bg-primary-yellow-2/50  text-gray-700 border-primary-yellow-2/50 border rounded-sm"
-                    >
-                        {range.label}
-                    </button>
-                ))}
+                {CARAT_RANGES.map((range, idx) => {
+                    // Only show as selected if the range exactly matches the current filter
+                    // AND the filter is not the full default range (0 to 10.99)
+                    const isDefaultRange =
+                        filters.caratRange[0] === 0 &&
+                        filters.caratRange[1] === 10.99;
+
+                    const isSelected =
+                        !isDefaultRange &&
+                        range.min >= filters.caratRange[0] &&
+                        range.max <= filters.caratRange[1];
+
+                    return (
+                        <button
+                            key={idx}
+                            onClick={() => {
+                                // Smart range selection logic
+                                const currentMin = filters.caratRange[0];
+                                const currentMax = filters.caratRange[1];
+
+                                let newMin = currentMin;
+                                let newMax = currentMax;
+
+                                // If clicking on a range that's already selected, reset to that range only
+                                if (
+                                    isSelected &&
+                                    currentMin !== range.min &&
+                                    currentMax !== range.max
+                                ) {
+                                    newMin = range.min;
+                                    newMax = range.max;
+                                }
+                                // If the new range is higher than current max, extend max
+                                else if (range.min > currentMax) {
+                                    newMax = range.max;
+                                }
+                                // If the new range is lower than current min, extend min
+                                else if (range.max < currentMin) {
+                                    newMin = range.min;
+                                }
+                                // If clicking within current range, reset to just this range
+                                else if (
+                                    range.min >= currentMin &&
+                                    range.max <= currentMax
+                                ) {
+                                    newMin = range.min;
+                                    newMax = range.max;
+                                }
+                                // Otherwise, extend to include this range
+                                else {
+                                    newMin = Math.min(currentMin, range.min);
+                                    newMax = Math.max(currentMax, range.max);
+                                }
+
+                                setFilters((prev) => ({
+                                    ...prev,
+                                    caratRange: [newMin, newMax],
+                                }));
+                            }}
+                            className={`px-1 cursor-pointer py-0 text-[12px] transition-all text-gray-700 border rounded-sm ${
+                                isSelected
+                                    ? "bg-primary-yellow-2 border-primary-yellow-2 font-semibold"
+                                    : "bg-transparent hover:bg-primary-yellow-2/50 border-primary-yellow-2/50"
+                            }`}
+                        >
+                            {range.label}
+                        </button>
+                    );
+                })}
             </div>
         </>
     );
 
     const colorContent = (
-        <div className="flex flex-wrap gap-1">
-            {COLORS.map((color) => (
-                <ToggleButton
-                    key={color}
-                    label={color}
-                    active={filters.color.includes(color)}
-                    onClick={() => toggleFilter(filters.color, color, "color")}
-                    className="w-6 h-5 flex items-center justify-center p-0 border border-primary-yellow-2 "
-                />
-            ))}
-        </div>
+        <TooltipProvider>
+            <div className="flex flex-wrap gap-1">
+                {(filters.colorType === "fancy" ? FANCY_COLORS : COLORS).map(
+                    (color) => {
+                        const isFancyColor = color.length > 1;
+                        const displayLabel =
+                            isFancyColor && color.length > 4
+                                ? `${color.substring(0, 4)}...`
+                                : color;
+
+                        const isActive = filters.color.includes(
+                            color as DiamondColor,
+                        );
+
+                        // Create button without wrapping in ToggleButton component
+                        const button = (
+                            <button
+                                onClick={() =>
+                                    toggleFilter(
+                                        filters.color,
+                                        color as DiamondColor,
+                                        "color",
+                                    )
+                                }
+                                className={cn(
+                                    " cursor-pointer px-3 py-1.5 text-xs rounded transition-all border",
+                                    isActive
+                                        ? "bg-primary-yellow-2 text-black font-medium"
+                                        : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50",
+                                    "border border-primary-yellow-2",
+                                    isFancyColor
+                                        ? "min-w-[60px] text-center px-2 py-1"
+                                        : "w-6 h-5 flex items-center justify-center p-0",
+                                )}
+                            >
+                                {displayLabel}
+                            </button>
+                        );
+
+                        return isFancyColor && color.length > 4 ? (
+                            <Tooltip key={color}>
+                                <TooltipTrigger asChild>
+                                    {button}
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p className="text-xs">{color}</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        ) : (
+                            <React.Fragment key={color}>
+                                {button}
+                            </React.Fragment>
+                        );
+                    },
+                )}
+            </div>
+        </TooltipProvider>
     );
 
     const clarityContent = (
@@ -440,9 +582,9 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                 <ToggleButton
                     key={clarity}
                     label={clarity}
-                    active={filters.clarities.includes(clarity)}
+                    active={filters.clarity.includes(clarity)}
                     onClick={() =>
-                        toggleFilter(filters.clarities, clarity, "clarities")
+                        toggleFilter(filters.clarity, clarity, "clarity")
                     }
                     className="min-w-[10] text-center border border-primary-yellow-2 px-2 py-1 "
                 />
@@ -615,6 +757,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                 maxLimit={1000000}
                 step={100}
                 variant={variant}
+                disabled={!isAuthenticated}
             />
             <RangeSliderWithInputs
                 label="Price/ct"
@@ -626,6 +769,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                 maxLimit={1000000}
                 step={100}
                 variant={variant}
+                disabled={!isAuthenticated}
             />
             <RangeSliderWithInputs
                 label="Discount %"
