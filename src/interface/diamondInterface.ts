@@ -155,16 +155,18 @@ export interface DiamondParams {
     search?: string;
     sortBy?: string;
     sortOrder?: "asc" | "desc";
-    shapes?: DiamondShape[];
-    colors?: DiamondColor[];
-    clarities?: DiamondClarity[];
-    cuts?: DiamondCut[];
+    shape?: DiamondShape[];
+    color?: DiamondColor[];
+    clarity?: DiamondClarity[];
+    cutGrade?: DiamondCut[];
     polish?: DiamondCut[];
     symmetry?: DiamondCut[];
-    fluorescence?: string[];
+    fluorescenceIntensity?: string[];
     lab?: string[];
     minPrice?: number;
     maxPrice?: number;
+    minPricePerCarat?: number;
+    maxPricePerCarat?: number;
     minCarat?: number;
     maxCarat?: number;
     minDepth?: number;
@@ -173,12 +175,15 @@ export interface DiamondParams {
     maxWidth?: number;
     minLength?: number;
     maxLength?: number;
+    minHeight?: number;
+    maxHeight?: number;
     minTable?: number;
     maxTable?: number;
     minDepthPercent?: number;
     maxDepthPercent?: number;
     isNatural?: boolean;
     colorType?: DiamondColorType;
+    searchTerm?: string;
 }
 
 // Helper function to get full shape name from code

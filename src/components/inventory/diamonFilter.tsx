@@ -28,13 +28,16 @@ export interface FilterState {
     fluorescence: string[];
     lab: string[];
     priceRange: [number, number];
+    pricePerCaratRange: [number, number];
     lengthRange: [number, number];
     widthRange: [number, number];
+    heightRange: [number, number];
     depthRange: [number, number];
     depthPercentRange: [number, number];
     tablePercentRange: [number, number];
     isNatural: boolean | undefined;
     colorType: DiamondColorType | undefined;
+    searchTerm: string | undefined;
 }
 
 interface DiamondFiltersProps {
@@ -614,6 +617,17 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                 step={100}
                 variant={variant}
             />
+            <RangeSliderWithInputs
+                label="Price/ct"
+                value={filters.pricePerCaratRange}
+                onChange={(val) =>
+                    setFilters((prev) => ({ ...prev, pricePerCaratRange: val }))
+                }
+                minLimit={0}
+                maxLimit={1000000}
+                step={100}
+                variant={variant}
+            />
 
             <RangeSliderWithInputs
                 label="Length"
@@ -639,12 +653,11 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                 maxLimit={20}
                 variant={variant}
             />
-
             <RangeSliderWithInputs
-                label="Depth"
-                value={filters.depthRange}
+                label="Height"
+                value={filters.heightRange}
                 onChange={(val) =>
-                    setFilters((prev) => ({ ...prev, depthRange: val }))
+                    setFilters((prev) => ({ ...prev, heightRange: val }))
                 }
                 minLimit={0}
                 maxLimit={20}
@@ -652,6 +665,17 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
             />
 
             <RangeSliderWithInputs
+                label="Depth %"
+                value={filters.depthRange}
+                onChange={(val) =>
+                    setFilters((prev) => ({ ...prev, depthRange: val }))
+                }
+                minLimit={0}
+                maxLimit={100}
+                variant={variant}
+            />
+
+            {/* <RangeSliderWithInputs
                 label="Depth %"
                 value={filters.depthPercentRange}
                 onChange={(val) =>
@@ -663,7 +687,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                 minLimit={40}
                 maxLimit={90}
                 variant={variant}
-            />
+            /> */}
 
             <RangeSliderWithInputs
                 label="Table %"

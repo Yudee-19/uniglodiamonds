@@ -152,12 +152,7 @@ export const getDiamondColumns = (
         key: "totalPrice",
         header: "Total",
         render: (row: Diamond) => {
-            const total = calculateTotalPrice(row.weight, row.pricePerCts);
-            return (
-                <span className=" text-gray-900">
-                    ${total.toLocaleString()}
-                </span>
-            );
+            return <span className=" text-gray-900">${row.priceListUSD}</span>;
         },
     },
 

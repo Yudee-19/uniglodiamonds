@@ -42,6 +42,7 @@ import DiamondDetailView from "@/components/inventory/DiamondDetailView";
 import { toast } from "sonner";
 import { addToCart } from "@/services/cartService";
 import { useAuth } from "@/context/AuthContext";
+import { s } from "motion/react-client";
 
 function InventoryContent() {
     const router = useRouter();
@@ -84,13 +85,16 @@ function InventoryContent() {
         fluorescence: [] as string[],
         lab: [] as string[],
         priceRange: [0, 1000000] as [number, number],
+        pricePerCaratRange: [0, 1000000] as [number, number],
         lengthRange: [0, 20] as [number, number],
         widthRange: [0, 20] as [number, number],
-        depthRange: [0, 20] as [number, number],
+        heightRange: [0, 20] as [number, number],
+        depthRange: [0, 100] as [number, number],
         depthPercentRange: [40, 90] as [number, number],
         tablePercentRange: [40, 90] as [number, number],
         isNatural: undefined as boolean | undefined,
         colorType: undefined as DiamondColorType | undefined,
+        searchTerm: undefined as string | undefined,
     });
 
     // New state variables for diamond type and color type
@@ -119,159 +123,168 @@ function InventoryContent() {
             filterState.widthRange[0] > 0 ||
             filterState.widthRange[1] < 20 ||
             filterState.depthRange[0] > 0 ||
-            filterState.depthRange[1] < 20 ||
+            filterState.depthRange[1] < 100 ||
             filterState.depthPercentRange[0] > 40 ||
             filterState.depthPercentRange[1] < 90 ||
             filterState.tablePercentRange[0] > 40 ||
             filterState.tablePercentRange[1] < 90 ||
             filterState.isNatural !== undefined ||
-            filterState.colorType !== undefined
+            filterState.colorType !== undefined ||
+            filterState.searchTerm !== undefined
         );
     }, [filterState]);
 
-    const loadData = useCallback(
-        async (useSearchApi: boolean = false) => {
-            if (viewId) return;
+    const loadData = useCallback(async () => {
+        if (viewId) return;
 
-            setLoading(true);
-            try {
-                const params = {
-                    page,
-                    limit: rowsPerPage,
-                    shapes:
-                        filterState.shapes.length > 0
-                            ? filterState.shapes
-                            : undefined,
-                    colors:
-                        filterState.colors.length > 0
-                            ? filterState.colors
-                            : undefined,
-                    clarities:
-                        filterState.clarities.length > 0
-                            ? filterState.clarities
-                            : undefined,
-                    cuts:
-                        filterState.cuts.length > 0
-                            ? filterState.cuts
-                            : undefined,
-                    polish:
-                        filterState.polish.length > 0
-                            ? filterState.polish
-                            : undefined,
-                    symmetry:
-                        filterState.symmetry.length > 0
-                            ? filterState.symmetry
-                            : undefined,
-                    fluorescence:
-                        filterState.fluorescence.length > 0
-                            ? filterState.fluorescence
-                            : undefined,
-                    lab:
-                        filterState.lab.length > 0
-                            ? filterState.lab
-                            : undefined,
-                    minPrice:
-                        filterState.priceRange[0] > 0
-                            ? filterState.priceRange[0]
-                            : undefined,
-                    maxPrice:
-                        filterState.priceRange[1] < 1000000
-                            ? filterState.priceRange[1]
-                            : undefined,
-                    minCarat:
-                        filterState.caratRange[0] > 0
-                            ? filterState.caratRange[0]
-                            : undefined,
-                    maxCarat:
-                        filterState.caratRange[1] < 10.99
-                            ? filterState.caratRange[1]
-                            : undefined,
-                    minLength:
-                        filterState.lengthRange[0] > 0
-                            ? filterState.lengthRange[0]
-                            : undefined,
-                    maxLength:
-                        filterState.lengthRange[1] < 20
-                            ? filterState.lengthRange[1]
-                            : undefined,
-                    minWidth:
-                        filterState.widthRange[0] > 0
-                            ? filterState.widthRange[0]
-                            : undefined,
-                    maxWidth:
-                        filterState.widthRange[1] < 20
-                            ? filterState.widthRange[1]
-                            : undefined,
-                    minDepth:
-                        filterState.depthRange[0] > 0
-                            ? filterState.depthRange[0]
-                            : undefined,
-                    maxDepth:
-                        filterState.depthRange[1] < 20
-                            ? filterState.depthRange[1]
-                            : undefined,
-                    minTable:
-                        filterState.tablePercentRange[0] > 40
-                            ? filterState.tablePercentRange[0]
-                            : undefined,
-                    maxTable:
-                        filterState.tablePercentRange[1] < 90
-                            ? filterState.tablePercentRange[1]
-                            : undefined,
-                    minDepthPercent:
-                        filterState.depthPercentRange[0] > 40
-                            ? filterState.depthPercentRange[0]
-                            : undefined,
-                    maxDepthPercent:
-                        filterState.depthPercentRange[1] < 90
-                            ? filterState.depthPercentRange[1]
-                            : undefined,
-                    sortBy,
-                    sortOrder,
-                    isNatural: filterState.isNatural, // Add these new params
-                    colorType: filterState.colorType, // Add these new params
-                };
+        setLoading(true);
+        try {
+            const params = {
+                page,
+                limit: rowsPerPage,
+                shapes:
+                    filterState.shapes.length > 0
+                        ? filterState.shapes
+                        : undefined,
+                colors:
+                    filterState.colors.length > 0
+                        ? filterState.colors
+                        : undefined,
+                clarities:
+                    filterState.clarities.length > 0
+                        ? filterState.clarities
+                        : undefined,
+                cuts:
+                    filterState.cuts.length > 0 ? filterState.cuts : undefined,
+                polish:
+                    filterState.polish.length > 0
+                        ? filterState.polish
+                        : undefined,
+                symmetry:
+                    filterState.symmetry.length > 0
+                        ? filterState.symmetry
+                        : undefined,
+                fluorescence:
+                    filterState.fluorescence.length > 0
+                        ? filterState.fluorescence
+                        : undefined,
+                lab: filterState.lab.length > 0 ? filterState.lab : undefined,
+                minPrice:
+                    filterState.priceRange[0] > 0
+                        ? filterState.priceRange[0]
+                        : undefined,
+                maxPrice:
+                    filterState.priceRange[1] < 1000000
+                        ? filterState.priceRange[1]
+                        : undefined,
+                minPricePerCarat:
+                    filterState.pricePerCaratRange[0] > 0
+                        ? filterState.pricePerCaratRange[0]
+                        : undefined,
+                maxPricePerCarat:
+                    filterState.pricePerCaratRange[1] < 1000000
+                        ? filterState.pricePerCaratRange[1]
+                        : undefined,
+                minCarat:
+                    filterState.caratRange[0] > 0
+                        ? filterState.caratRange[0]
+                        : undefined,
+                maxCarat:
+                    filterState.caratRange[1] < 10.99
+                        ? filterState.caratRange[1]
+                        : undefined,
+                minLength:
+                    filterState.lengthRange[0] > 0
+                        ? filterState.lengthRange[0]
+                        : undefined,
+                maxLength:
+                    filterState.lengthRange[1] < 20
+                        ? filterState.lengthRange[1]
+                        : undefined,
+                minWidth:
+                    filterState.widthRange[0] > 0
+                        ? filterState.widthRange[0]
+                        : undefined,
+                maxWidth:
+                    filterState.widthRange[1] < 20
+                        ? filterState.widthRange[1]
+                        : undefined,
+                minHeight:
+                    filterState.heightRange[0] > 0
+                        ? filterState.heightRange[0]
+                        : undefined,
+                maxHeight:
+                    filterState.heightRange[1] < 20
+                        ? filterState.heightRange[1]
+                        : undefined,
+                minDepth:
+                    filterState.depthRange[0] > 0
+                        ? filterState.depthRange[0]
+                        : undefined,
+                maxDepth:
+                    filterState.depthRange[1] < 100
+                        ? filterState.depthRange[1]
+                        : undefined,
+                minTable:
+                    filterState.tablePercentRange[0] > 40
+                        ? filterState.tablePercentRange[0]
+                        : undefined,
+                maxTable:
+                    filterState.tablePercentRange[1] < 90
+                        ? filterState.tablePercentRange[1]
+                        : undefined,
+                minDepthPercent:
+                    filterState.depthPercentRange[0] > 40
+                        ? filterState.depthPercentRange[0]
+                        : undefined,
+                maxDepthPercent:
+                    filterState.depthPercentRange[1] < 90
+                        ? filterState.depthPercentRange[1]
+                        : undefined,
+                sortBy,
+                sortOrder,
+                isNatural: filterState.isNatural, // Add these new params
+                colorType: filterState.colorType, // Add these new params
+                searchTerm: filterState.searchTerm, // Add search term
+            };
 
-                let result;
+            let result;
 
-                if (isAuthenticated) {
-                    // Logged in user - fetch private data
-                    result = useSearchApi
-                        ? await searchDiamonds(params)
-                        : await fetchDiamonds(params);
-                } else {
-                    // Public user - fetch public data
-                    result = await fetchPublicDiamonds(params);
-                }
-
-                setData(result.data);
-                setTotalCount(result.totalCount);
-                setTotalPages(result.totalPages);
-                setHasNextPage(result.hasNextPage);
-                setHasPrevPage(result.hasPrevPage);
-            } catch (error) {
-                console.error("Failed to fetch diamonds", error);
-            } finally {
-                setLoading(false);
+            if (isAuthenticated) {
+                // Logged in user - fetch private data
+                result = await searchDiamonds(params);
+                // : await fetchDiamonds(params);
+            } else {
+                // Public user - fetch public data
+                result = await fetchPublicDiamonds(params);
             }
-        },
-        [
-            page,
-            rowsPerPage,
-            sortBy,
-            sortOrder,
-            filterState,
-            isAuthenticated,
-            viewId,
-        ],
-    );
+
+            setData(result.data);
+            setTotalCount(result.totalCount);
+            setTotalPages(result.totalPages);
+            setHasNextPage(result.hasNextPage);
+            setHasPrevPage(result.hasPrevPage);
+        } catch (error) {
+            console.error("Failed to fetch diamonds", error);
+        } finally {
+            setLoading(false);
+        }
+    }, [
+        page,
+        rowsPerPage,
+        sortBy,
+        sortOrder,
+        filterState,
+        isAuthenticated,
+        viewId,
+    ]);
 
     // Wait for auth to load before fetching data
     useEffect(() => {
         if (authLoading) return;
 
         const timeoutId = setTimeout(() => {
-            loadData(hasActiveFilters());
+            loadData();
         }, 500);
 
         return () => clearTimeout(timeoutId);
@@ -289,13 +302,16 @@ function InventoryContent() {
             fluorescence: [],
             lab: [],
             priceRange: [0, 1000000],
+            pricePerCaratRange: [0, 1000000],
             lengthRange: [0, 20],
             widthRange: [0, 20],
-            depthRange: [0, 20],
+            heightRange: [0, 20],
+            depthRange: [0, 100],
             depthPercentRange: [40, 90],
             tablePercentRange: [40, 90],
             isNatural: undefined,
             colorType: undefined,
+            searchTerm: undefined,
         });
         setPage(1);
         setSelectedDiamonds([]); // Clear selection on reset
@@ -453,7 +469,14 @@ function InventoryContent() {
                     <Input
                         type="text"
                         placeholder="Diamond ID"
+                        value={filterState.searchTerm || ""}
                         className="h-10 w-full rounded-full bg-gray-50 border-gray-200 pl-4 pr-10 text-sm focus-visible:ring-1 focus-visible:ring-primary-purple2"
+                        onChange={(e) => {
+                            setFilterState((prev) => ({
+                                ...prev,
+                                searchTerm: e.target.value || undefined,
+                            }));
+                        }}
                     />
                     <button className="absolute right-1 top-1/2 -translate-y-1/2 p-1.5 bg-black text-white rounded-full hover:bg-gray-800 transition-colors">
                         <Search size={14} />
@@ -467,6 +490,7 @@ function InventoryContent() {
                         onClick={handleReset}
                         className="p-2 text-gray-500 hover:bg-gray-100 rounded-full border border-gray-100 bg-white"
                         title="Reset Filters"
+                        disabled={!hasActiveFilters()}
                     >
                         <RotateCcw size={18} />
                     </button>
@@ -592,7 +616,14 @@ function InventoryContent() {
                         <Input
                             type="text"
                             placeholder="Lot/Certificate"
+                            value={filterState.searchTerm || ""}
                             className="h-10 w-full rounded-4xl border border-gray-300 pl-5 pr-28 focus-visible:ring-2 focus-visible:ring-primary-purple2"
+                            onChange={(e) => {
+                                setFilterState((prev) => ({
+                                    ...prev,
+                                    searchTerm: e.target.value || undefined,
+                                }));
+                            }}
                         />
                         <Button className="absolute right-0 top-0 h-full  rounded-4xl bg-gray-800 px-8 text-white hover:bg-gray-700">
                             Search

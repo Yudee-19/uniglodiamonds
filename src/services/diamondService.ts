@@ -65,29 +65,31 @@ export const fetchDiamonds = async (
         if (params.sortOrder) queryParams.append("sortOrder", params.sortOrder);
 
         // Shape filters
-        if (params.shapes && params.shapes.length > 0) {
-            params.shapes.forEach((shape) =>
-                queryParams.append("shapes[]", shape),
+        if (params.shape && params.shape.length > 0) {
+            params.shape.forEach((shape) =>
+                queryParams.append("shape[]", shape),
             );
         }
 
         // Color filters
-        if (params.colors && params.colors.length > 0) {
-            params.colors.forEach((color) =>
-                queryParams.append("colors[]", color),
+        if (params.color && params.color.length > 0) {
+            params.color.forEach((color) =>
+                queryParams.append("color[]", color),
             );
         }
 
         // Clarity filters
-        if (params.clarities && params.clarities.length > 0) {
-            params.clarities.forEach((clarity) =>
-                queryParams.append("clarities[]", clarity),
+        if (params.clarity && params.clarity.length > 0) {
+            params.clarity.forEach((clarity) =>
+                queryParams.append("clarity[]", clarity),
             );
         }
 
         // Cut filters
-        if (params.cuts && params.cuts.length > 0) {
-            params.cuts.forEach((cut) => queryParams.append("cuts[]", cut));
+        if (params.cutGrade && params.cutGrade.length > 0) {
+            params.cutGrade.forEach((cut) =>
+                queryParams.append("cutGrade[]", cut),
+            );
         }
 
         // Polish filters
@@ -103,9 +105,12 @@ export const fetchDiamonds = async (
         }
 
         // Fluorescence filters
-        if (params.fluorescence && params.fluorescence.length > 0) {
-            params.fluorescence.forEach((fluor) =>
-                queryParams.append("fluorescence[]", fluor),
+        if (
+            params.fluorescenceIntensity &&
+            params.fluorescenceIntensity.length > 0
+        ) {
+            params.fluorescenceIntensity.forEach((fluor) =>
+                queryParams.append("fluorescenceIntensity[]", fluor),
             );
         }
 
@@ -116,39 +121,55 @@ export const fetchDiamonds = async (
 
         // Price range
         if (params.minPrice !== undefined)
-            queryParams.append("minPrice", params.minPrice.toString());
+            queryParams.append("priceListUSD_MIN", params.minPrice.toString());
         if (params.maxPrice !== undefined)
-            queryParams.append("maxPrice", params.maxPrice.toString());
+            queryParams.append("priceListUSD_MAX", params.maxPrice.toString());
 
+        // price per carat range
+        if (params.minPricePerCarat !== undefined)
+            queryParams.append(
+                "pricePerCts_MIN",
+                params.minPricePerCarat.toString(),
+            );
+        if (params.maxPricePerCarat !== undefined)
+            queryParams.append(
+                "pricePerCts_MAX",
+                params.maxPricePerCarat.toString(),
+            );
         // Carat range
         if (params.minCarat !== undefined)
-            queryParams.append("minCarat", params.minCarat.toString());
+            queryParams.append("weight_MIN", params.minCarat.toString());
         if (params.maxCarat !== undefined)
-            queryParams.append("maxCarat", params.maxCarat.toString());
+            queryParams.append("weight_MAX", params.maxCarat.toString());
 
         // Depth range
         if (params.minDepth !== undefined)
-            queryParams.append("minDepth", params.minDepth.toString());
+            queryParams.append("depthPerc_MIN", params.minDepth.toString());
         if (params.maxDepth !== undefined)
-            queryParams.append("maxDepth", params.maxDepth.toString());
+            queryParams.append("depthPerc_MAX", params.maxDepth.toString());
 
         // Width range
         if (params.minWidth !== undefined)
-            queryParams.append("minWidth", params.minWidth.toString());
+            queryParams.append("width_MIN", params.minWidth.toString());
         if (params.maxWidth !== undefined)
-            queryParams.append("maxWidth", params.maxWidth.toString());
+            queryParams.append("width_MAX", params.maxWidth.toString());
 
         // Length range
         if (params.minLength !== undefined)
-            queryParams.append("minLength", params.minLength.toString());
+            queryParams.append("length_MIN", params.minLength.toString());
         if (params.maxLength !== undefined)
-            queryParams.append("maxLength", params.maxLength.toString());
+            queryParams.append("length_MAX", params.maxLength.toString());
 
         // Table percentage range
         if (params.minTable !== undefined)
-            queryParams.append("minTable", params.minTable.toString());
+            queryParams.append("tablePerc_MIN", params.minTable.toString());
         if (params.maxTable !== undefined)
-            queryParams.append("maxTable", params.maxTable.toString());
+            queryParams.append("tablePerc_MAX", params.maxTable.toString());
+
+        if (params.minHeight !== undefined)
+            queryParams.append("height_MIN", params.minHeight.toString());
+        if (params.maxHeight !== undefined)
+            queryParams.append("height_MAX", params.maxHeight.toString());
 
         // Depth percentage range
         if (params.minDepthPercent !== undefined)
@@ -217,29 +238,27 @@ export const searchDiamonds = async (
         if (params.sortOrder) queryParams.append("sortOrder", params.sortOrder);
 
         // Shape filters - using repeated parameters with &
-        if (params.shapes && params.shapes.length > 0) {
-            params.shapes.forEach((shape) =>
-                queryParams.append("shape", shape),
-            );
+        if (params.shape && params.shape.length > 0) {
+            params.shape.forEach((shape) => queryParams.append("shape", shape));
         }
 
         // Color filters - using repeated parameters with &
-        if (params.colors && params.colors.length > 0) {
-            params.colors.forEach((color) =>
-                queryParams.append("color", color),
-            );
+        if (params.color && params.color.length > 0) {
+            params.color.forEach((color) => queryParams.append("color", color));
         }
 
         // Clarity filters - using repeated parameters with &
-        if (params.clarities && params.clarities.length > 0) {
-            params.clarities.forEach((clarity) =>
+        if (params.clarity && params.clarity.length > 0) {
+            params.clarity.forEach((clarity) =>
                 queryParams.append("clarity", clarity),
             );
         }
 
         // Cut filters - using repeated parameters with &
-        if (params.cuts && params.cuts.length > 0) {
-            params.cuts.forEach((cut) => queryParams.append("cutGrade", cut));
+        if (params.cutGrade && params.cutGrade.length > 0) {
+            params.cutGrade.forEach((cut) =>
+                queryParams.append("cutGrade", cut),
+            );
         }
 
         // Polish filters - using repeated parameters with &
@@ -255,8 +274,11 @@ export const searchDiamonds = async (
         }
 
         // Fluorescence filters - using repeated parameters with &
-        if (params.fluorescence && params.fluorescence.length > 0) {
-            params.fluorescence.forEach((fluor) =>
+        if (
+            params.fluorescenceIntensity &&
+            params.fluorescenceIntensity.length > 0
+        ) {
+            params.fluorescenceIntensity.forEach((fluor) =>
                 queryParams.append("fluorescenceIntensity", fluor),
             );
         }
@@ -268,39 +290,56 @@ export const searchDiamonds = async (
 
         // Price range
         if (params.minPrice !== undefined)
-            queryParams.append("minPrice", params.minPrice.toString());
+            queryParams.append("priceListUSD_MIN", params.minPrice.toString());
         if (params.maxPrice !== undefined)
-            queryParams.append("maxPrice", params.maxPrice.toString());
+            queryParams.append("priceListUSD_MAX", params.maxPrice.toString());
+
+        // price per carat range
+        if (params.minPricePerCarat !== undefined)
+            queryParams.append(
+                "pricePerCts_MIN",
+                params.minPricePerCarat.toString(),
+            );
+        if (params.maxPricePerCarat !== undefined)
+            queryParams.append(
+                "pricePerCts_MAX",
+                params.maxPricePerCarat.toString(),
+            );
 
         // Carat range
         if (params.minCarat !== undefined)
-            queryParams.append("minWeight", params.minCarat.toString());
+            queryParams.append("weight_MIN", params.minCarat.toString());
         if (params.maxCarat !== undefined)
-            queryParams.append("maxWeight", params.maxCarat.toString());
+            queryParams.append("weight_MAX", params.maxCarat.toString());
 
         // Depth range
         if (params.minDepth !== undefined)
-            queryParams.append("minDepth", params.minDepth.toString());
+            queryParams.append("depthPerc_MIN", params.minDepth.toString());
         if (params.maxDepth !== undefined)
-            queryParams.append("maxDepth", params.maxDepth.toString());
+            queryParams.append("depthPerc_MAX", params.maxDepth.toString());
 
         // Width range
         if (params.minWidth !== undefined)
-            queryParams.append("minWidth", params.minWidth.toString());
+            queryParams.append("width_MIN", params.minWidth.toString());
         if (params.maxWidth !== undefined)
-            queryParams.append("maxWidth", params.maxWidth.toString());
+            queryParams.append("width_MAX", params.maxWidth.toString());
 
         // Length range
         if (params.minLength !== undefined)
-            queryParams.append("minLength", params.minLength.toString());
+            queryParams.append("length_MIN", params.minLength.toString());
         if (params.maxLength !== undefined)
-            queryParams.append("maxLength", params.maxLength.toString());
+            queryParams.append("length_MAX", params.maxLength.toString());
+
+        if (params.minHeight !== undefined)
+            queryParams.append("height_MIN", params.minHeight.toString());
+        if (params.maxHeight !== undefined)
+            queryParams.append("height_MAX", params.maxHeight.toString());
 
         // Table percentage range
         if (params.minTable !== undefined)
-            queryParams.append("minTablePerc", params.minTable.toString());
+            queryParams.append("tablePerc_MIN", params.minTable.toString());
         if (params.maxTable !== undefined)
-            queryParams.append("maxTablePerc", params.maxTable.toString());
+            queryParams.append("tablePerc_MAX", params.maxTable.toString());
 
         // Depth percentage range
         if (params.minDepthPercent !== undefined)
@@ -320,6 +359,8 @@ export const searchDiamonds = async (
 
         // Color type filter
         if (params.colorType) queryParams.append("colorType", params.colorType);
+        if (params.searchTerm)
+            queryParams.append("searchTerm", params.searchTerm);
 
         const response = await apiClient.get<ApiResponse>(
             `/diamonds/search?${queryParams.toString()}`,
@@ -395,26 +436,28 @@ export const fetchPublicDiamonds = async (
         if (params.sortOrder) queryParams.append("sortOrder", params.sortOrder);
 
         // Add all other filter parameters (same as fetchDiamonds)
-        if (params.shapes && params.shapes.length > 0) {
-            params.shapes.forEach((shape) =>
-                queryParams.append("shapes[]", shape),
+        if (params.shape && params.shape.length > 0) {
+            params.shape.forEach((shape) =>
+                queryParams.append("shape[]", shape),
             );
         }
 
-        if (params.colors && params.colors.length > 0) {
-            params.colors.forEach((color) =>
-                queryParams.append("colors[]", color),
+        if (params.color && params.color.length > 0) {
+            params.color.forEach((color) =>
+                queryParams.append("color[]", color),
             );
         }
 
-        if (params.clarities && params.clarities.length > 0) {
-            params.clarities.forEach((clarity) =>
-                queryParams.append("clarities[]", clarity),
+        if (params.clarity && params.clarity.length > 0) {
+            params.clarity.forEach((clarity) =>
+                queryParams.append("clarity[]", clarity),
             );
         }
 
-        if (params.cuts && params.cuts.length > 0) {
-            params.cuts.forEach((cut) => queryParams.append("cuts[]", cut));
+        if (params.cutGrade && params.cutGrade.length > 0) {
+            params.cutGrade.forEach((cut) =>
+                queryParams.append("cutGrade[]", cut),
+            );
         }
 
         if (params.polish && params.polish.length > 0) {
@@ -427,9 +470,12 @@ export const fetchPublicDiamonds = async (
             );
         }
 
-        if (params.fluorescence && params.fluorescence.length > 0) {
-            params.fluorescence.forEach((fluor) =>
-                queryParams.append("fluorescence[]", fluor),
+        if (
+            params.fluorescenceIntensity &&
+            params.fluorescenceIntensity.length > 0
+        ) {
+            params.fluorescenceIntensity.forEach((fluor) =>
+                queryParams.append("fluorescenceIntensity[]", fluor),
             );
         }
 
@@ -439,30 +485,34 @@ export const fetchPublicDiamonds = async (
 
         // Carat range
         if (params.minCarat !== undefined)
-            queryParams.append("minCarat", params.minCarat.toString());
+            queryParams.append("weight_MIN", params.minCarat.toString());
         if (params.maxCarat !== undefined)
-            queryParams.append("maxCarat", params.maxCarat.toString());
+            queryParams.append("weight_MAX", params.maxCarat.toString());
 
         // Dimension ranges
         if (params.minDepth !== undefined)
-            queryParams.append("minDepth", params.minDepth.toString());
+            queryParams.append("depthPerc_MIN", params.minDepth.toString());
         if (params.maxDepth !== undefined)
-            queryParams.append("maxDepth", params.maxDepth.toString());
+            queryParams.append("depthPerc_MAX", params.maxDepth.toString());
 
         if (params.minWidth !== undefined)
-            queryParams.append("minWidth", params.minWidth.toString());
+            queryParams.append("width_MIN", params.minWidth.toString());
         if (params.maxWidth !== undefined)
-            queryParams.append("maxWidth", params.maxWidth.toString());
+            queryParams.append("width_MAX", params.maxWidth.toString());
 
         if (params.minLength !== undefined)
-            queryParams.append("minLength", params.minLength.toString());
+            queryParams.append("length_MIN", params.minLength.toString());
         if (params.maxLength !== undefined)
-            queryParams.append("maxLength", params.maxLength.toString());
+            queryParams.append("length_MAX", params.maxLength.toString());
+        if (params.minHeight !== undefined)
+            queryParams.append("height_MIN", params.minHeight.toString());
+        if (params.maxHeight !== undefined)
+            queryParams.append("height_MAX", params.maxHeight.toString());
 
         if (params.minTable !== undefined)
-            queryParams.append("minTable", params.minTable.toString());
+            queryParams.append("tablePerc_MIN", params.minTable.toString());
         if (params.maxTable !== undefined)
-            queryParams.append("maxTable", params.maxTable.toString());
+            queryParams.append("tablePerc_MAX", params.maxTable.toString());
 
         if (params.minDepthPercent !== undefined)
             queryParams.append(
@@ -479,6 +529,8 @@ export const fetchPublicDiamonds = async (
             queryParams.append("isNatural", params.isNatural.toString());
 
         if (params.colorType) queryParams.append("colorType", params.colorType);
+        if (params.searchTerm)
+            queryParams.append("searchTerm", params.searchTerm);
 
         const response = await apiClient.get<PublicApiResponse>(
             `/diamonds/safe?${queryParams.toString()}`,
