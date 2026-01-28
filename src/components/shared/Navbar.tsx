@@ -48,7 +48,7 @@ const NAV_LINKS = [
                 href: "/diamond-financing-options",
             },
             { name: "Investment Diamonds", href: "/investment-diamonds" },
-            { name: "Security Seals", href: "/security-seals" },
+            // { name: "Security Seals", href: "/security-seals" },
             { name: "Partners", href: "/partners" },
         ],
     },

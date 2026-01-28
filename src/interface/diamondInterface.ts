@@ -35,7 +35,15 @@ export type DiamondColor =
     | "W"
     | "X"
     | "Y"
-    | "Z";
+    | "Z"
+    | "N-O"
+    | "OP"
+    | "QR"
+    | "ST"
+    | "UV"
+    | "WX"
+    | "YZ"
+    | "E-F";
 
 export type DiamondClarity =
     | "FL"

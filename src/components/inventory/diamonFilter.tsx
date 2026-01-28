@@ -90,6 +90,7 @@ const COLORS: DiamondColor[] = [
     "D",
     "E",
     "F",
+    "E-F",
     "G",
     "H",
     "I",
@@ -110,10 +111,16 @@ const COLORS: DiamondColor[] = [
     "X",
     "Y",
     "Z",
+    "N-O",
+    "OP",
+    "QR",
+    "ST",
+    "UV",
+    "WX",
+    "YZ",
 ];
 
 const FANCY_COLORS = [
-    "E-F",
     "FANCY VIVID BLUE",
     "FBOY",
     "FIP",
@@ -125,13 +132,6 @@ const FANCY_COLORS = [
     "Fancy Deep Brownish Orangy Yellow*",
     "Fancy Orange-Brown",
     "Light Yellow-Green*",
-    "N-O",
-    "OP",
-    "QR",
-    "ST",
-    "UV",
-    "WX",
-    "YZ",
     "f*",
 ];
 
@@ -594,7 +594,15 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
 
     const finishContent = (
         <div className="space-y-3">
-            <div className="flex justify-center gap-2">
+            {/* Quick Select Buttons - Stack on small screens in sidebar */}
+            <div
+                className={cn(
+                    "grid grid-cols-4 gap-2",
+                    variant === "sidebar"
+                        ? "grid grid-cols-2 sm:flex-row sm:flex-wrap sm:justify-center"
+                        : "justify-center",
+                )}
+            >
                 <ToggleButton
                     label="3EX"
                     active={false}
@@ -606,7 +614,12 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                             polish: ["EX"],
                         }));
                     }}
-                    className="px-4 py-2 bg-primary-purple2 text-white border-primary-purple2 hover:bg-primary-purple2/90"
+                    className={cn(
+                        "bg-primary-purple2 text-white border-primary-purple2 hover:bg-primary-purple2/90",
+                        variant === "sidebar"
+                            ? "px-3 py-1.5 w-full sm:w-auto sm:flex-1"
+                            : "px-4 py-2",
+                    )}
                 />
                 <ToggleButton
                     label="EX-"
@@ -619,7 +632,12 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                             polish: ["EX", "VG"],
                         }));
                     }}
-                    className="px-4 py-2 bg-primary-purple2 text-white border-primary-purple2 hover:bg-primary-purple2/90"
+                    className={cn(
+                        "bg-primary-purple2 text-white border-primary-purple2 hover:bg-primary-purple2/90",
+                        variant === "sidebar"
+                            ? "px-3 py-1.5 w-full sm:w-auto sm:flex-1"
+                            : "px-4 py-2",
+                    )}
                 />
                 <ToggleButton
                     label="VG+"
@@ -632,7 +650,12 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                             polish: ["EX", "VG"],
                         }));
                     }}
-                    className="px-4 py-2 bg-primary-purple2 text-white border-primary-purple2 hover:bg-primary-purple2/90"
+                    className={cn(
+                        "bg-primary-purple2 text-white border-primary-purple2 hover:bg-primary-purple2/90",
+                        variant === "sidebar"
+                            ? "px-3 py-1.5 w-full sm:w-auto sm:flex-1"
+                            : "px-4 py-2",
+                    )}
                 />
                 <ToggleButton
                     label="VG-"
@@ -645,15 +668,40 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                             polish: ["VG", "G"],
                         }));
                     }}
-                    className="px-4 py-2 bg-primary-purple2 text-white border-primary-purple2 hover:bg-primary-purple2/90"
+                    className={cn(
+                        "bg-primary-purple2 text-white border-primary-purple2 hover:bg-primary-purple2/90",
+                        variant === "sidebar"
+                            ? "px-3 py-1.5 w-full sm:w-auto sm:flex-1"
+                            : "px-4 py-2",
+                    )}
                 />
             </div>
+
             {/* Cut */}
-            <div className="flex items-center gap-2">
-                <span className="w-16 text-sm font-semibold text-white bg-primary-purple2 py-1 px-2 rounded-sm text-center">
+            <div
+                className={cn(
+                    "flex gap-2",
+                    variant === "sidebar"
+                        ? "flex-col sm:flex-row sm:items-center"
+                        : "items-center",
+                )}
+            >
+                <span
+                    className={cn(
+                        "text-sm font-semibold text-white bg-primary-purple2 rounded-sm text-center",
+                        variant === "sidebar"
+                            ? "py-1 px-2 w-full sm:w-16 sm:shrink-0"
+                            : "w-16 py-1 px-2",
+                    )}
+                >
                     Cut
                 </span>
-                <div className="flex flex-1 gap-1">
+                <div
+                    className={cn(
+                        "flex gap-1",
+                        variant === "sidebar" ? "flex-1 flex-wrap" : "flex-1",
+                    )}
+                >
                     {CUT_OPTIONS.map((opt) => (
                         <ToggleButton
                             key={`cut-${opt}`}
@@ -662,18 +710,42 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                             onClick={() =>
                                 toggleFilter(filters.cutGrade, opt, "cutGrade")
                             }
-                            className="flex-1 border border-primary-yellow-2"
+                            className={cn(
+                                "border border-primary-yellow-2",
+                                variant === "sidebar"
+                                    ? "flex-1 min-w-[40px]"
+                                    : "flex-1",
+                            )}
                         />
                     ))}
                 </div>
             </div>
 
             {/* Symmetry */}
-            <div className="flex items-center gap-2">
-                <span className="w-16 text-sm font-semibold text-white bg-primary-purple2 py-1 px-2 rounded-sm text-center">
+            <div
+                className={cn(
+                    "flex gap-2",
+                    variant === "sidebar"
+                        ? "flex-col sm:flex-row sm:items-center"
+                        : "items-center",
+                )}
+            >
+                <span
+                    className={cn(
+                        "text-sm font-semibold text-white bg-primary-purple2 rounded-sm text-center",
+                        variant === "sidebar"
+                            ? "py-1 px-2 w-full sm:w-16 sm:shrink-0"
+                            : "w-16 py-1 px-2",
+                    )}
+                >
                     Symm.
                 </span>
-                <div className="flex flex-1 gap-1">
+                <div
+                    className={cn(
+                        "flex gap-1",
+                        variant === "sidebar" ? "flex-1 flex-wrap" : "flex-1",
+                    )}
+                >
                     {CUT_OPTIONS.map((opt) => (
                         <ToggleButton
                             key={`symm-${opt}`}
@@ -682,18 +754,42 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                             onClick={() =>
                                 toggleFilter(filters.symmetry, opt, "symmetry")
                             }
-                            className="flex-1 border border-primary-yellow-2"
+                            className={cn(
+                                "border border-primary-yellow-2",
+                                variant === "sidebar"
+                                    ? "flex-1 min-w-[40px]"
+                                    : "flex-1",
+                            )}
                         />
                     ))}
                 </div>
             </div>
 
             {/* Polish */}
-            <div className="flex items-center gap-2">
-                <span className="w-16 text-sm font-semibold text-white bg-primary-purple2 py-1 px-2 rounded-sm text-center">
+            <div
+                className={cn(
+                    "flex gap-2",
+                    variant === "sidebar"
+                        ? "flex-col sm:flex-row sm:items-center"
+                        : "items-center",
+                )}
+            >
+                <span
+                    className={cn(
+                        "text-sm font-semibold text-white bg-primary-purple2 rounded-sm text-center",
+                        variant === "sidebar"
+                            ? "py-1 px-2 w-full sm:w-16 sm:shrink-0"
+                            : "w-16 py-1 px-2",
+                    )}
+                >
                     Polish
                 </span>
-                <div className="flex flex-1 gap-1">
+                <div
+                    className={cn(
+                        "flex gap-1",
+                        variant === "sidebar" ? "flex-1 flex-wrap" : "flex-1",
+                    )}
+                >
                     {CUT_OPTIONS.map((opt) => (
                         <ToggleButton
                             key={`pol-${opt}`}
@@ -702,7 +798,12 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                             onClick={() =>
                                 toggleFilter(filters.polish, opt, "polish")
                             }
-                            className="flex-1 border border-primary-yellow-2"
+                            className={cn(
+                                "border border-primary-yellow-2",
+                                variant === "sidebar"
+                                    ? "flex-1 min-w-[40px]"
+                                    : "flex-1",
+                            )}
                         />
                     ))}
                 </div>
@@ -781,6 +882,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                 maxLimit={100}
                 step={1}
                 variant={variant}
+                disabled={!isAuthenticated}
             />
 
             <RangeSliderWithInputs
