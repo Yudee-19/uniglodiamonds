@@ -1,6 +1,6 @@
 import BannerSection from "@/components/shared/BannerSection";
 import React from "react";
-import BannerImage from "@/assets/fancy-colored-diamonds/banner.jpg";
+import BannerImage from "@/assets/fancy-colored-diamonds/new.jpeg";
 import Image from "next/image";
 
 // Replace with your actual image paths
@@ -96,7 +96,7 @@ const page = () => {
                                             >
                                                 {paragraph}
                                             </p>
-                                        )
+                                        ),
                                     )}
                                 </div>
                             </div>

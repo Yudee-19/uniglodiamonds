@@ -1,7 +1,7 @@
 import BannerSection from "@/components/shared/BannerSection";
 import ArticleLayout from "@/components/shared/ArticleLayout";
 import React from "react";
-import BannerImage from "@/assets/ethical-diamonds/banner.jpg";
+import BannerImage from "@/assets/ethical-diamonds/bannerNewEthical.jpeg";
 import Image from "next/image";
 
 // Replace with your actual image paths

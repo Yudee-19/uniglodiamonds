@@ -1,6 +1,6 @@
 import React from "react";
 import BannerSection from "@/components/shared/BannerSection";
-import BannerImage from "@/assets/services/security-seals/banner.jpg";
+import BannerImage from "@/assets/services/security-seals/bannerNew.jpeg";
 import ArticleLayout from "@/components/shared/ArticleLayout";
 import FedexImage from "@/assets/services/security-seals/image-1.png";
 import SubFooter from "@/components/shared/SubFooter";

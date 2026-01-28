@@ -4,7 +4,7 @@ import BannerSection from "@/components/shared/BannerSection";
 import ArticleLayout from "@/components/shared/ArticleLayout";
 
 // Placeholder imports - Replace with your actual assets
-import BannerImage from "@/assets/diamond-certificates/banner.jpg";
+import BannerImage from "@/assets/diamond-certificates/certiBanner.jpeg";
 import FedexImage from "@/assets/diamond-certificates/image-1.png";
 import InspectionImage from "@/assets/diamond-certificates/image-2.png";
 

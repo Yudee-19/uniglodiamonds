@@ -1,6 +1,6 @@
 import React from "react";
 import BannerSection from "@/components/shared/BannerSection";
-import BannerImage from "@/assets/services/diamond-financing-options/banner.jpg";
+import BannerImage from "@/assets/services/diamond-financing-options/banner.jpeg";
 import ArticleLayout from "@/components/shared/ArticleLayout";
 import FinancingImg from "@/assets/services/diamond-financing-options/image-1.png"; // Update path as needed
 import Image from "next/image";
@@ -13,7 +13,7 @@ const page = () => {
                 image={BannerImage}
                 text="Diamond Financing Options"
                 textClassName="left-10 top-90 text-4xl"
-                imageClassName="h-100 object-cover"
+                imageClassName="h-120 object-cover"
             />
             {/* Article Section */}
             <section className="max-w-7xl mx-auto px-10 mt-20">

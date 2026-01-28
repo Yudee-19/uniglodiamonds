@@ -1,5 +1,5 @@
 import BannerSection from "@/components/shared/BannerSection";
-import BannerImage from "@/assets/services/the-best-price-for-your-diamonds/banner.png";
+import BannerImage from "@/assets/services/the-best-price-for-your-diamonds/bannerNew.jpeg";
 import React from "react";
 import ArticleLayout from "@/components/shared/ArticleLayout";
 import DiamondsBanner from "@/assets/services/the-best-price-for-your-diamonds/banner2.png";
@@ -14,7 +14,7 @@ const page = () => {
                 image={BannerImage}
                 text="The best price for your diamond"
                 textClassName="left-10 top-90 text-4xl"
-                imageClassName="h-100 object-cover"
+                imageClassName="h-120 object-cover"
             />
             {/* Article Section */}
             <section className=" max-w-7xl mx-auto px-10 mt-20">

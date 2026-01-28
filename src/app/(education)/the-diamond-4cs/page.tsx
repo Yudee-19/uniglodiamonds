@@ -14,7 +14,7 @@ import IgiLogo from "@/assets/our-partners/igi.jpg";
 import { Clock1, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BannerSection from "@/components/shared/BannerSection";
-import BannerImage from "@/assets/services/the-best-price-for-your-diamonds/banner1.png";
+import BannerImage from "@/assets/diamond-4cs/banner4c.jpeg";
 const page = () => {
     return (
         <div className="min-h-screen  mb-20">

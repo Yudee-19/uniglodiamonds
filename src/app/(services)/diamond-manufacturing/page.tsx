@@ -1,10 +1,10 @@
 import BannerSection from "@/components/shared/BannerSection";
 import React from "react";
-import BannerImage from "@/assets/services/diamond-manufacturing/banner.jpg";
+import BannerImage from "@/assets/services/diamond-manufacturing/bannerNew.jpeg";
 import ArticleLayout from "@/components/shared/ArticleLayout";
 
 // Example images (replace with your actual paths)
-import manufacturing1 from "@/assets/services/diamond-manufacturing/manufacturing1.png";
+import manufacturing1 from "@/assets/services/diamond-manufacturing/manufacturing1.jpeg";
 import manufacturing2 from "@/assets/services/diamond-manufacturing/image-2.png";
 import customDiamondImage from "@/assets/services/diamond-manufacturing/custom-diamond-manufacturing.png";
 import whyChooseImage from "@/assets/services/diamond-manufacturing/image-3.png";
@@ -17,8 +17,8 @@ const page = () => {
             <BannerSection
                 image={BannerImage}
                 text="Diamond Manufacturing"
-                imageClassName="transform scale-x-[-1] h-120 object-cover"
-                textClassName=" left-10 text-5xl"
+                imageClassName="h-120 object-cover"
+                textClassName="top-50 left-10 text-5xl"
             />
 
             <section className="max-w-7xl mx-auto px-4 py-20">

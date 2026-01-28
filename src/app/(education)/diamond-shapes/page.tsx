@@ -2,7 +2,7 @@ import React from "react";
 import BannerSection from "@/components/shared/BannerSection";
 import ArticleLayout from "@/components/shared/ArticleLayout";
 import Image from "next/image";
-import BannerImage from "@/assets/diamond-shape/banner.png";
+import BannerImage from "@/assets/diamond-shape/banner.jpeg";
 
 // Replace with your actual image paths
 import DiamondShapesGrid from "@/assets/diamond-shape/diamond-shape.png";
