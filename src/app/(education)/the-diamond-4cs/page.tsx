@@ -430,7 +430,7 @@ const page = () => {
                                         Address
                                     </strong>
                                     <p>
-                                        Hoveniersstraat 30, Suite 663, Bus 250
+                                        Hoveniersstraat 30, Suite 662, Bus 250
                                         2018 Antwerp
                                     </p>
                                 </div>

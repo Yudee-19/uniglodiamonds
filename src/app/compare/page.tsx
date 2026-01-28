@@ -68,7 +68,15 @@ function CompareContent() {
 
             try {
                 setLoading(true);
-                const promises = idArray.map((id) => fetchDiamondById(id));
+                const promises = idArray.map(async (id) => {
+                    try {
+                        const response = await fetchDiamondById(id, false);
+                        return response.diamond;
+                    } catch (error) {
+                        console.error(`Failed to fetch diamond ${id}:`, error);
+                        return null;
+                    }
+                });
                 const results = await Promise.all(promises);
                 setDiamonds(results.filter((d): d is Diamond => d !== null));
             } catch (error) {
@@ -81,11 +89,11 @@ function CompareContent() {
         fetchComparisonData();
     }, [idsParam]);
 
-    const removeDiamond = (idToRemove: string) => {
+    const removeDiamond = (stockRefToRemove: string) => {
         const currentIds = idsParam?.split(",") || [];
-        const newIds = currentIds.filter((id) => id !== idToRemove);
+        const newIds = currentIds.filter((id) => id !== stockRefToRemove);
 
-        if (newIds.length === 0) {
+        if (newIds.length < 2) {
             router.push("/inventory");
         } else {
             router.push(`/compare?ids=${newIds.join(",")}`);
@@ -118,21 +126,24 @@ function CompareContent() {
         { label: "Fls", key: "fluorescenceIntensity" },
         {
             label: "Rap.($)",
-            getValue: (d) => d.priceListUSD?.toLocaleString(),
+            getValue: (d) => d.priceListUSD?.toLocaleString() || "-",
         },
         { label: "Length", key: "length" },
         { label: "Width", key: "width" },
         { label: "Depth", key: "height" },
-        { label: "Depth %", getValue: (d) => d.depthPerc?.toFixed(2) },
-        { label: "Table %", getValue: (d) => d.tablePerc?.toFixed(2) },
+        { label: "Depth %", getValue: (d) => d.depthPerc?.toFixed(2) || "-" },
+        { label: "Table %", getValue: (d) => d.tablePerc?.toFixed(2) || "-" },
         { label: "Disc %", getValue: (d) => calculateDiscount(d) },
         {
             label: "Net Rate",
-            getValue: (d) => d.pricePerCts?.toLocaleString(),
+            getValue: (d) => d.pricePerCts?.toLocaleString() || "-",
         },
         {
             label: "Net Value",
-            getValue: (d) => (d.weight * d.pricePerCts)?.toLocaleString(),
+            getValue: (d) =>
+                d.weight && d.pricePerCts
+                    ? (d.weight * d.pricePerCts).toLocaleString()
+                    : "-",
         },
         { label: "C/A", getValue: (d) => d.crownAngle?.toFixed(2) || "-" },
         { label: "C/H", getValue: (d) => d.crownHeight?.toFixed(2) || "-" },
@@ -144,7 +155,7 @@ function CompareContent() {
                 d.length && d.width ? (d.length / d.width).toFixed(2) : "-",
         },
         { label: "Girdle", key: "girdle" },
-        { label: "Girdle %", getValue: () => "-" },
+        { label: "Girdle %", getValue: (d) => d.girdlePerc || "-" },
         { label: "Star", getValue: () => "-" },
         {
             label: "Key To Symbols",
@@ -227,7 +238,6 @@ function CompareContent() {
                 <div className="min-w-[200px] flex flex-col shrink-0 sticky left-0 z-20 bg-white">
                     {/* Spacer for Image area */}
                     <div className="h-[250px] mb-2 border-primary-yellow-3 border rounded-lg flex items-center justify-center">
-                        {/* Placeholder for logo if needed */}
                         {/* Header Row */}
                         <Image
                             src={"/logo/logo.png"}
@@ -265,12 +275,15 @@ function CompareContent() {
                         {/* Image Area */}
                         <div className="h-[250px] mb-2 relative border border-primary-yellow-3 rounded-lg bg-gray-50 flex items-center justify-center group">
                             <button
-                                onClick={() => removeDiamond(diamond.certiNo)}
+                                onClick={() => removeDiamond(diamond.stockRef)}
                                 className="absolute top-2 right-2 p-1 bg-white/80 hover:bg-white rounded-full z-10 shadow-sm border border-gray-200"
                             >
                                 <X className="w-4 h-4 text-gray-500" />
                             </button>
-                            <DiamondImage src={diamond.webLink} />
+                            <DiamondImage
+                                src={diamond.webLink}
+                                showdefault={false}
+                            />
                         </div>
 
                         {/* Header Row (A, B, C...) */}

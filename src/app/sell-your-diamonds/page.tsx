@@ -183,7 +183,7 @@ const Page = () => {
                                 Address
                             </h4>
                             <p className="text-white font-lora text-lg">
-                                Hoveniersstraat 30, Suite 663, Bus 250 2018
+                                Hoveniersstraat 30, Suite 662, Bus 250 2018
                                 Antwerp
                             </p>
                         </div>

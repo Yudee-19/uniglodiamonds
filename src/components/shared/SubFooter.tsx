@@ -5,7 +5,7 @@ import Image from "next/image";
 export const subFooterInfo = {
     address: {
         label: "Address",
-        value: ["Hoveniersstraat 30,", "Suite 663,", "Bus 250 2018 Antwerp"],
+        value: ["Hoveniersstraat 30,", "Suite 662,", "Bus 250 2018 Antwerp"],
     },
     hours: {
         label: "Hours",
@@ -118,7 +118,7 @@ const SubFooter: React.FC = () => {
                                 {subFooterInfo.address.value.map(
                                     (line, idx) => (
                                         <div key={idx}>{line}</div>
-                                    )
+                                    ),
                                 )}
                             </div>
                         </div>
