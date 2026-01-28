@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import bannerImage from "@/assets/about/banner2.png";
+import bannerImage from "@/assets/conflict-free/bannerConflict.jpeg";
 import UniglowFamilySection from "@/components/shared/UniglowFamilySection";
 import CertificatesMarqueeSection from "@/components/shared/CertificatesMarqueeSection";
 import Antwerpimage1 from "@/assets/about/antwerp_2.jpg";
@@ -41,7 +41,7 @@ const Page = () => {
             <BannerSection
                 image={bannerImage}
                 text="About us"
-                textClassName="text-black "
+                textClassName="text-white left-10 top-110 text-5xl"
             />
             {/* Uniglow Family Section */}
             <UniglowFamilySection />

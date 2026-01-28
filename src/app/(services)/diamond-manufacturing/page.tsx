@@ -18,7 +18,7 @@ const page = () => {
                 image={BannerImage}
                 text="Diamond Manufacturing"
                 imageClassName="h-120 object-cover"
-                textClassName="top-50 left-10 text-5xl"
+                textClassName="left-10 top-110  text-5xl"
             />
 
             <section className="max-w-7xl mx-auto px-4 py-20">
