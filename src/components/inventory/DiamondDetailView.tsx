@@ -49,6 +49,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
 import { DiamondImage } from "@/app/compare/page";
+import SimilarDiamonds from "./SimilarDiamonds";
 
 interface DiamondDetailViewProps {
     diamondId: string;
@@ -63,6 +64,7 @@ export default function DiamondDetailView({
     const [diamond, setDiamond] = useState<Diamond | PublicDiamond | null>(
         null,
     );
+    const [similarDiamondIds, setSimilarDiamondIds] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [activeTab, setActiveTab] = useState<
@@ -88,8 +90,9 @@ export default function DiamondDetailView({
                 try {
                     setLoading(true);
                     const id = decodeURIComponent(diamondId as string);
-                    const data = await fetchDiamondById(id, isPublic);
-                    setDiamond(data);
+                    const response = await fetchDiamondById(id, isPublic);
+                    setDiamond(response.diamond);
+                    setSimilarDiamondIds(response.similarDiamonds || []);
                 } catch (err) {
                     setError(
                         "Failed to load diamond details. Please try again.",
@@ -700,6 +703,14 @@ export default function DiamondDetailView({
                             value={diamond.memberComment}
                         />
                     </div>
+                )}
+
+                {/* Similar Diamonds Section */}
+                {similarDiamondIds.length > 0 && (
+                    <SimilarDiamonds
+                        similarDiamondIds={similarDiamondIds}
+                        isPublic={isPublic}
+                    />
                 )}
             </div>
         </div>

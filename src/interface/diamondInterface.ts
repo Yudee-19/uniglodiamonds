@@ -147,6 +147,9 @@ export interface Diamond {
     __v: number;
     createdAt: string; // ISO Date String
     updatedAt: string; // ISO Date String
+
+    // --- Similar Diamonds ---
+    similar_diamonds?: string[];
 }
 
 export interface DiamondParams {

@@ -341,7 +341,6 @@ export const searchDiamonds = async (
             queryParams.append("length_MIN", params.minLength.toString());
         if (params.maxLength !== undefined)
             queryParams.append("length_MAX", params.maxLength.toString());
-
         if (params.minHeight !== undefined)
             queryParams.append("height_MIN", params.minHeight.toString());
         if (params.maxHeight !== undefined)
@@ -402,7 +401,7 @@ export const searchDiamonds = async (
 export const fetchDiamondById = async (
     id: string,
     isPublic = false,
-): Promise<Diamond> => {
+): Promise<{ diamond: Diamond; similarDiamonds: string[] }> => {
     try {
         const response = await apiClient.get<ApiResponse>(
             `/diamonds${isPublic ? "/safe" : "/search"}?searchTerm=${id}`,
@@ -415,7 +414,10 @@ export const fetchDiamondById = async (
 
         // The API returns an array, so we return the first match
         if (Array.isArray(result.data) && result.data.length > 0) {
-            return result.data[0];
+            return {
+                diamond: result.data[0],
+                similarDiamonds: result.data[0].similar_diamonds || [],
+            };
         }
 
         throw new Error("Diamond not found");
@@ -530,12 +532,12 @@ export const fetchPublicDiamonds = async (
 
         if (params.minDepthPercent !== undefined)
             queryParams.append(
-                "minDepthPercent",
+                "minDepthPerc",
                 params.minDepthPercent.toString(),
             );
         if (params.maxDepthPercent !== undefined)
             queryParams.append(
-                "maxDepthPercent",
+                "maxDepthPerc",
                 params.maxDepthPercent.toString(),
             );
 
