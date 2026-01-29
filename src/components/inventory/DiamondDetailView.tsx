@@ -174,6 +174,23 @@ export default function DiamondDetailView({
         }
     };
 
+    const getCertificateLink = (lab: string, certNo: string | undefined) => {
+        if (!certNo) return null;
+
+        const labUpper = lab.toUpperCase();
+
+        switch (labUpper) {
+            case "GIA":
+                return `https://www.gia.edu/report-check?reportno=${certNo}`;
+            case "IGI":
+                return `https://www.igi.org/verify-your-report/?r=${certNo}`;
+            case "HRD":
+                return `https://my.hrdantwerp.com/Download/GetGradingReportPdf/?reportNumber=${certNo}`;
+            default:
+                return null;
+        }
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-white">
@@ -350,7 +367,35 @@ export default function DiamondDetailView({
                                         </span>
                                     </h1>
                                     <div className="flex items-center gap-2 text-sm text-gray-600">
-                                        <span>Report #: -</span>
+                                        {isDiamond(diamond) ? (
+                                            <>
+                                                <span>Report #:</span>
+                                                {getCertificateLink(
+                                                    diamond.lab,
+                                                    diamond.certiNo,
+                                                ) ? (
+                                                    <a
+                                                        href={
+                                                            getCertificateLink(
+                                                                diamond.lab,
+                                                                diamond.certiNo,
+                                                            )!
+                                                        }
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-primary hover:text-primary-yellow-3 underline font-semibold transition-colors"
+                                                    >
+                                                        {diamond.certiNo}
+                                                    </a>
+                                                ) : (
+                                                    <span className="font-semibold">
+                                                        {diamond.certiNo}
+                                                    </span>
+                                                )}
+                                            </>
+                                        ) : (
+                                            <span>Report #: -</span>
+                                        )}
                                         <span>•</span>
                                         <span>Lab: {diamond.lab}</span>
                                     </div>
