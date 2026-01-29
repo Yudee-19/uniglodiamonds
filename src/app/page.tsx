@@ -505,8 +505,11 @@ export default function Home() {
                         <Button
                             className="purple-reveal-btn px-10 py-6 font-serif text-base"
                             size="lg"
+                            asChild
                         >
-                            <span>EXPLORE MORE</span>
+                            <Link href="/diamond-manufacturing">
+                                <span>EXPLORE MORE</span>
+                            </Link>
                         </Button>
                     </div>
                 </div>
