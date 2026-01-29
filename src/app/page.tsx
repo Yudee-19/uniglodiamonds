@@ -105,6 +105,7 @@ const blogPosts = [
         author: "Admin",
         date: "August 29, 2023",
         button: "LEARN MORE",
+        link: "/choose-diamond-engagement-ring",
     },
     {
         image: blogImage2,
@@ -113,6 +114,7 @@ const blogPosts = [
         author: "Admin",
         date: "August 29, 2023",
         button: "LEARN MORE",
+        link: "/about-us",
     },
     {
         image: blogImage3,
@@ -121,6 +123,7 @@ const blogPosts = [
         author: "Admin",
         date: "August 29, 2023",
         button: "LEARN MORE",
+        link: "/investment-diamonds",
     },
 ];
 
@@ -156,6 +159,7 @@ export default function Home() {
             button: "LEARN MORE",
             number: "01",
             reverse: false,
+            link: "/sell-your-diamonds",
         },
         {
             image: diamondGuide,
@@ -166,6 +170,7 @@ export default function Home() {
             button: "LEARN MORE",
             number: "02",
             reverse: true,
+            link: "/investment-diamonds",
         },
         {
             image: education,
@@ -176,6 +181,7 @@ export default function Home() {
             button: "LEARN MORE",
             number: "03",
             reverse: false,
+            link: "/old-cut-diamonds",
         },
     ];
 
@@ -585,8 +591,11 @@ export default function Home() {
                                 <Button
                                     className="purple-reveal-btn px-8 py-6 font-cormorantGaramond text-base w-fit"
                                     size="lg"
+                                    asChild
                                 >
-                                    <span>{section.button}</span>
+                                    <Link href={section.link}>
+                                        <span>{section.button}</span>
+                                    </Link>
                                 </Button>
                             </div>
                         </div>

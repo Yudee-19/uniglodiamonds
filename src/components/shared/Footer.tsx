@@ -152,7 +152,7 @@ export default function Footer() {
                     <ul className="space-y-8 text-white/80 font-lora">
                         <li className="flex items-start gap-2">
                             <MapPin
-                                className="text-primary-yellow-1 mt-1 flex-shrink-0"
+                                className="text-primary-yellow-1 mt-1 shrink-0"
                                 size={20}
                             />
                             <span>
@@ -165,7 +165,7 @@ export default function Footer() {
                         </li>
                         <li className="flex items-center gap-2">
                             <Mail
-                                className="text-primary-yellow-1 flex-shrink-0"
+                                className="text-primary-yellow-1 shrink-0"
                                 size={20}
                             />
                             <span>
@@ -181,7 +181,7 @@ export default function Footer() {
                         </li>
                         <li className="flex items-center gap-2">
                             <Phone
-                                className="text-primary-yellow-1 flex-shrink-0"
+                                className="text-primary-yellow-1 shrink-0"
                                 size={20}
                             />
                             <span>

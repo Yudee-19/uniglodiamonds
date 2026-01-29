@@ -183,7 +183,7 @@ const Page = () => {
 
                             {/* Address */}
                             <div className="flex gap-4 mb-6">
-                                <div className="w-12 h-12 bg-primary flex items-center justify-center flex-shrink-0">
+                                <div className="w-12 h-12 bg-primary flex items-center justify-center shrink-0">
                                     <MapPin className="w-6 h-6 text-white" />
                                 </div>
                                 <div>
@@ -202,7 +202,7 @@ const Page = () => {
 
                             {/* Phone */}
                             <div className="flex gap-4 mb-6">
-                                <div className="w-12 h-12 bg-primary flex items-center justify-center flex-shrink-0">
+                                <div className="w-12 h-12 bg-primary flex items-center justify-center shrink-0">
                                     <Phone className="w-6 h-6 text-white" />
                                 </div>
                                 <div>
@@ -219,7 +219,7 @@ const Page = () => {
 
                             {/* Email */}
                             <div className="flex gap-4 mb-6">
-                                <div className="w-12 h-12 bg-primary flex items-center justify-center flex-shrink-0">
+                                <div className="w-12 h-12 bg-primary flex items-center justify-center shrink-0">
                                     <Mail className="w-6 h-6 text-white" />
                                 </div>
                                 <div>
@@ -234,7 +234,7 @@ const Page = () => {
 
                             {/* Hours */}
                             <div className="flex gap-4">
-                                <div className="w-12 h-12 bg-primary flex items-center justify-center flex-shrink-0">
+                                <div className="w-12 h-12 bg-primary flex items-center justify-center shrink-0">
                                     <Clock className="w-6 h-6 text-white" />
                                 </div>
                                 <div>
