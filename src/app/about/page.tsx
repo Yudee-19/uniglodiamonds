@@ -41,7 +41,7 @@ const Page = () => {
             <BannerSection
                 image={bannerImage}
                 text="About us"
-                textClassName="text-white left-10 top-110 text-5xl"
+                textClassName="text-white left-10 bottom-10 translate-y-10 text-5xl"
             />
             {/* Uniglow Family Section */}
             <UniglowFamilySection />
