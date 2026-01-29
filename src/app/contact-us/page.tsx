@@ -239,7 +239,7 @@ const Page = () => {
                                 </div>
                                 <div>
                                     <h4 className="font-bold text-xl mb-2 font-cormorantGaramond">
-                                        Mon - Fri: 9:00 AM - 5:00 PM
+                                        Mon - Fri: 10:00 - 18:00
                                     </h4>
                                 </div>
                             </div>
