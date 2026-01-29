@@ -307,7 +307,7 @@ export default function Home() {
                 </div>
             </section>
             {/* Uniglow Family section */}
-            <UniglowFamilySection />
+            {/* <UniglowFamilySection /> */}
             {/* Uniglow Diamonds App Section */}
             <section className="bg-brand-gradient font-cormorantGaramond ">
                 <div className="container mx-auto flex flex-col justify-center items-center">

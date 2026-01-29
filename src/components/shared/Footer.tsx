@@ -160,7 +160,7 @@ export default function Footer() {
                                 <br />
                                 Hoveniersstraat 30, Suite 662/Bus 250
                                 <br />
-                                2018 Antwerpen
+                                2018 Antwerp
                             </span>
                         </li>
                         <li className="flex items-center gap-2">

@@ -195,7 +195,7 @@ const Page = () => {
                                         <br />
                                         Suite 662/Bus 250
                                         <br />
-                                        2018 Antwerpen
+                                        2018 Antwerp
                                     </p>
                                 </div>
                             </div>
