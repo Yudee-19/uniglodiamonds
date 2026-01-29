@@ -164,7 +164,9 @@ export default function Navbar() {
                                             </Link>
                                         </Button>
                                         <Button className="gold-reveal-btn font-cormorantGaramond uppercase">
-                                            <span>Contact</span>
+                                            <Link href="/contact-us">
+                                                <span>Contact</span>
+                                            </Link>
                                         </Button>
                                     </>
                                 )}
