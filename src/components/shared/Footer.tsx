@@ -152,32 +152,47 @@ export default function Footer() {
                     <ul className="space-y-8 text-white/80 font-lora">
                         <li className="flex items-start gap-2">
                             <MapPin
-                                className="text-primary-yellow-1 mt-1"
+                                className="text-primary-yellow-1 mt-1 flex-shrink-0"
                                 size={20}
                             />
                             <span>
                                 <span className="font-semibold">Location:</span>
                                 <br />
-                                Hoveniersstraat 30, Antwerp
+                                Hoveniersstraat 30, Suite 662/Bus 250
+                                <br />
+                                2018 Antwerpen
                             </span>
                         </li>
                         <li className="flex items-center gap-2">
-                            <Mail className="text-primary-yellow-1" size={20} />
+                            <Mail
+                                className="text-primary-yellow-1 flex-shrink-0"
+                                size={20}
+                            />
                             <span>
                                 <span className="font-semibold">Email:</span>
                                 <br />
-                                example@mail.com
+                                <a
+                                    href="mailto:suraj@uniglodiamonds.com"
+                                    className="hover:text-primary-yellow-1 transition"
+                                >
+                                    suraj@uniglodiamonds.com
+                                </a>
                             </span>
                         </li>
                         <li className="flex items-center gap-2">
                             <Phone
-                                className="text-primary-yellow-1"
+                                className="text-primary-yellow-1 flex-shrink-0"
                                 size={20}
                             />
                             <span>
                                 <span className="font-semibold">Phone:</span>
                                 <br />
-                                +8 91230 456 789
+                                <a
+                                    href="tel:+32473565758"
+                                    className="hover:text-primary-yellow-1 transition"
+                                >
+                                    +32 473 565 758
+                                </a>
                             </span>
                         </li>
                     </ul>

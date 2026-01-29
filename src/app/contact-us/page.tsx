@@ -188,16 +188,14 @@ const Page = () => {
                                 </div>
                                 <div>
                                     <h4 className="font-bold text-xl mb-2 font-cormorantGaramond">
-                                        Dalila Diamonds
+                                        Uniglo Diamonds
                                     </h4>
                                     <p className="text-slate-700 text-lg font-lora">
-                                        Shivraq O. Gandhi
+                                        Hoveniersstraat 30
                                         <br />
-                                        Hoveniersstraat 30, Bus 105
+                                        Suite 662/Bus 250
                                         <br />
-                                        Suite 326, 2018 Antwerpen
-                                        <br />
-                                        BTW BE: 0750.471.230
+                                        2018 Antwerpen
                                     </p>
                                 </div>
                             </div>
@@ -209,11 +207,13 @@ const Page = () => {
                                 </div>
                                 <div>
                                     <h4 className="font-bold text-xl mb-2 font-cormorantGaramond">
-                                        Landline: +32 3 453 94 74
+                                        <a
+                                            href="tel:+32473565758"
+                                            className="hover:text-primary transition"
+                                        >
+                                            +32 473 565 758
+                                        </a>
                                     </h4>
-                                    <p className="text-slate-700 text-lg font-lora">
-                                        Phone: +32 487 93 93 51
-                                    </p>
                                 </div>
                             </div>
 
@@ -224,10 +224,10 @@ const Page = () => {
                                 </div>
                                 <div>
                                     <a
-                                        href="mailto:business@daliladiamonds.com"
+                                        href="mailto:suraj@uniglodiamonds.com"
                                         className="text-slate-700 text-lg hover:text-primary transition font-lora"
                                     >
-                                        business@daliladiamonds.com
+                                        suraj@uniglodiamonds.com
                                     </a>
                                 </div>
                             </div>
@@ -249,7 +249,7 @@ const Page = () => {
 
                 {/* Map Section */}
                 <div className="w-full h-[500px] relative border border-slate-200">
-                    <Map center={officeCoordinates} zoom={15} theme="light">
+                    <Map center={officeCoordinates} zoom={15}>
                         <MapControls
                             position="bottom-right"
                             showZoom
