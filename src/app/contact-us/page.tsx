@@ -211,7 +211,7 @@ const Page = () => {
                                             href="tel:+32473565758"
                                             className="hover:text-primary transition"
                                         >
-                                            +32 473 565 758
+                                            +32 03 500 91 07
                                         </a>
                                     </h4>
                                 </div>

@@ -191,7 +191,7 @@ export default function Footer() {
                                     href="tel:+32473565758"
                                     className="hover:text-primary-yellow-1 transition"
                                 >
-                                    +32 473 565 758
+                                    +32 03 500 91 07
                                 </a>
                             </span>
                         </li>

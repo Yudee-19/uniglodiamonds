@@ -2,7 +2,7 @@
 
 import BannerSection from "@/components/shared/BannerSection";
 import React, { useState } from "react";
-import bannerImage from "@/assets/sell-your-diamonds/banner.jpg";
+import bannerImage from "@/assets/sell-your-diamonds/banner.jpeg";
 import sellyourdiamondsImage from "@/assets/sell-your-diamonds/sell_diamonds.jpg";
 import adviceImage from "@/assets/sell-your-diamonds/advice.png";
 import benefitImage from "@/assets/sell-your-diamonds/banifits.jpg";

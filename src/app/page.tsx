@@ -205,16 +205,16 @@ export default function Home() {
                                 className="w-full  min-h-screen   object-cover "
                             />
                             {/* Phone Number Div - Left */}
-                            <div className="absolute left-6 md:left-10 top-1/2 -translate-y-1/2 z-20">
+                            {/* <div className="absolute left-6 md:left-10 top-1/2 -translate-y-1/2 z-20">
                                 <div className="border-2 border-white/80 px-4 md:px-6 py-4 md:py-12 flex flex-col items-center justify-center">
                                     <p className="text-white text-lg font-lora font-semibold leading-tight [writing-mode:vertical-rl] rotate-180 tracking-widest">
-                                        +32 473 565 758
+                                        +32 03 500 91 07
                                     </p>
                                     <span className="text-[#bb923a] [writing-mode:vertical-rl]  -rotate-50 mt-4">
                                         <Phone size={24} />
                                     </span>
                                 </div>
-                            </div>
+                            </div> */}
                             <div className="absolute  bottom-12 md:bottom-10 right-20  z-20">
                                 <Button
                                     className="purple-reveal-btn px-10 py-8 font-cormorantGaramond text-xl uppercase"
@@ -233,16 +233,16 @@ export default function Home() {
                                 alt="Description"
                                 className="w-full  min-h-screen  object-cover "
                             />
-                            <div className="absolute left-6 md:left-10 top-1/2 -translate-y-1/2 z-20">
+                            {/* <div className="absolute left-6 md:left-10 top-1/2 -translate-y-1/2 z-20">
                                 <div className="border-2 border-white/80 px-4 md:px-6 py-4 md:py-12 flex flex-col items-center justify-center">
                                     <p className="text-white text-lg font-lora font-semibold leading-tight [writing-mode:vertical-rl] rotate-180 tracking-widest">
-                                        +32 473 565 758
+                                        +32 03 500 91 07
                                     </p>
                                     <span className="text-[#bb923a] [writing-mode:vertical-rl]  -rotate-50 mt-4">
                                         <Phone size={24} />
                                     </span>
                                 </div>
-                            </div>
+                            </div> */}
                             <div className="absolute bottom-12 md:bottom-85 left-1/2 -translate-x-1/2  z-20">
                                 <Button
                                     className="purple-reveal-btn px-10 py-7 font-cormorantGaramond text-xl uppercase"

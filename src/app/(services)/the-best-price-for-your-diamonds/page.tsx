@@ -5,7 +5,7 @@ import BannerImage from "@/assets/services/the-best-price-for-your-diamonds/bann
 import React, { useState } from "react";
 import ArticleLayout from "@/components/shared/ArticleLayout";
 import DiamondsBanner from "@/assets/services/the-best-price-for-your-diamonds/banner2.png";
-import FedexImage from "@/assets/services/the-best-price-for-your-diamonds/fedex.png";
+import FedexImage from "@/assets/services/the-best-price-for-your-diamonds/fedex.jpg";
 import { Button } from "@/components/ui/button";
 import SubFooter from "@/components/shared/SubFooter";
 import { submitInquiryForm, InquiryFormData } from "@/services/inquiryService";
