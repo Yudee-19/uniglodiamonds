@@ -1,6 +1,6 @@
 import BannerSection from "@/components/shared/BannerSection";
 import React from "react";
-import BannerImage from "@/assets/fancy-colored-diamonds/new.jpeg";
+import BannerImage from "@/assets/fancy-colored-diamonds/fancybanner.png";
 import Image from "next/image";
 
 // Replace with your actual image paths
@@ -60,7 +60,7 @@ const page = () => {
             <BannerSection
                 image={BannerImage}
                 text="Fancy Colored Diamonds"
-                textClassName="right-10 top-110 text-5xl"
+                textClassName="right-10 top-110 text-5xl text-black"
                 imageClassName="h-130 object-cover"
             />
 
