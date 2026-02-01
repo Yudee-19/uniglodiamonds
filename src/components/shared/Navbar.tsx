@@ -48,7 +48,6 @@ const NAV_LINKS = [
                 href: "/diamond-financing-options",
             },
             { name: "Investment Diamonds", href: "/investment-diamonds" },
-            // { name: "Security Seals", href: "/security-seals" },
             { name: "Partners", href: "/partners" },
         ],
     },
@@ -101,6 +100,9 @@ const USER_NAV_LINKS = [
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [mobileDropdownOpen, setMobileDropdownOpen] = useState<string | null>(
+        null,
+    );
     const { scrollY } = useScroll();
     const [lastScrollY, setLastScrollY] = useState(0);
     const { user, logout, isAuthenticated, loading } = useAuth();
@@ -114,19 +116,22 @@ export default function Navbar() {
         return [];
     };
 
-    // 2. Listen to scroll changes using the Motion hook (Replacing native event listener)
     useMotionValueEvent(scrollY, "change", (latest: number) => {
         if (latest > lastScrollY) {
-            // Scrolling down, retract navbar
             setIsScrolled(true);
         } else if (latest < lastScrollY) {
-            // Scrolling up, show navbar
             setIsScrolled(false);
         }
         setLastScrollY(latest);
     });
 
     const roleNavLinks = getRoleNavLinks();
+
+    const toggleMobileDropdown = (linkName: string) => {
+        setMobileDropdownOpen(
+            mobileDropdownOpen === linkName ? null : linkName,
+        );
+    };
 
     return (
         <>
@@ -140,11 +145,11 @@ export default function Navbar() {
                         height: isScrolled ? 0 : "auto",
                         opacity: isScrolled ? 1 : 1,
                     }}
-                    transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }} // Smooth cubic-bezier
-                    className="  border-b border-slate-800 hidden md:block"
+                    transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+                    className="border-b border-slate-800 hidden md:block"
                 >
                     {/* BRAND BAR: Logo & Primary Buttons */}
-                    <div className=" px-4 lg:px-8 py-4 bg-brand-gradient  border-b border-white/70">
+                    <div className="px-4 lg:px-8 py-4 bg-brand-gradient border-b border-white/70">
                         <div className="lg:container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
                             {/* Left Actions */}
                             <div className="hidden md:flex gap-3 lg:w-1/3 w-fit">
@@ -157,7 +162,7 @@ export default function Navbar() {
                                     <>
                                         <Button
                                             asChild
-                                            className="gold-reveal-btn  font-cormorantGaramond uppercase"
+                                            className="gold-reveal-btn font-cormorantGaramond uppercase"
                                         >
                                             <Link href="/inventory">
                                                 <span>Inventory</span>
@@ -176,7 +181,6 @@ export default function Navbar() {
                             </div>
                             {/* Center Logo */}
                             <div className="w-full md:w-1/3 flex justify-center items-center gap-3">
-                                {/* Logo Icon Mock */}
                                 <Link href="/">
                                     <Image
                                         src={logo}
@@ -184,7 +188,7 @@ export default function Navbar() {
                                         width={350}
                                         height={100}
                                         className="object-contain"
-                                    />{" "}
+                                    />
                                 </Link>
                             </div>
                             {/* Right Actions */}
@@ -239,7 +243,6 @@ export default function Navbar() {
                                                                 </Link>
                                                             ),
                                                         )}
-                                                        {/* Divider */}
                                                         <div className="border-t border-gray-200"></div>
                                                     </div>
                                                 </div>
@@ -287,10 +290,12 @@ export default function Navbar() {
                 >
                     <div className="container mx-auto px-4 md:px-8">
                         <div className="flex justify-between md:justify-center items-center h-14">
-                            {/* Mobile Menu Toggle (Visible only on small screens) */}
+                            {/* Mobile Menu Toggle */}
                             <div className="md:hidden flex items-center gap-4 w-full justify-between">
-                                {/* When scrolled, we might want to show a mini logo on mobile, otherwise just text */}
-                                <div className="font-serif text-2xl text-white flex items-center gap-2">
+                                <Link
+                                    href="/"
+                                    className="font-serif text-2xl text-white flex items-center gap-2"
+                                >
                                     <Image
                                         src={logoIcon}
                                         alt="Uniglo Logo"
@@ -299,14 +304,19 @@ export default function Navbar() {
                                         className="object-contain"
                                     />
                                     UNIGLO
-                                </div>
+                                </Link>
                                 <button
-                                    onClick={() =>
-                                        setIsMobileMenuOpen(!isMobileMenuOpen)
-                                    }
-                                    className="text-white"
+                                    onClick={() => {
+                                        setIsMobileMenuOpen(!isMobileMenuOpen);
+                                        setMobileDropdownOpen(null);
+                                    }}
+                                    className="text-white z-50"
                                 >
-                                    {isMobileMenuOpen ? <X /> : <Menu />}
+                                    {isMobileMenuOpen ? (
+                                        <X size={28} />
+                                    ) : (
+                                        <Menu size={28} />
+                                    )}
                                 </button>
                             </div>
 
@@ -319,7 +329,7 @@ export default function Navbar() {
                                     >
                                         <a
                                             href={link.href}
-                                            className="flex items-center gap-1 font-cormorantGaramond text-base text-primary "
+                                            className="flex items-center gap-1 font-cormorantGaramond text-base text-primary font-bold "
                                         >
                                             {link.name}
                                             {link.hasDropdown && (
@@ -330,10 +340,10 @@ export default function Navbar() {
                                             )}
                                         </a>
 
-                                        {/* Mock Dropdown */}
+                                        {/* Desktop Dropdown */}
                                         {link.hasDropdown && (
                                             <div className="absolute top-full left-1/2 -translate-x-1/2 mt-0 w-48 bg-white border-t-2 border-[#c5a059] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 shadow-xl transform group-hover:translate-y-0 translate-y-2">
-                                                <div className=" flex flex-col  text-black font-cormorantGaramond text-base normal-case tracking-normal ">
+                                                <div className="flex flex-col text-black font-cormorantGaramond text-base normal-case tracking-normal ">
                                                     {link.submenuItems?.map(
                                                         (submenu) => (
                                                             <a
@@ -366,45 +376,160 @@ export default function Navbar() {
                     <AnimatePresence>
                         {isMobileMenuOpen && (
                             <motion.div
-                                initial={{ height: 0 }}
-                                animate={{ height: "auto" }}
-                                exit={{ height: 0 }}
-                                className="md:hidden bg-slate-900 border-t border-slate-800 overflow-hidden"
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.3 }}
+                                className="md:hidden bg-slate-900 border-t border-slate-800 overflow-hidden absolute top-full left-0 right-0 max-h-[calc(100vh-80px)] overflow-y-auto"
                             >
-                                <div className="flex flex-col p-4 gap-4">
+                                <div className="flex flex-col p-4 gap-2">
+                                    {/* Navigation Links */}
                                     {NAV_LINKS.map((link) => (
-                                        <a
-                                            key={link.name}
-                                            href="#"
-                                            className="text-slate-300 text-sm uppercase tracking-wider py-2 border-b border-slate-800 font-cormorantGaramond"
-                                        >
-                                            {link.name}
-                                        </a>
+                                        <div key={link.name}>
+                                            {link.hasDropdown ? (
+                                                <>
+                                                    <button
+                                                        onClick={() =>
+                                                            toggleMobileDropdown(
+                                                                link.name,
+                                                            )
+                                                        }
+                                                        className="w-full text-left text-primary text-base uppercase tracking-wider py-3 border-b border-slate-800 font-cormorantGaramond font-bold flex justify-between items-center"
+                                                    >
+                                                        {link.name}
+                                                        <ChevronDown
+                                                            size={16}
+                                                            className={`transition-transform duration-300 ${
+                                                                mobileDropdownOpen ===
+                                                                link.name
+                                                                    ? "rotate-180"
+                                                                    : ""
+                                                            }`}
+                                                        />
+                                                    </button>
+                                                    <AnimatePresence>
+                                                        {mobileDropdownOpen ===
+                                                            link.name && (
+                                                            <motion.div
+                                                                initial={{
+                                                                    height: 0,
+                                                                    opacity: 0,
+                                                                }}
+                                                                animate={{
+                                                                    height: "auto",
+                                                                    opacity: 1,
+                                                                }}
+                                                                exit={{
+                                                                    height: 0,
+                                                                    opacity: 0,
+                                                                }}
+                                                                transition={{
+                                                                    duration: 0.2,
+                                                                }}
+                                                                className="overflow-hidden bg-slate-800/50"
+                                                            >
+                                                                {link.submenuItems?.map(
+                                                                    (
+                                                                        submenu,
+                                                                    ) => (
+                                                                        <Link
+                                                                            key={
+                                                                                submenu.name
+                                                                            }
+                                                                            href={
+                                                                                submenu.href
+                                                                            }
+                                                                            className="block text-slate-300 text-sm py-2 px-6 font-cormorantGaramond hover:text-primary transition-colors"
+                                                                            onClick={() => {
+                                                                                setIsMobileMenuOpen(
+                                                                                    false,
+                                                                                );
+                                                                                setMobileDropdownOpen(
+                                                                                    null,
+                                                                                );
+                                                                            }}
+                                                                        >
+                                                                            {
+                                                                                submenu.name
+                                                                            }
+                                                                        </Link>
+                                                                    ),
+                                                                )}
+                                                            </motion.div>
+                                                        )}
+                                                    </AnimatePresence>
+                                                </>
+                                            ) : (
+                                                <Link
+                                                    href={link.href}
+                                                    className="block text-primary text-base uppercase tracking-wider py-3 border-b border-slate-800 font-cormorantGaramond font-bold"
+                                                    onClick={() =>
+                                                        setIsMobileMenuOpen(
+                                                            false,
+                                                        )
+                                                    }
+                                                >
+                                                    {link.name}
+                                                </Link>
+                                            )}
+                                        </div>
                                     ))}
+
                                     {/* Role-specific links for mobile */}
                                     {isAuthenticated &&
-                                        roleNavLinks.map((link) => (
+                                        roleNavLinks.length > 0 && (
+                                            <div className="border-t border-slate-700 pt-2 mt-2">
+                                                <p className="text-primary text-xs uppercase px-2 mb-2 font-cormorantGaramond">
+                                                    My Account
+                                                </p>
+                                                {roleNavLinks.map((link) => (
+                                                    <Link
+                                                        key={link.name}
+                                                        href={link.href}
+                                                        className="text-slate-300 text-sm uppercase tracking-wider py-2 border-b border-slate-800 font-cormorantGaramond flex items-center gap-2"
+                                                        onClick={() =>
+                                                            setIsMobileMenuOpen(
+                                                                false,
+                                                            )
+                                                        }
+                                                    >
+                                                        {link.icon && (
+                                                            <link.icon
+                                                                size={16}
+                                                            />
+                                                        )}
+                                                        {link.name}
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                    {/* Action Buttons */}
+                                    <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-slate-700">
+                                        <Button
+                                            asChild
+                                            className="gold-reveal-btn font-cormorantGaramond uppercase w-full py-6 text-base font-bold"
+                                        >
                                             <Link
-                                                key={link.name}
-                                                href={link.href}
-                                                className="text-slate-300 text-sm uppercase tracking-wider py-2 border-b border-slate-800 font-cormorantGaramond flex items-center gap-2"
+                                                href="/inventory"
                                                 onClick={() =>
                                                     setIsMobileMenuOpen(false)
                                                 }
                                             >
-                                                {link.icon && (
-                                                    <link.icon size={16} />
-                                                )}
-                                                {link.name}
+                                                <span>Inventory</span>
                                             </Link>
-                                        ))}
-                                    <div className="flex gap-2 mt-4">
+                                        </Button>
                                         <Button
                                             asChild
-                                            className="gold-reveal-btn  font-cormorantGaramond uppercase w-1/2 py-7 text-lg font-bold "
+                                            className="gold-reveal-btn font-cormorantGaramond uppercase w-full py-6 text-base font-bold"
                                         >
-                                            <Link href="/inventory">
-                                                <span>Inventory</span>
+                                            <Link
+                                                href="/contact-us"
+                                                onClick={() =>
+                                                    setIsMobileMenuOpen(false)
+                                                }
+                                            >
+                                                <span>Contact</span>
                                             </Link>
                                         </Button>
                                         {isAuthenticated ? (
@@ -413,19 +538,43 @@ export default function Navbar() {
                                                     logout();
                                                     setIsMobileMenuOpen(false);
                                                 }}
-                                                className="flex-1 py-3 border border-slate-600 text-white text-lg font-cormorantGaramond font-bold uppercase"
+                                                className="w-full py-3 border-2 border-red-500 text-white text-base font-cormorantGaramond font-bold uppercase rounded hover:bg-red-500 transition-colors"
                                             >
                                                 Logout
                                             </button>
                                         ) : (
-                                            <Link
-                                                href="/login"
-                                                className="flex-1"
-                                            >
-                                                <button className="w-full py-3 border border-slate-600 text-white text-lg font-cormorantGaramond font-bold uppercase">
-                                                    Login
-                                                </button>
-                                            </Link>
+                                            <div className="flex gap-2">
+                                                <Button
+                                                    asChild
+                                                    className="gold-reveal-btn font-cormorantGaramond uppercase flex-1 py-6 text-base font-bold"
+                                                >
+                                                    <Link
+                                                        href="/login"
+                                                        onClick={() =>
+                                                            setIsMobileMenuOpen(
+                                                                false,
+                                                            )
+                                                        }
+                                                    >
+                                                        <span>Login</span>
+                                                    </Link>
+                                                </Button>
+                                                <Button
+                                                    asChild
+                                                    className="gold-reveal-btn font-cormorantGaramond uppercase flex-1 py-6 text-base font-bold"
+                                                >
+                                                    <Link
+                                                        href="/register"
+                                                        onClick={() =>
+                                                            setIsMobileMenuOpen(
+                                                                false,
+                                                            )
+                                                        }
+                                                    >
+                                                        <span>Signup</span>
+                                                    </Link>
+                                                </Button>
+                                            </div>
                                         )}
                                     </div>
                                 </div>

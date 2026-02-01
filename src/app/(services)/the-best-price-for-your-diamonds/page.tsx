@@ -1,13 +1,81 @@
+"use client";
+
 import BannerSection from "@/components/shared/BannerSection";
 import BannerImage from "@/assets/services/the-best-price-for-your-diamonds/bannerNew.jpeg";
-import React from "react";
+import React, { useState } from "react";
 import ArticleLayout from "@/components/shared/ArticleLayout";
 import DiamondsBanner from "@/assets/services/the-best-price-for-your-diamonds/banner2.png";
-import FedexImage from "@/assets/services/the-best-price-for-your-diamonds/fedex.png"; // Add your FedEx image path
+import FedexImage from "@/assets/services/the-best-price-for-your-diamonds/fedex.png";
 import { Button } from "@/components/ui/button";
 import SubFooter from "@/components/shared/SubFooter";
+import { submitInquiryForm, InquiryFormData } from "@/services/inquiryService";
+import FileUploader from "@/components/shared/FileUploader";
 
 const page = () => {
+    const [formData, setFormData] = useState<InquiryFormData>({
+        name: "",
+        email: "",
+        address: "",
+        phoneNumber: "",
+        type: "private",
+        city: "",
+        country: "",
+        diamondDetails: "",
+        images: [],
+    });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitStatus, setSubmitStatus] = useState<{
+        type: "success" | "error" | null;
+        message: string;
+    }>({ type: null, message: "" });
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleTypeChange = (type: "private" | "business") => {
+        setFormData((prev) => ({ ...prev, type }));
+    };
+
+    const handleFilesChange = (files: File[]) => {
+        setFormData((prev) => ({ ...prev, images: files }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        setSubmitStatus({ type: null, message: "" });
+
+        try {
+            await submitInquiryForm(formData);
+            setSubmitStatus({
+                type: "success",
+                message:
+                    "Form submitted successfully! We will contact you soon.",
+            });
+            // Reset form
+            setFormData({
+                name: "",
+                email: "",
+                address: "",
+                phoneNumber: "",
+                type: "private",
+                city: "",
+                country: "",
+                diamondDetails: "",
+                images: [],
+            });
+        } catch (error) {
+            setSubmitStatus({
+                type: "error",
+                message: "Failed to submit form. Please try again.",
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     return (
         <div className="min-h-screen ">
             <BannerSection
@@ -75,7 +143,10 @@ const page = () => {
                         receiving it, we will respond with a confirmation, along
                         with further instructions.
                     </h2>
-                    <form className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <form
+                        onSubmit={handleSubmit}
+                        className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6"
+                    >
                         {/* Name */}
                         <div>
                             <label className="block text-primary mb-2 font-semibold font-lora">
@@ -83,7 +154,11 @@ const page = () => {
                             </label>
                             <input
                                 type="text"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleInputChange}
                                 placeholder="John"
+                                required
                                 className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
                             />
                         </div>
@@ -94,7 +169,11 @@ const page = () => {
                             </label>
                             <input
                                 type="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleInputChange}
                                 placeholder="John@gmail.com"
+                                required
                                 className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
                             />
                         </div>
@@ -107,6 +186,10 @@ const page = () => {
                                 <label className="flex items-center gap-2 text-white">
                                     <input
                                         type="checkbox"
+                                        checked={formData.type === "private"}
+                                        onChange={() =>
+                                            handleTypeChange("private")
+                                        }
                                         className="accent-primary"
                                     />
                                     Private
@@ -114,6 +197,10 @@ const page = () => {
                                 <label className="flex items-center gap-2 text-white">
                                     <input
                                         type="checkbox"
+                                        checked={formData.type === "business"}
+                                        onChange={() =>
+                                            handleTypeChange("business")
+                                        }
                                         className="accent-primary"
                                     />
                                     Business
@@ -127,7 +214,11 @@ const page = () => {
                             </label>
                             <input
                                 type="text"
+                                name="address"
+                                value={formData.address}
+                                onChange={handleInputChange}
                                 placeholder="User Address"
+                                required
                                 className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
                             />
                         </div>
@@ -138,7 +229,11 @@ const page = () => {
                             </label>
                             <input
                                 type="text"
+                                name="city"
+                                value={formData.city}
+                                onChange={handleInputChange}
                                 placeholder="Enter City Name"
+                                required
                                 className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
                             />
                         </div>
@@ -149,7 +244,11 @@ const page = () => {
                             </label>
                             <input
                                 type="text"
+                                name="country"
+                                value={formData.country}
+                                onChange={handleInputChange}
                                 placeholder="Enter Country Name"
+                                required
                                 className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
                             />
                         </div>
@@ -160,7 +259,11 @@ const page = () => {
                             </label>
                             <input
                                 type="text"
+                                name="phoneNumber"
+                                value={formData.phoneNumber}
+                                onChange={handleInputChange}
                                 placeholder="Enter Phone Number"
+                                required
                                 className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
                             />
                         </div>
@@ -171,29 +274,50 @@ const page = () => {
                             </label>
                             <input
                                 type="text"
+                                name="diamondDetails"
+                                value={formData.diamondDetails}
+                                onChange={handleInputChange}
                                 placeholder="Enter Diamond Details"
+                                required
                                 className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
                             />
                         </div>
-                        {/* Upload Button */}
-                        <div className="md:col-span-2 flex justify-end">
-                            <label className="bg-primary text-white font-lora px-8 py-5 rounded-md text-lg w-full md:w-auto cursor-pointer flex items-center justify-center">
-                                Please Upload Photos And/or Certificates
-                                <input
-                                    type="file"
-                                    multiple
-                                    className="hidden"
-                                    accept="image/*,application/pdf"
-                                />
-                            </label>
+
+                        {/* File Uploader */}
+                        <div className="md:col-span-2">
+                            <FileUploader
+                                files={formData.images || []}
+                                onFilesChange={handleFilesChange}
+                            />
                         </div>
+
+                        {/* Status Message */}
+                        {submitStatus.type && (
+                            <div className="md:col-span-2">
+                                <p
+                                    className={`text-center ${
+                                        submitStatus.type === "success"
+                                            ? "text-green-400"
+                                            : "text-red-400"
+                                    }`}
+                                >
+                                    {submitStatus.message}
+                                </p>
+                            </div>
+                        )}
+
                         {/* Submit Button */}
                         <div className="md:col-span-2 flex justify-start mt-2">
                             <Button
                                 type="submit"
-                                className="gold-reveal-btn bg-primary font-semibold px-8 py-3  text-base font-lora"
+                                disabled={isSubmitting}
+                                className="gold-reveal-btn bg-primary font-semibold px-8 py-3  text-base font-lora disabled:opacity-50"
                             >
-                                <span> SUBMIT NOW</span>
+                                <span>
+                                    {isSubmitting
+                                        ? "SUBMITTING..."
+                                        : "SUBMIT NOW"}
+                                </span>
                             </Button>
                         </div>
                     </form>

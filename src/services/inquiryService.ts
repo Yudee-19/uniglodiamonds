@@ -68,6 +68,12 @@ interface ReplyToQueryParams {
     reply: string;
 }
 
+interface FormSubmitResponse {
+    success: boolean;
+    message: string;
+    data?: any;
+}
+
 export const createDiamondInquiry = async (
     params: CreateInquiryParams,
 ): Promise<InquiryResponse> => {
@@ -151,5 +157,123 @@ export const replyToQuery = async (
     } catch (error: any) {
         console.error("Error replying to query:", error);
         throw error.response?.data?.message || "Failed to send reply";
+    }
+};
+
+export interface InquiryFormData {
+    name: string;
+    email: string;
+    address: string;
+    phoneNumber: string;
+    type: "private" | "business";
+    city: string;
+    country: string;
+    diamondDetails: string;
+    images?: File[];
+}
+
+export const submitInquiryForm = async (
+    data: InquiryFormData,
+): Promise<FormSubmitResponse> => {
+    try {
+        const formData = new FormData();
+
+        formData.append("name", data.name);
+        formData.append("email", data.email);
+        formData.append("address", data.address);
+        formData.append("phoneNumber", data.phoneNumber);
+        formData.append("type", data.type);
+        formData.append("city", data.city);
+        formData.append("country", data.country);
+        formData.append("diamondDetails", data.diamondDetails);
+
+        // Append multiple images
+        if (data.images && data.images.length > 0) {
+            data.images.forEach((image) => {
+                formData.append("images", image);
+            });
+        }
+
+        const response = await apiClient.post<FormSubmitResponse>(
+            "/forms/inquiry/submit",
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            },
+        );
+
+        if (!response.data.success) {
+            throw new Error(
+                response.data.message || "Failed to submit inquiry form",
+            );
+        }
+
+        return response.data;
+    } catch (error: any) {
+        console.error("Error submitting inquiry form:", error);
+        throw (
+            error.response?.data?.message ||
+            error.message ||
+            "Failed to submit inquiry form"
+        );
+    }
+};
+
+export interface SellDiamondFormData {
+    name: string;
+    email: string;
+    address: string;
+    phoneNumber: string;
+    material: string;
+    description: string;
+    images?: File[];
+}
+
+export const submitSellDiamondForm = async (
+    data: SellDiamondFormData,
+): Promise<FormSubmitResponse> => {
+    try {
+        const formData = new FormData();
+
+        formData.append("name", data.name);
+        formData.append("email", data.email);
+        formData.append("address", data.address);
+        formData.append("phoneNumber", data.phoneNumber);
+        formData.append("material", data.material);
+        formData.append("description", data.description);
+
+        // Append multiple images
+        if (data.images && data.images.length > 0) {
+            data.images.forEach((image) => {
+                formData.append("images", image);
+            });
+        }
+
+        const response = await apiClient.post<FormSubmitResponse>(
+            "/forms/submit",
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            },
+        );
+
+        if (!response.data.success) {
+            throw new Error(
+                response.data.message || "Failed to submit sell diamond form",
+            );
+        }
+
+        return response.data;
+    } catch (error: any) {
+        console.error("Error submitting sell diamond form:", error);
+        throw (
+            error.response?.data?.message ||
+            error.message ||
+            "Failed to submit sell diamond form"
+        );
     }
 };

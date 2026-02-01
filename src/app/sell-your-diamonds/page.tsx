@@ -1,5 +1,7 @@
+"use client";
+
 import BannerSection from "@/components/shared/BannerSection";
-import React from "react";
+import React, { useState } from "react";
 import bannerImage from "@/assets/sell-your-diamonds/banner.jpg";
 import sellyourdiamondsImage from "@/assets/sell-your-diamonds/sell_diamonds.jpg";
 import adviceImage from "@/assets/sell-your-diamonds/advice.png";
@@ -16,6 +18,11 @@ import CertificatesMarqueeSection from "@/components/shared/CertificatesMarqueeS
 import Image from "next/image";
 import appointmentRing from "@/assets/sell-your-diamonds/online-inventory-banner.png";
 import ArticleLayout from "@/components/shared/ArticleLayout";
+import {
+    submitSellDiamondForm,
+    SellDiamondFormData,
+} from "@/services/inquiryService";
+import FileUploader from "@/components/shared/FileUploader";
 
 const articleData = [
     {
@@ -47,7 +54,7 @@ const articleData = [
         reverse: false,
         paragraphs: [
             "Uniglo is a safe, secure and reliable option. We take your diamonds and appraise it first, to ensure you understand its value. We check if the diamond(s) need to be recut or what can be done to get the best possible value from them. Furthermore, if the diamonds require new certification or an update of certification, we can get that done for you, charging you no extra.",
-            "What’s more, if you want to sell your diamond jewellery, we can remove the diamonds from it and sell the diamond component for you. We can check if the diamond needs to be recut, or if it needs renewed certification. We will give you the best offer on your diamonds, and pay you immediately based on the appraised value of your diamonds. This option saves you the stress of listing your diamond on your own. With the dedicated audience we have, and traffic we attract, you will have your diamond sold in a quicker manner compared to other jewellers.",
+            "What's more, if you want to sell your diamond jewellery, we can remove the diamonds from it and sell the diamond component for you. We can check if the diamond needs to be recut, or if it needs renewed certification. We will give you the best offer on your diamonds, and pay you immediately based on the appraised value of your diamonds. This option saves you the stress of listing your diamond on your own. With the dedicated audience we have, and traffic we attract, you will have your diamond sold in a quicker manner compared to other jewellers.",
         ],
         buttonText: "Contact Us",
     },
@@ -57,7 +64,7 @@ const articleData = [
         image: benefitImage,
         reverse: true,
         paragraphs: [
-            "The benefits are many. The most crucial thing while making the decision of whom to sell your diamonds to is TRUST. You can review Uniglo’s testimonials, history in the industry and track record with reputed websites, to ensure the best service and that the highest possible returns are provided to you.",
+            "The benefits are many. The most crucial thing while making the decision of whom to sell your diamonds to is TRUST. You can review Uniglo's testimonials, history in the industry and track record with reputed websites, to ensure the best service and that the highest possible returns are provided to you.",
             "Uniglo has access to national and global markets, which can have a positive impact on the returns you may receive for your diamonds, since we have the ability to purchase a larger range of items.",
             "Another benefit of selling your diamonds to Uniglo is the guarantee of easy, seamless communication. We have a dedicated team on ground and online to respond to your every query, resolving any doubts or confusion you may have. Our experts will educate you on everything you may need to know to ensure your sale is legitimate and beneficiary to you. If you are located in Antwerp, you can always come to the office headquarters, or alternatively, we can even arrange an appointment to meet you at a location of your convenience to satisfy your every requirement during the sale",
             "Selling online with Uniglo, means significantly less hassle. Our process is seamless and executed by a team of well-trained and efficient executives, who will always assist you every step of the way.",
@@ -103,6 +110,64 @@ const blogData = [
 ];
 
 const Page = () => {
+    const [formData, setFormData] = useState<SellDiamondFormData>({
+        name: "",
+        email: "",
+        address: "",
+        phoneNumber: "",
+        material: "",
+        description: "",
+        images: [],
+    });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitStatus, setSubmitStatus] = useState<{
+        type: "success" | "error" | null;
+        message: string;
+    }>({ type: null, message: "" });
+
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleFilesChange = (files: File[]) => {
+        setFormData((prev) => ({ ...prev, images: files }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        setSubmitStatus({ type: null, message: "" });
+
+        try {
+            await submitSellDiamondForm(formData);
+            setSubmitStatus({
+                type: "success",
+                message:
+                    "Form submitted successfully! We will contact you soon.",
+            });
+            // Reset form
+            setFormData({
+                name: "",
+                email: "",
+                address: "",
+                phoneNumber: "",
+                material: "",
+                description: "",
+                images: [],
+            });
+        } catch (error) {
+            setSubmitStatus({
+                type: "error",
+                message: "Failed to submit form. Please try again.",
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     return (
         <div className="min-h-screen ">
             <BannerSection image={bannerImage} text="Sell Your Diamonds" />
@@ -146,6 +211,153 @@ const Page = () => {
             {/* Blog Section */}
 
             <CertificatesMarqueeSection />
+
+            {/* Sell Your Diamonds Form Section */}
+            <section className="mt-6 bg-brand-gradient">
+                <div className=" max-w-7xl mx-auto px-4 rounded-lg p-10  shadow-lg">
+                    <h2 className="text-white text-center text-2xl md:text-3xl font-cormorantGaramond ">
+                        Sell Your Diamonds - Get a Free Valuation
+                    </h2>
+                    <h2 className="text-white text-center text-lg font-cormorantGaramond mb-10 max-w-5xl mx-auto">
+                        Complete the form below to get a free valuation for your
+                        diamonds. Our process is secure, confidential, and
+                        designed to get you the best possible price.
+                    </h2>
+                    <form
+                        onSubmit={handleSubmit}
+                        className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6"
+                    >
+                        {/* Name */}
+                        <div>
+                            <label className="block text-primary mb-2 font-semibold font-lora">
+                                Name
+                            </label>
+                            <input
+                                type="text"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleInputChange}
+                                placeholder="John"
+                                required
+                                className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
+                            />
+                        </div>
+                        {/* Email */}
+                        <div>
+                            <label className=" font-lora block text-primary mb-2 font-semibold">
+                                Email
+                            </label>
+                            <input
+                                type="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleInputChange}
+                                placeholder="John@gmail.com"
+                                required
+                                className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
+                            />
+                        </div>
+                        {/* Address */}
+                        <div>
+                            <label className="block font-lora text-primary mb-2 font-semibold">
+                                Address
+                            </label>
+                            <input
+                                type="text"
+                                name="address"
+                                value={formData.address}
+                                onChange={handleInputChange}
+                                placeholder="User Address"
+                                required
+                                className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
+                            />
+                        </div>
+                        {/* Phone */}
+                        <div>
+                            <label className="block font-lora text-primary mb-2 font-semibold">
+                                Phone
+                            </label>
+                            <input
+                                type="text"
+                                name="phoneNumber"
+                                value={formData.phoneNumber}
+                                onChange={handleInputChange}
+                                placeholder="Enter Phone Number"
+                                required
+                                className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
+                            />
+                        </div>
+                        {/* Material */}
+                        <div>
+                            <label className="block font-lora text-primary mb-2 font-semibold">
+                                Material
+                            </label>
+                            <input
+                                type="text"
+                                name="material"
+                                value={formData.material}
+                                onChange={handleInputChange}
+                                placeholder="Enter Material Type"
+                                required
+                                className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
+                            />
+                        </div>
+                        {/* Description */}
+                        <div className="md:col-span-2">
+                            <label className="block font-lora text-primary mb-2 font-semibold">
+                                Description
+                            </label>
+                            <textarea
+                                name="description"
+                                value={formData.description}
+                                onChange={handleInputChange}
+                                placeholder="Enter Description"
+                                required
+                                rows={4}
+                                className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none resize-none"
+                            />
+                        </div>
+                        {/* File Uploader */}
+                        <div className="md:col-span-2">
+                            <FileUploader
+                                files={formData.images || []}
+                                onFilesChange={handleFilesChange}
+                            />
+                        </div>
+
+                        {/* Status Message */}
+                        {submitStatus.type && (
+                            <div className="md:col-span-2">
+                                <p
+                                    className={`text-center ${
+                                        submitStatus.type === "success"
+                                            ? "text-green-400"
+                                            : "text-red-400"
+                                    }`}
+                                >
+                                    {submitStatus.message}
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Submit Button */}
+                        <div className="md:col-span-2 flex justify-start mt-2">
+                            <Button
+                                type="submit"
+                                disabled={isSubmitting}
+                                className="gold-reveal-btn bg-primary font-semibold px-8 py-3  text-base font-lora disabled:opacity-50"
+                            >
+                                <span>
+                                    {isSubmitting
+                                        ? "SUBMITTING..."
+                                        : "SUBMIT NOW"}
+                                </span>
+                            </Button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
             {/* Make an Appointment Section */}
             <section className="bg-brand-gradient py-20 px-4">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-center md:items-stretch gap-0 md:gap-0 rounded-lg overflow-hidden">

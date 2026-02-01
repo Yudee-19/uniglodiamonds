@@ -307,8 +307,14 @@ export default function Home() {
 
                 {/* Button */}
                 <div className="mt-16">
-                    <Button className="purple-reveal-btn p-6" size={"lg"}>
-                        <span>VIEW ALL DIAMONDS</span>
+                    <Button
+                        className="purple-reveal-btn p-6"
+                        size={"lg"}
+                        asChild
+                    >
+                        <Link href="/inventory">
+                            <span>VIEW ALL DIAMONDS</span>
+                        </Link>
                     </Button>
                 </div>
             </section>
