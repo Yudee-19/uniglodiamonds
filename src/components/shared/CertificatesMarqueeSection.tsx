@@ -22,7 +22,7 @@ const CertificatesMarqueeSection = () => {
                     </h2>
                     <p className="text-slate-600 font-lora text-base max-w-3xl mx-auto">
                         We work with globally trusted diamond authorities like
-                        GIA and IGI to ensure every Uniglow diamond is
+                        GIA and IGI to ensure every Uniglo diamond is
                         authentically graded. Their expertise guarantees
                         transparency, ethical sourcing, and uncompromised
                         quality in every piece you choose.
