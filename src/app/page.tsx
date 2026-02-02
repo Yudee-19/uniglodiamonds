@@ -325,7 +325,7 @@ export default function Home() {
                 <div className="container mx-auto flex flex-col justify-center items-center">
                     <div className="mb-12 space-y-2 text-center pt-15">
                         <span className="text-primary text-sm uppercase tracking-widest  ">
-                            Uniglow diamond app
+                            Uniglo diamond app
                         </span>
                         <h2 className="text-3xl font-serif text-white">
                             Discover the UNIGLO DIAMONDS APP

@@ -183,7 +183,7 @@ function CompareContent() {
                 <div className="animate-pulse flex flex-col items-center">
                     <Image
                         src={"/logo/logo.png"}
-                        alt="Uniglow Logo"
+                        alt="Uniglo Logo"
                         width={50}
                         height={40}
                         className="mb-2 animate-pulse"
@@ -199,7 +199,7 @@ function CompareContent() {
                 <div className="flex flex-col items-center gap-2">
                     <Image
                         src={"/logo/logo.png"}
-                        alt="Uniglow Logo"
+                        alt="Uniglo Logo"
                         width={50}
                         height={40}
                         className="mb-2"
@@ -241,7 +241,7 @@ function CompareContent() {
                         {/* Header Row */}
                         <Image
                             src={"/logo/logo.png"}
-                            alt="Uniglow Logo"
+                            alt="Uniglo Logo"
                             width={150}
                             height={40}
                             className="mb-2"
@@ -333,7 +333,7 @@ export default function ComparePage() {
                     <div className="animate-pulse flex flex-col items-center">
                         <Image
                             src={"/logo/logo.png"}
-                            alt="Uniglow Logo"
+                            alt="Uniglo Logo"
                             width={50}
                             height={40}
                             className="mb-2 animate-pulse"

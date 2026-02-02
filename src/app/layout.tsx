@@ -43,7 +43,7 @@ const lato = Lato({
 });
 
 export const metadata: Metadata = {
-    title: "Uniglow Jewels",
+    title: "Uniglo Jewels",
     description: "Best Jewels in Antwerp",
 };
 
