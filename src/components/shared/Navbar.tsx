@@ -22,6 +22,7 @@ import {
     Users,
     FileStack,
     Shield,
+    FormInputIcon,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import Image from "next/image";
@@ -80,6 +81,11 @@ const ADMIN_NAV_LINKS = [
         href: "/enquiry-management",
         icon: FileStack,
     },
+    {
+        name: "Form Submissions",
+        href: "/sell-diamonds-form-submissions",
+        icon: FormInputIcon,
+    },
 ];
 
 const SUPER_ADMIN_NAV_LINKS = [
@@ -90,6 +96,11 @@ const SUPER_ADMIN_NAV_LINKS = [
         icon: FileStack,
     },
     { name: "Admin Management", href: "/admin-management", icon: Shield },
+    {
+        name: "Form Submissions",
+        href: "/sell-diamonds-form-submissions",
+        icon: FormInputIcon,
+    },
 ];
 
 const USER_NAV_LINKS = [
@@ -329,7 +340,7 @@ export default function Navbar() {
                                     >
                                         <a
                                             href={link.href}
-                                            className="flex items-center gap-1 font-cormorantGaramond text-base text-primary font-bold "
+                                            className="flex items-center gap-1 font-cormorantGaramond text-lg text-primary font-bold "
                                         >
                                             {link.name}
                                             {link.hasDropdown && (

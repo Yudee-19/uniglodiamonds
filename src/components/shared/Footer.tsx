@@ -71,7 +71,7 @@ export default function Footer() {
                         to bring ethically sourced, internationally certified
                         diamonds to people who appreciate true quality. Every
                         Uniglo diamond is hand-selected and graded by
-                        world-renowned institutions like GIA and IGI.
+                        world-renowned institutions like HRD and IGI.
                     </p>
                     <div className="mt-4">
                         <span className="text-primary-yellow-1 text-lg font-cormorantGaramond mb-2 block">

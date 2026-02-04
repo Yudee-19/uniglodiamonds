@@ -13,7 +13,7 @@ import { Button } from "../ui/button";
 
 const carouselImages = [
     "/uniglow-family/about1.jpeg", // Replace with your image paths
-    "/uniglow-family/unigloHand.jpeg",
+    "/uniglow-family/uniglo2.jpeg",
 ];
 
 const UniglowFamilySection = () => {

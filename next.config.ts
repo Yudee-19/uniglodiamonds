@@ -4,6 +4,16 @@ const nextConfig: NextConfig = {
     /* config options here */
     // images: { unoptimized: true },
     // output: "export",
+    images: {
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname:
+                    "uniglow-inventory-management-dev.s3.eu-north-1.amazonaws.com",
+                pathname: "/**",
+            },
+        ],
+    },
 };
 
 export default nextConfig;

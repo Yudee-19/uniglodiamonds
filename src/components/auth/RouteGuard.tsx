@@ -21,6 +21,7 @@ const adminRoutes = [
     "/members-management",
     "/enquiry-management",
     "/inventory-management",
+    "/sell-diamonds-form-submissions",
 ];
 
 // 4. Super Admin-only routes
