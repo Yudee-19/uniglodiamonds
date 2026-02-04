@@ -7,7 +7,7 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel";
-import banner1 from "@/assets/Banner-1.jpeg";
+import banner1 from "@/assets/banner1.jpeg";
 import banner2 from "@/assets/Banner-02.jpg";
 import Autoplay from "embla-carousel-autoplay";
 import { Button } from "@/components/ui/button";
