@@ -2,7 +2,7 @@ import React from "react";
 import BannerSection from "@/components/shared/BannerSection";
 import BannerImage from "@/assets/services/partner/bannerPartners.jpeg";
 import ArticleLayout from "@/components/shared/ArticleLayout";
-import FedexImage from "@/assets/services/partner/image-1.png";
+import FedexImage from "@/assets/services/partner/image1.jpg";
 import SubFooter from "@/components/shared/SubFooter";
 
 const article = {
