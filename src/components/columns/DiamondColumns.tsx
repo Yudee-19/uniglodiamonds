@@ -146,69 +146,6 @@ export const getDiamondColumns = (
     { key: "fluorescenceIntensity", header: "Fluor Intensity" },
     { key: "fluorescenceColor", header: "Fluor Color" },
 
-    // --- Dimensions & Proportions ---
-    {
-        key: "measurements",
-        header: "Measurement",
-        render: (row: Diamond) =>
-            row.length && row.width && row.height
-                ? `${row.length.toFixed(2)} x ${row.width.toFixed(
-                      2,
-                  )} x ${row.height.toFixed(2)}`
-                : row.measurements,
-    },
-    { key: "length", header: "Length" },
-    { key: "width", header: "Width" },
-    { key: "height", header: "Height" },
-    {
-        key: "depthPerc",
-        header: (
-            <SortableHeader
-                label="Depth %"
-                columnKey="depthPerc"
-                currentSortBy={currentSortBy}
-                currentSortOrder={currentSortOrder}
-                onSort={onSort}
-            />
-        ),
-        sortable: true,
-    },
-    {
-        key: "tablePerc",
-        header: (
-            <SortableHeader
-                label="Table %"
-                columnKey="tablePerc"
-                currentSortBy={currentSortBy}
-                currentSortOrder={currentSortOrder}
-                onSort={onSort}
-            />
-        ),
-        sortable: true,
-    },
-
-    // --- Girdle & Culet ---
-    { key: "girdle", header: "Girdle" },
-    { key: "girdleThin", header: "Girdle Thin" },
-    { key: "girdlePerc", header: "Girdle %" },
-    { key: "girdleCondition", header: "Girdle Condition" },
-    { key: "culetSize", header: "Culet Size" },
-    { key: "culetCondition", header: "Culet Condition" },
-
-    // --- Certification & Lab ---
-    { key: "lab", header: "Lab" },
-    { key: "certiNo", header: "Cert No" },
-    {
-        key: "certIssueDate",
-        header: "Cert Issue Date",
-        render: (row: Diamond) =>
-            row.certIssueDate
-                ? new Date(row.certIssueDate).toLocaleDateString()
-                : "N/A",
-    },
-    { key: "certComment", header: "Cert Comment" },
-    { key: "laserInscription", header: "Laser Inscription" },
-
     // --- Pricing ---
     {
         key: "priceListUSD",
@@ -265,7 +202,7 @@ export const getDiamondColumns = (
         key: "cashDiscPrice",
         header: "Cash Disc Price",
         render: (row: Diamond) =>
-            `$${row.cashDiscPrice ? row.cashDiscPrice.toLocaleString() : "N/A"}`,
+            `${row.cashDiscPrice ? `$${row.cashDiscPrice.toLocaleString()}` : "N/A"}`,
     },
     {
         key: "totalPrice",
@@ -274,6 +211,59 @@ export const getDiamondColumns = (
             return <span className=" text-gray-900">${row.priceListUSD}</span>;
         },
     },
+
+    // --- Dimensions & Proportions ---
+    { key: "length", header: "Length" },
+    { key: "width", header: "Width" },
+    { key: "height", header: "Height" },
+    {
+        key: "depthPerc",
+        header: (
+            <SortableHeader
+                label="Depth %"
+                columnKey="depthPerc"
+                currentSortBy={currentSortBy}
+                currentSortOrder={currentSortOrder}
+                onSort={onSort}
+            />
+        ),
+        sortable: true,
+    },
+    {
+        key: "tablePerc",
+        header: (
+            <SortableHeader
+                label="Table %"
+                columnKey="tablePerc"
+                currentSortBy={currentSortBy}
+                currentSortOrder={currentSortOrder}
+                onSort={onSort}
+            />
+        ),
+        sortable: true,
+    },
+
+    // --- Girdle & Culet ---
+    { key: "girdle", header: "Girdle" },
+    { key: "girdleThin", header: "Girdle Thin" },
+    { key: "girdlePerc", header: "Girdle %" },
+    { key: "girdleCondition", header: "Girdle Condition" },
+    { key: "culetSize", header: "Culet Size" },
+    { key: "culetCondition", header: "Culet Condition" },
+
+    // --- Certification & Lab ---
+    { key: "lab", header: "Lab" },
+    { key: "certiNo", header: "Cert No" },
+    {
+        key: "certIssueDate",
+        header: "Cert Issue Date",
+        render: (row: Diamond) =>
+            row.certIssueDate
+                ? new Date(row.certIssueDate).toLocaleDateString()
+                : "N/A",
+    },
+    { key: "certComment", header: "Cert Comment" },
+    { key: "laserInscription", header: "Laser Inscription" },
 
     // --- Inclusions & Comments ---
     {
@@ -452,25 +442,11 @@ export const getPublicDiamondColumns = (
     },
     { key: "fluorescenceIntensity", header: "Fluor Intensity" },
     { key: "fluorescenceColor", header: "Fluor Color" },
-    {
-        key: "measurements",
-        header: "Measurement",
-        render: (row: PublicDiamond) =>
-            row.length && row.width && row.height
-                ? `${row.length.toFixed(2)} x ${row.width.toFixed(2)} x ${row.height.toFixed(2)}`
-                : row.measurements,
-    },
+
     { key: "depthPerc", header: "Depth %" },
     { key: "tablePerc", header: "Table %" },
     { key: "lab", header: "Lab" },
-    {
-        key: "certIssueDate",
-        header: "Cert Issue Date",
-        render: (row: PublicDiamond) =>
-            row.certIssueDate
-                ? new Date(row.certIssueDate).toLocaleDateString()
-                : "N/A",
-    },
+
     { key: "country", header: "Country" },
     {
         key: "price",

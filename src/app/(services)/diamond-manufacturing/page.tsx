@@ -1,6 +1,6 @@
 import BannerSection from "@/components/shared/BannerSection";
 import React from "react";
-import BannerImage from "@/assets/services/diamond-manufacturing/banner.png";
+import BannerImage from "@/assets/services/diamond-manufacturing/finalbanner.jpg";
 import ArticleLayout from "@/components/shared/ArticleLayout";
 
 // Example images (replace with your actual paths)

@@ -25,7 +25,7 @@ const CertificatesMarqueeSection = () => {
                     </p>
                     <p className="text-slate-600 font-lora text-base max-w-3xl mx-auto">
                         We work with globally trusted diamond authorities like
-                        HRD and IGI to ensure every Uniglo diamond is
+                        HRD, GIA and IGI to ensure every Uniglo diamond is
                         authentically graded. Their expertise guarantees
                         transparency, ethical sourcing, and uncompromised
                         quality in every piece you choose.

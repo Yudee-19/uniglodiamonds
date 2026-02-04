@@ -2,80 +2,14 @@
 
 import BannerSection from "@/components/shared/BannerSection";
 import BannerImage from "@/assets/services/the-best-price-for-your-diamonds/bannerNew.jpeg";
-import React, { useState } from "react";
+import React from "react";
 import ArticleLayout from "@/components/shared/ArticleLayout";
 import DiamondsBanner from "@/assets/services/the-best-price-for-your-diamonds/banner2.png";
 import FedexImage from "@/assets/services/the-best-price-for-your-diamonds/fedex.jpg";
-import { Button } from "@/components/ui/button";
 import SubFooter from "@/components/shared/SubFooter";
-import { submitInquiryForm, InquiryFormData } from "@/services/inquiryService";
-import FileUploader from "@/components/shared/FileUploader";
+import SellDiamondForm from "@/components/shared/SellDiamondForm";
 
 const page = () => {
-    const [formData, setFormData] = useState<InquiryFormData>({
-        name: "",
-        email: "",
-        address: "",
-        phoneNumber: "",
-        type: "private",
-        city: "",
-        country: "",
-        diamondDetails: "",
-        images: [],
-    });
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitStatus, setSubmitStatus] = useState<{
-        type: "success" | "error" | null;
-        message: string;
-    }>({ type: null, message: "" });
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    const handleTypeChange = (type: "private" | "business") => {
-        setFormData((prev) => ({ ...prev, type }));
-    };
-
-    const handleFilesChange = (files: File[]) => {
-        setFormData((prev) => ({ ...prev, images: files }));
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-        setSubmitStatus({ type: null, message: "" });
-
-        try {
-            await submitInquiryForm(formData);
-            setSubmitStatus({
-                type: "success",
-                message:
-                    "Form submitted successfully! We will contact you soon.",
-            });
-            // Reset form
-            setFormData({
-                name: "",
-                email: "",
-                address: "",
-                phoneNumber: "",
-                type: "private",
-                city: "",
-                country: "",
-                diamondDetails: "",
-                images: [],
-            });
-        } catch (error) {
-            setSubmitStatus({
-                type: "error",
-                message: "Failed to submit form. Please try again.",
-            });
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
     return (
         <div className="min-h-screen ">
             <BannerSection
@@ -90,7 +24,7 @@ const page = () => {
                     title="Free Diamond Valuation and FedEx Shipping"
                     subtitle="Welcome"
                     paragraphs={[
-                        "Uniglo Diamonds’ provides you with a step by step shipping process, which is secure and safe. We understand what it takes to securely transport diamonds, and therefore take the necessary measures. All our transactions are fully insured by Malca-Amit.",
+                        "Uniglo Diamonds' provides you with a step by step shipping process, which is secure and safe. We understand what it takes to securely transport diamonds, and therefore take the necessary measures. All our transactions are fully insured by Malca-Amit.",
                     ]}
                     bulletPoints={[
                         "Begin by filling out the form.",
@@ -135,194 +69,7 @@ const page = () => {
                 </div>
             </section>
             {/* Pickup Form */}
-            <section className="mt-16 bg-brand-gradient">
-                <div className=" max-w-7xl mx-auto px-4 rounded-lg p-10  shadow-lg">
-                    <h2 className="text-white text-center text-2xl md:text-3xl font-cormorantGaramond mb-10">
-                        To proceed with a free FedEx pick up and a free
-                        appraisal, fill in our FedEx pick up request form. Upon
-                        receiving it, we will respond with a confirmation, along
-                        with further instructions.
-                    </h2>
-                    <form
-                        onSubmit={handleSubmit}
-                        className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6"
-                    >
-                        {/* Name */}
-                        <div>
-                            <label className="block text-primary mb-2 font-semibold font-lora">
-                                Name
-                            </label>
-                            <input
-                                type="text"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleInputChange}
-                                placeholder="John"
-                                required
-                                className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
-                            />
-                        </div>
-                        {/* Email */}
-                        <div>
-                            <label className=" font-lora block text-primary mb-2 font-semibold">
-                                Email
-                            </label>
-                            <input
-                                type="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleInputChange}
-                                placeholder="John@gmail.com"
-                                required
-                                className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
-                            />
-                        </div>
-                        {/* Type */}
-                        <div className="col-span-1 md:col-span-2">
-                            <label className="block font-lora text-primary mb-2 font-semibold">
-                                Type
-                            </label>
-                            <div className="flex gap-8">
-                                <label className="flex items-center gap-2 text-white">
-                                    <input
-                                        type="checkbox"
-                                        checked={formData.type === "private"}
-                                        onChange={() =>
-                                            handleTypeChange("private")
-                                        }
-                                        className="accent-primary"
-                                    />
-                                    Private
-                                </label>
-                                <label className="flex items-center gap-2 text-white">
-                                    <input
-                                        type="checkbox"
-                                        checked={formData.type === "business"}
-                                        onChange={() =>
-                                            handleTypeChange("business")
-                                        }
-                                        className="accent-primary"
-                                    />
-                                    Business
-                                </label>
-                            </div>
-                        </div>
-                        {/* Address */}
-                        <div>
-                            <label className="block font-lora text-primary mb-2 font-semibold">
-                                Address
-                            </label>
-                            <input
-                                type="text"
-                                name="address"
-                                value={formData.address}
-                                onChange={handleInputChange}
-                                placeholder="User Address"
-                                required
-                                className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
-                            />
-                        </div>
-                        {/* City */}
-                        <div>
-                            <label className="block font-lora text-primary mb-2 font-semibold">
-                                City
-                            </label>
-                            <input
-                                type="text"
-                                name="city"
-                                value={formData.city}
-                                onChange={handleInputChange}
-                                placeholder="Enter City Name"
-                                required
-                                className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
-                            />
-                        </div>
-                        {/* Country */}
-                        <div>
-                            <label className="block font-lora text-primary mb-2 font-semibold">
-                                Country
-                            </label>
-                            <input
-                                type="text"
-                                name="country"
-                                value={formData.country}
-                                onChange={handleInputChange}
-                                placeholder="Enter Country Name"
-                                required
-                                className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
-                            />
-                        </div>
-                        {/* Phone */}
-                        <div>
-                            <label className="block font-lora text-primary mb-2 font-semibold">
-                                Phone
-                            </label>
-                            <input
-                                type="text"
-                                name="phoneNumber"
-                                value={formData.phoneNumber}
-                                onChange={handleInputChange}
-                                placeholder="Enter Phone Number"
-                                required
-                                className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
-                            />
-                        </div>
-                        {/* Diamond Details */}
-                        <div className="md:col-span-2">
-                            <label className="block font-lora text-primary mb-2 font-semibold">
-                                Diamond Details
-                            </label>
-                            <input
-                                type="text"
-                                name="diamondDetails"
-                                value={formData.diamondDetails}
-                                onChange={handleInputChange}
-                                placeholder="Enter Diamond Details"
-                                required
-                                className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
-                            />
-                        </div>
-
-                        {/* File Uploader */}
-                        <div className="md:col-span-2">
-                            <FileUploader
-                                files={formData.images || []}
-                                onFilesChange={handleFilesChange}
-                            />
-                        </div>
-
-                        {/* Status Message */}
-                        {submitStatus.type && (
-                            <div className="md:col-span-2">
-                                <p
-                                    className={`text-center ${
-                                        submitStatus.type === "success"
-                                            ? "text-green-400"
-                                            : "text-red-400"
-                                    }`}
-                                >
-                                    {submitStatus.message}
-                                </p>
-                            </div>
-                        )}
-
-                        {/* Submit Button */}
-                        <div className="md:col-span-2 flex justify-start mt-2">
-                            <Button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className="gold-reveal-btn bg-primary font-semibold px-8 py-3  text-base font-lora disabled:opacity-50"
-                            >
-                                <span>
-                                    {isSubmitting
-                                        ? "SUBMITTING..."
-                                        : "SUBMIT NOW"}
-                                </span>
-                            </Button>
-                        </div>
-                    </form>
-                </div>
-            </section>
+            <SellDiamondForm />
             <SubFooter />
         </div>
     );

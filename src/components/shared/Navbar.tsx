@@ -82,8 +82,8 @@ const ADMIN_NAV_LINKS = [
         icon: FileStack,
     },
     {
-        name: "Form Submissions",
-        href: "/sell-diamonds-form-submissions",
+        name: "Sell Diamonds Requests",
+        href: "/sell-diamonds-requests",
         icon: FormInputIcon,
     },
 ];
@@ -97,8 +97,8 @@ const SUPER_ADMIN_NAV_LINKS = [
     },
     { name: "Admin Management", href: "/admin-management", icon: Shield },
     {
-        name: "Form Submissions",
-        href: "/sell-diamonds-form-submissions",
+        name: "Sell Diamonds Requests",
+        href: "/sell-diamonds-form-requests",
         icon: FormInputIcon,
     },
 ];

@@ -1,28 +1,18 @@
 "use client";
 
 import BannerSection from "@/components/shared/BannerSection";
-import React, { useState } from "react";
+import React from "react";
 import bannerImage from "@/assets/sell-your-diamonds/banner.jpeg";
-import sellyourdiamondsImage from "@/assets/sell-your-diamonds/sell_diamonds.jpg";
-import adviceImage from "@/assets/sell-your-diamonds/advice.png";
-import benefitImage from "@/assets/sell-your-diamonds/banifits.jpg";
-import ReasonImage from "@/assets/sell-your-diamonds/reson.jpg";
+import sellyourdiamondsImage from "@/assets/sell-your-diamonds/img1.jpg";
+import adviceImage from "@/assets/sell-your-diamonds/img2.jpg";
+import benefitImage from "@/assets/sell-your-diamonds/img3.jpg";
+import ReasonImage from "@/assets/sell-your-diamonds/ing4.jpg";
 import { Button } from "@/components/ui/button";
-import blog1 from "@/assets/home/blog_1.jpg";
-import blog2 from "@/assets/home/blog_2.1.jpg";
-import blog3 from "@/assets/home/blog_3.jpg";
-import blog4 from "@/assets/home/blog_4.jpg";
-import blog5 from "@/assets/home/Education.jpg";
-import { desc } from "motion/react-client";
 import CertificatesMarqueeSection from "@/components/shared/CertificatesMarqueeSection";
 import Image from "next/image";
 import appointmentRing from "@/assets/sell-your-diamonds/online-inventory-banner.png";
 import ArticleLayout from "@/components/shared/ArticleLayout";
-import {
-    submitSellDiamondForm,
-    SellDiamondFormData,
-} from "@/services/inquiryService";
-import FileUploader from "@/components/shared/FileUploader";
+import SellDiamondForm from "@/components/shared/SellDiamondForm";
 
 const articleData = [
     {
@@ -73,104 +63,11 @@ const articleData = [
     },
 ];
 
-const blogData = [
-    {
-        image: blog1,
-
-        title: "How to Choose a Diamond Engagement Ring",
-        description:
-            "Choosing a diamond engagement ring is an exciting and personal experience, but with so many options, it can be overwhelming.",
-    },
-    {
-        image: blog2,
-
-        title: "Best Places to Buy Diamonds Online",
-        description: "Buying diamonds online has become increasingly...",
-    },
-    {
-        image: blog3,
-
-        title: "Diamond Investment Guide: What You Need to Know Before Investing",
-        description: "Diamonds have long been valued for their beauty..",
-    },
-    {
-        image: blog4,
-
-        title: "Loose Diamonds Buying Guide: How to Choose the Perfect Stone",
-        description:
-            " When buying a loose diamond, you have the opportunity to handpick a stone that matches your personal style, budget, and jewelry preferences.",
-    },
-    {
-        image: blog5,
-
-        title: "Diamond Size Guide: Understanding Carat Weight and Visual Appearance",
-        description:
-            "When selecting a diamond, one of the most important factors to consider is carat weight, which directly influences the size and visual impact of the stone.",
-    },
-];
-
 const Page = () => {
-    const [formData, setFormData] = useState<SellDiamondFormData>({
-        name: "",
-        email: "",
-        address: "",
-        phoneNumber: "",
-        material: "",
-        description: "",
-        images: [],
-    });
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitStatus, setSubmitStatus] = useState<{
-        type: "success" | "error" | null;
-        message: string;
-    }>({ type: null, message: "" });
-
-    const handleInputChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    ) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    const handleFilesChange = (files: File[]) => {
-        setFormData((prev) => ({ ...prev, images: files }));
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-        setSubmitStatus({ type: null, message: "" });
-
-        try {
-            await submitSellDiamondForm(formData);
-            setSubmitStatus({
-                type: "success",
-                message:
-                    "Form submitted successfully! We will contact you soon.",
-            });
-            // Reset form
-            setFormData({
-                name: "",
-                email: "",
-                address: "",
-                phoneNumber: "",
-                material: "",
-                description: "",
-                images: [],
-            });
-        } catch (error) {
-            setSubmitStatus({
-                type: "error",
-                message: "Failed to submit form. Please try again.",
-            });
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
     return (
         <div className="min-h-screen ">
             <BannerSection image={bannerImage} text="Sell Your Diamonds" />
+
             {/* Articles Section */}
             <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
                 {articleData.map((data, index) => (
@@ -179,14 +76,12 @@ const Page = () => {
                         title={data.title}
                         subtitle={data.subtitle}
                         paragraphs={data.paragraphs}
-                        // Handling the image object from imports
                         image={{
                             src: data.image.src,
                             alt: data.title,
                         }}
                         reverse={data.reverse}
                         buttonText={data.buttonText}
-                        // Passing bullet points (optional)
                     />
                 ))}
             </section>
@@ -208,155 +103,14 @@ const Page = () => {
                 </div>
             </section>
 
-            {/* Blog Section */}
-
+            {/* Certificates Marquee Section */}
             <CertificatesMarqueeSection />
 
             {/* Sell Your Diamonds Form Section */}
-            <section className="mt-6 bg-brand-gradient">
-                <div className=" max-w-7xl mx-auto px-4 rounded-lg p-10  shadow-lg">
-                    <h2 className="text-white text-center text-2xl md:text-3xl font-cormorantGaramond ">
-                        Sell Your Diamonds - Get a Free Valuation
-                    </h2>
-                    <h2 className="text-white text-center text-lg font-cormorantGaramond mb-10 max-w-5xl mx-auto">
-                        Complete the form below to get a free valuation for your
-                        diamonds. Our process is secure, confidential, and
-                        designed to get you the best possible price.
-                    </h2>
-                    <form
-                        onSubmit={handleSubmit}
-                        className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6"
-                    >
-                        {/* Name */}
-                        <div>
-                            <label className="block text-primary mb-2 font-semibold font-lora">
-                                Name
-                            </label>
-                            <input
-                                type="text"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleInputChange}
-                                placeholder="John"
-                                required
-                                className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
-                            />
-                        </div>
-                        {/* Email */}
-                        <div>
-                            <label className=" font-lora block text-primary mb-2 font-semibold">
-                                Email
-                            </label>
-                            <input
-                                type="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleInputChange}
-                                placeholder="John@gmail.com"
-                                required
-                                className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
-                            />
-                        </div>
-                        {/* Address */}
-                        <div>
-                            <label className="block font-lora text-primary mb-2 font-semibold">
-                                Address
-                            </label>
-                            <input
-                                type="text"
-                                name="address"
-                                value={formData.address}
-                                onChange={handleInputChange}
-                                placeholder="User Address"
-                                required
-                                className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
-                            />
-                        </div>
-                        {/* Phone */}
-                        <div>
-                            <label className="block font-lora text-primary mb-2 font-semibold">
-                                Phone
-                            </label>
-                            <input
-                                type="text"
-                                name="phoneNumber"
-                                value={formData.phoneNumber}
-                                onChange={handleInputChange}
-                                placeholder="Enter Phone Number"
-                                required
-                                className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
-                            />
-                        </div>
-                        {/* Material */}
-                        <div>
-                            <label className="block font-lora text-primary mb-2 font-semibold">
-                                Material
-                            </label>
-                            <input
-                                type="text"
-                                name="material"
-                                value={formData.material}
-                                onChange={handleInputChange}
-                                placeholder="Enter Material Type"
-                                required
-                                className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none"
-                            />
-                        </div>
-                        {/* Description */}
-                        <div className="md:col-span-2">
-                            <label className="block font-lora text-primary mb-2 font-semibold">
-                                Description
-                            </label>
-                            <textarea
-                                name="description"
-                                value={formData.description}
-                                onChange={handleInputChange}
-                                placeholder="Enter Description"
-                                required
-                                rows={4}
-                                className="w-full bg-transparent border border-slate-600 rounded-md px-4 py-3 text-white placeholder:text-slate-400 focus:outline-none resize-none"
-                            />
-                        </div>
-                        {/* File Uploader */}
-                        <div className="md:col-span-2">
-                            <FileUploader
-                                files={formData.images || []}
-                                onFilesChange={handleFilesChange}
-                            />
-                        </div>
-
-                        {/* Status Message */}
-                        {submitStatus.type && (
-                            <div className="md:col-span-2">
-                                <p
-                                    className={`text-center ${
-                                        submitStatus.type === "success"
-                                            ? "text-green-400"
-                                            : "text-red-400"
-                                    }`}
-                                >
-                                    {submitStatus.message}
-                                </p>
-                            </div>
-                        )}
-
-                        {/* Submit Button */}
-                        <div className="md:col-span-2 flex justify-start mt-2">
-                            <Button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className="gold-reveal-btn bg-primary font-semibold px-8 py-3  text-base font-lora disabled:opacity-50"
-                            >
-                                <span>
-                                    {isSubmitting
-                                        ? "SUBMITTING..."
-                                        : "SUBMIT NOW"}
-                                </span>
-                            </Button>
-                        </div>
-                    </form>
-                </div>
-            </section>
+            <SellDiamondForm
+                title="Sell Your Diamonds - Get a Free Valuation"
+                subtitle="Complete the form below to get a free valuation for your diamonds. Our process is secure, confidential, and designed to get you the best possible price."
+            />
 
             {/* Make an Appointment Section */}
             <section className="bg-brand-gradient py-20 px-4">
@@ -373,7 +127,7 @@ const Page = () => {
                                 ONLINE INVENTORY
                             </Button>
                             <Image
-                                src={appointmentRing} // Replace with your diamond ring image path
+                                src={appointmentRing}
                                 alt="Diamond Ring"
                                 width={250}
                                 height={250}

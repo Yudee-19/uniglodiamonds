@@ -1,6 +1,6 @@
 import React from "react";
 import BannerSection from "@/components/shared/BannerSection";
-import BannerImage from "@/assets/services/investment/banner.jpg";
+import BannerImage from "@/assets/services/diamond-financing-options/banner.png";
 import ArticleLayout from "@/components/shared/ArticleLayout";
 import FedexImage from "@/assets/services/investment/image-1.png";
 import LoupeImage from "@/assets/services/investment/image-2.png"; // Update path as needed

@@ -713,7 +713,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                             className={cn(
                                 "border border-primary-yellow-2",
                                 variant === "sidebar"
-                                    ? "flex-1 min-w-[40px]"
+                                    ? "flex-1 min-w-10"
                                     : "flex-1",
                             )}
                         />
@@ -757,7 +757,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                             className={cn(
                                 "border border-primary-yellow-2",
                                 variant === "sidebar"
-                                    ? "flex-1 min-w-[40px]"
+                                    ? "flex-1 min-w-10"
                                     : "flex-1",
                             )}
                         />
@@ -801,7 +801,7 @@ export const DiamondFilters: React.FC<DiamondFiltersProps> = ({
                             className={cn(
                                 "border border-primary-yellow-2",
                                 variant === "sidebar"
-                                    ? "flex-1 min-w-[40px]"
+                                    ? "flex-1 min-w-10"
                                     : "flex-1",
                             )}
                         />
