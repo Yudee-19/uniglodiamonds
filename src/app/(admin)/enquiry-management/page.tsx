@@ -16,11 +16,13 @@ import {
     FileStack,
     Send,
     Loader2,
+    ClockIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import ExtendHoldDialog from "@/components/admin/ExtendHoldDialog";
 
 // --- Types ---
 interface GroupedQuery {
@@ -74,9 +76,13 @@ const StatCard = ({
 const InnerDiamondTable = ({
     items,
     isHold = false,
+    userId,
+    onExtendHold,
 }: {
     items: { diamond: Diamond }[];
     isHold?: boolean;
+    userId?: string;
+    onExtendHold?: (stockRef: string) => void;
 }) => {
     if (!items || items.length === 0) {
         return (
@@ -104,6 +110,7 @@ const InnerDiamondTable = ({
                         <th className="py-2 px-3">Table%</th>
                         <th className="py-2 px-3">Price/Ct</th>
                         <th className="py-2 px-3 text-right">Total</th>
+                        {isHold && <th className="py-2 px-3">Action</th>}
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -148,6 +155,20 @@ const InnerDiamondTable = ({
                                         maximumFractionDigits: 2,
                                     })}
                                 </td>
+                                {isHold && (
+                                    <td className="py-2 px-3">
+                                        <Button
+                                            size="sm"
+                                            onClick={() =>
+                                                onExtendHold?.(d.stockRef)
+                                            }
+                                            className="flex items-center gap-1 text-xs bg-primary-purple hover:bg-primary-purple/90"
+                                        >
+                                            <ClockIcon size={12} />
+                                            Extend
+                                        </Button>
+                                    </td>
+                                )}
                             </tr>
                         );
                     })}
@@ -182,8 +203,10 @@ const QueryItem = ({
             toast.success("Reply sent successfully");
             setReplyText("");
             onReplySuccess();
-        } catch (error: any) {
-            toast.error(error || "Failed to send reply");
+        } catch (error: unknown) {
+            const errorMessage =
+                error instanceof Error ? error.message : "Failed to send reply";
+            toast.error(errorMessage);
         } finally {
             setIsReplying(false);
         }
@@ -386,6 +409,7 @@ const EnquiryRow = ({
     limit,
     queriesData,
     onReplySuccess,
+    onExtendHoldSuccess,
 }: {
     data: AdminCartData;
     index: number;
@@ -393,8 +417,17 @@ const EnquiryRow = ({
     limit: number;
     queriesData?: AdminQueriesData;
     onReplySuccess: () => void;
+    onExtendHoldSuccess: () => void;
 }) => {
     const [isExpanded, setIsExpanded] = useState(false);
+    const [extendHoldDialog, setExtendHoldDialog] = useState<{
+        open: boolean;
+        stockRef: string;
+    }>({
+        open: false,
+        stockRef: "",
+    });
+
     const { user, cart } = data;
     const customer = user.customerData;
     const business = customer?.businessInfo;
@@ -412,6 +445,15 @@ const EnquiryRow = ({
 
     // Get queries for this user
     const userQueries = queriesData?.queries || [];
+
+    const handleExtendHold = (stockRef: string) => {
+        setExtendHoldDialog({ open: true, stockRef });
+    };
+
+    const handleExtendHoldSuccess = () => {
+        onExtendHoldSuccess();
+        setExtendHoldDialog({ open: false, stockRef: "" });
+    };
 
     return (
         <React.Fragment>
@@ -489,6 +531,8 @@ const EnquiryRow = ({
                                 <InnerDiamondTable
                                     items={cart.holdItems}
                                     isHold={true}
+                                    userId={user._id}
+                                    onExtendHold={handleExtendHold}
                                 />
                             </div>
 
@@ -513,6 +557,17 @@ const EnquiryRow = ({
                     </td>
                 </tr>
             )}
+
+            {/* Extend Hold Dialog */}
+            <ExtendHoldDialog
+                open={extendHoldDialog.open}
+                onClose={() =>
+                    setExtendHoldDialog({ open: false, stockRef: "" })
+                }
+                stockRef={extendHoldDialog.stockRef}
+                userId={user._id}
+                onSuccess={handleExtendHoldSuccess}
+            />
         </React.Fragment>
     );
 };
@@ -575,14 +630,14 @@ export default function EnquiryManagementPage() {
         fetchQueries();
     };
 
+    const handleExtendHoldSuccess = () => {
+        fetchData(pagination.currentPage);
+    };
+
     // Calculate stats
     const totalEnquiries = pagination.totalRecords;
     const activeHolds = carts.reduce(
         (acc, curr) => acc + (curr.cart.holdItems?.length || 0),
-        0,
-    );
-    const activeCartItems = carts.reduce(
-        (acc, curr) => acc + (curr.cart.items?.length || 0),
         0,
     );
     const totalQueries = queries.reduce(
@@ -747,6 +802,9 @@ export default function EnquiryManagementPage() {
                                             limit={pagination.recordsPerPage}
                                             queriesData={userQueryData}
                                             onReplySuccess={handleReplySuccess}
+                                            onExtendHoldSuccess={
+                                                handleExtendHoldSuccess
+                                            }
                                         />
                                     );
                                 })
