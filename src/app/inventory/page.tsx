@@ -47,7 +47,7 @@ function InventoryContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();
-    const { isAuthenticated, loading: authLoading } = useAuth();
+    const { isAuthenticated, loading: authLoading, user } = useAuth();
 
     // 2. Extract the View ID
     const viewId = searchParams.get("view");
@@ -606,7 +606,7 @@ function InventoryContent() {
                         </Button>
 
                         {/* Cart - Only show for authenticated users */}
-                        {isAuthenticated && (
+                        {isAuthenticated && user?.role === "USER" && (
                             <Button
                                 variant="outline"
                                 className="text-sm"
