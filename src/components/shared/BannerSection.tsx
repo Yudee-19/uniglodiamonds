@@ -28,7 +28,7 @@ const BannerSection: React.FC<BannerSectionProps> = ({
             <h1
                 className={cn(
                     "absolute top-2/3 right-20 uppercase transform -translate-y-3/4 text-white text-5xl font-bold font-cormorantGaramond",
-                    textClassName
+                    textClassName,
                 )}
             >
                 {text}

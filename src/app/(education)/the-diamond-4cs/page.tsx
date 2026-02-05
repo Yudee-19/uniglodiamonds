@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 
 // Replace these with your actual image paths
-import Diagram4Cs from "@/assets/diamond-4cs/4csImage.jpeg";
+import Diagram4Cs from "@/assets/diamond-4cs/image1.png";
 import CutBanner from "@/assets/diamond-4cs/cut-banner.jpg";
 import ColorScale from "@/assets/diamond-4cs/color-scale.jpg";
 import ClarityBanner from "@/assets/diamond-4cs/clarity-banner.jpg";

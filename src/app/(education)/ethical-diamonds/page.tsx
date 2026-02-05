@@ -5,7 +5,7 @@ import BannerImage from "@/assets/ethical-diamonds/bannerNewEthical.jpeg";
 import Image from "next/image";
 
 // Replace with your actual image paths
-import ConflictFreeDiamondsImg from "@/assets/ethical-diamonds/image-1.jpg";
+import ConflictFreeDiamondsImg from "@/assets/ethical-diamonds/image1.jpeg";
 import TrustBannerBg from "@/assets/services/diamond-financing-options/banner3.png";
 import SubFooter from "@/components/shared/SubFooter";
 

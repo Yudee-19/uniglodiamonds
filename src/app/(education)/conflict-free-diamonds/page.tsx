@@ -1,11 +1,11 @@
 import BannerSection from "@/components/shared/BannerSection";
 import ArticleLayout from "@/components/shared/ArticleLayout";
 import React from "react";
-import BannerImage from "@/assets/conflict-free/bannerEthical.jpeg";
+import BannerImage from "@/assets/conflict-free/banner1.png";
 import Image from "next/image";
 
 // Replace with your actual image paths
-import ConflictFreeDiamondsImg from "@/assets/conflict-free/image-1.jpg";
+import ConflictFreeDiamondsImg from "@/assets/conflict-free/img1.jpeg";
 import WhatAreConflictDiamondsImg from "@/assets/conflict-free/image-2.jpg";
 import HistoryBannerImg from "@/assets/services/diamond-financing-options/banner3.png";
 import KimberleyProcessImg from "@/assets/conflict-free/image-3.png";

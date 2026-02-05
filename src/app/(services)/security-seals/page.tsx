@@ -1,8 +1,8 @@
 import React from "react";
 import BannerSection from "@/components/shared/BannerSection";
-import BannerImage from "@/assets/services/security-seals/bannerSeal.jpeg";
+import BannerImage from "@/assets/services/security-seals/banner11.png";
 import ArticleLayout from "@/components/shared/ArticleLayout";
-import FedexImage from "@/assets/services/security-seals/image-1.png";
+import FedexImage from "@/assets/services/security-seals/tamper-proff-seals1.jpeg";
 import SubFooter from "@/components/shared/SubFooter";
 
 const article = {
@@ -25,8 +25,8 @@ const page = () => {
             <BannerSection
                 image={BannerImage}
                 text="Security Seals"
-                textClassName="left-10 top-90 text-4xl lg:text-6xl text-black"
-                imageClassName="h-100 object-cover"
+                textClassName="left-10 top-80 text-4xl lg:text-6xl text-black"
+                imageClassName="h-90 object-cover"
             />
             <section className="max-w-7xl mx-auto px-10 mt-20">
                 <ArticleLayout {...article} />

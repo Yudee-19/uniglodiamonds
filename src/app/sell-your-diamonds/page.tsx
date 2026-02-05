@@ -2,7 +2,7 @@
 
 import BannerSection from "@/components/shared/BannerSection";
 import React from "react";
-import bannerImage from "@/assets/sell-your-diamonds/banner.jpeg";
+import bannerImage from "@/assets/sell-your-diamonds/banner.png";
 import sellyourdiamondsImage from "@/assets/sell-your-diamonds/img1.jpg";
 import adviceImage from "@/assets/sell-your-diamonds/img2.jpg";
 import benefitImage from "@/assets/sell-your-diamonds/img3.jpg";
@@ -66,7 +66,12 @@ const articleData = [
 const Page = () => {
     return (
         <div className="min-h-screen ">
-            <BannerSection image={bannerImage} text="Sell Your Diamonds" />
+            <BannerSection
+                image={bannerImage}
+                text="Sell Your Diamonds"
+                textClassName="right-10 top-80 text-5xl"
+                imageClassName="h-90 object-cover  "
+            />
 
             {/* Articles Section */}
             <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
