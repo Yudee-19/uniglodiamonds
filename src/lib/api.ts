@@ -4,8 +4,8 @@ import { toast } from "sonner";
 
 const BASE_URL =
     process.env.NODE_ENV === "production"
-        ? "https://uniglow-inventory-service-dev.caratlogic.com/api"
-        : "https://uniglow-inventory-service-dev.caratlogic.com/api";
+        ? process.env.NEXT_PUBLIC_LIVE_API_BASE_URL
+        : process.env.NEXT_PUBLIC_LOCAL_API_BASE_URL;
 
 const apiClient = axios.create({
     // The base URL of your backend

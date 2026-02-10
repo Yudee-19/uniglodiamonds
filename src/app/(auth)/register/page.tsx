@@ -15,6 +15,9 @@ import {
     Phone,
     MapPin,
     Globe,
+    FileText,
+    CreditCard,
+    Users,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -26,39 +29,98 @@ const Page = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState({
-        // Account Info
+        // Step 1: Account Info
         username: "",
         email: "",
         password: "",
         confirmPassword: "",
-        companyName: "",
 
-        // Personal Info
+        // Step 2: Company Info
+        companyName: "",
+        contactName: "",
+        currency: "USD",
+        companyGroup: "",
+        firmRegNo: "",
+        defaultTerms: "",
+        creditLimit: "",
+        annualTarget: "",
+        remarks: "",
+
+        // Step 3: Personal Info
         firstName: "",
         lastName: "",
         phoneNumber: "",
-        countryCode: "+1",
+        countryCode: "+91",
         landlineNumber: "",
 
-        // Address Info
+        // Step 4: Address Info
         street: "",
         city: "",
         state: "",
         postalCode: "",
         country: "",
 
-        // Business Info
+        // Step 5: Business Info
         businessCompanyName: "",
         businessType: "",
         vatNumber: "",
         websiteUrl: "",
+
+        // Step 6: Billing Address
+        billingPrintName: "",
+        billingStreet: "",
+        billingCity: "",
+        billingState: "",
+        billingCountry: "",
+        billingZipCode: "",
+        billingVatNo: "",
+        billingGstnNo: "",
+
+        // Step 7: Shipping Address
+        sameAsBilling: false,
+        shippingPrintName: "",
+        shippingStreet: "",
+        shippingCity: "",
+        shippingState: "",
+        shippingCountry: "",
+        shippingZipCode: "",
+        shippingVatNo: "",
+        shippingGstnNo: "",
+
+        // Step 8: Contact Details
+        contactDetailName: "",
+        designation: "",
+        businessTel1: "",
+        businessTel2: "",
+        businessFax: "",
+        mobileNo: "",
+        personalNo: "",
+        otherNo: "",
+        contactEmail: "",
     });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
+        const { name, value, type, checked } = e.target;
+
+        setFormData((prev) => ({
+            ...prev,
+            [name]: type === "checkbox" ? checked : value,
+        }));
+
+        // Auto-fill shipping address if "same as billing" is checked
+        if (name === "sameAsBilling" && checked) {
+            setFormData((prev) => ({
+                ...prev,
+                shippingPrintName: prev.billingPrintName,
+                shippingStreet: prev.billingStreet,
+                shippingCity: prev.billingCity,
+                shippingState: prev.billingState,
+                shippingCountry: prev.billingCountry,
+                shippingZipCode: prev.billingZipCode,
+                shippingVatNo: prev.billingVatNo,
+                shippingGstnNo: prev.billingGstnNo,
+            }));
+        }
     };
 
     const validateStep1 = () => {
@@ -71,21 +133,30 @@ const Page = () => {
             toast.error("Please fill in all required fields");
             return false;
         }
-
         if (formData.password !== formData.confirmPassword) {
             toast.error("Passwords do not match");
             return false;
         }
-
         if (formData.password.length < 6) {
             toast.error("Password must be at least 6 characters long");
             return false;
         }
-
         return true;
     };
 
     const validateStep2 = () => {
+        if (
+            !formData.companyName ||
+            !formData.contactName ||
+            !formData.currency
+        ) {
+            toast.error("Please fill in required company information");
+            return false;
+        }
+        return true;
+    };
+
+    const validateStep3 = () => {
         if (
             !formData.firstName ||
             !formData.lastName ||
@@ -97,7 +168,7 @@ const Page = () => {
         return true;
     };
 
-    const validateStep3 = () => {
+    const validateStep4 = () => {
         if (
             !formData.street ||
             !formData.city ||
@@ -111,13 +182,90 @@ const Page = () => {
         return true;
     };
 
+    const validateStep5 = () => {
+        // Business info is optional
+        return true;
+    };
+
+    const validateStep6 = () => {
+        if (
+            !formData.billingStreet ||
+            !formData.billingCity ||
+            !formData.billingState ||
+            !formData.billingZipCode ||
+            !formData.billingCountry
+        ) {
+            toast.error(
+                "Please fill in all required billing address information",
+            );
+            return false;
+        }
+        return true;
+    };
+
+    const validateStep7 = () => {
+        if (!formData.sameAsBilling) {
+            if (
+                !formData.shippingStreet ||
+                !formData.shippingCity ||
+                !formData.shippingState ||
+                !formData.shippingZipCode ||
+                !formData.shippingCountry
+            ) {
+                toast.error(
+                    "Please fill in all required shipping address information",
+                );
+                return false;
+            }
+        }
+        return true;
+    };
+
+    const validateStep8 = () => {
+        if (
+            !formData.contactDetailName ||
+            !formData.designation ||
+            !formData.mobileNo ||
+            !formData.contactEmail
+        ) {
+            toast.error("Please fill in required contact details");
+            return false;
+        }
+        return true;
+    };
+
     const handleNext = () => {
-        if (currentStep === 1 && validateStep1()) {
-            setCurrentStep(2);
-        } else if (currentStep === 2 && validateStep2()) {
-            setCurrentStep(3);
-        } else if (currentStep === 3 && validateStep3()) {
-            setCurrentStep(4);
+        let isValid = false;
+
+        switch (currentStep) {
+            case 1:
+                isValid = validateStep1();
+                break;
+            case 2:
+                isValid = validateStep2();
+                break;
+            case 3:
+                isValid = validateStep3();
+                break;
+            case 4:
+                isValid = validateStep4();
+                break;
+            case 5:
+                isValid = validateStep5();
+                break;
+            case 6:
+                isValid = validateStep6();
+                break;
+            case 7:
+                isValid = validateStep7();
+                break;
+            case 8:
+                isValid = validateStep8();
+                break;
+        }
+
+        if (isValid && currentStep < 8) {
+            setCurrentStep(currentStep + 1);
         }
     };
 
@@ -129,6 +277,11 @@ const Page = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        if (!validateStep8()) {
+            return;
+        }
+
         setIsLoading(true);
 
         try {
@@ -137,6 +290,53 @@ const Page = () => {
                 email: formData.email,
                 password: formData.password,
                 companyName: formData.companyName,
+                contactName: formData.contactName,
+                currency: formData.currency,
+                companyGroup: formData.companyGroup,
+                firmRegNo: formData.firmRegNo,
+                defaultTerms: formData.defaultTerms,
+                creditLimit: formData.creditLimit,
+                annualTarget: formData.annualTarget,
+                remarks: formData.remarks,
+                billingAddress: [
+                    {
+                        isDefault: "Y",
+                        printName:
+                            formData.billingPrintName || formData.companyName,
+                        street: formData.billingStreet,
+                        city: formData.billingCity,
+                        state: formData.billingState,
+                        country: formData.billingCountry,
+                        zipCode: formData.billingZipCode,
+                        vat_No: formData.billingVatNo,
+                        gstn_No: formData.billingGstnNo,
+                    },
+                ],
+                shippingAddress: [
+                    {
+                        isDefault: "Y",
+                        printName:
+                            formData.shippingPrintName || formData.companyName,
+                        street: formData.shippingStreet,
+                        city: formData.shippingCity,
+                        state: formData.shippingState,
+                        country: formData.shippingCountry,
+                        zipCode: formData.shippingZipCode,
+                        vat_No: formData.shippingVatNo,
+                        gstn_No: formData.shippingGstnNo,
+                    },
+                ],
+                contactDetail: {
+                    contactName: formData.contactDetailName,
+                    designation: formData.designation,
+                    businessTel1: formData.businessTel1,
+                    businessTel2: formData.businessTel2,
+                    businessFax: formData.businessFax,
+                    mobileNo: formData.mobileNo,
+                    personalNo: formData.personalNo,
+                    otherNo: formData.otherNo,
+                    email: formData.contactEmail,
+                },
                 customerData: {
                     firstName: formData.firstName,
                     lastName: formData.lastName,
@@ -151,7 +351,9 @@ const Page = () => {
                         country: formData.country,
                     },
                     businessInfo: {
-                        companyName: formData.businessCompanyName,
+                        companyName:
+                            formData.businessCompanyName ||
+                            formData.companyName,
                         businessType: formData.businessType,
                         vatNumber: formData.vatNumber,
                         websiteUrl: formData.websiteUrl,
@@ -166,7 +368,6 @@ const Page = () => {
                     "Registration successful! Please verify your email.",
             );
 
-            // Redirect to OTP verification page with email
             setTimeout(() => {
                 router.push(
                     `/verify-otp?email=${encodeURIComponent(formData.email)}`,
@@ -178,6 +379,18 @@ const Page = () => {
             setIsLoading(false);
         }
     };
+
+    const totalSteps = 8;
+    const stepTitles = [
+        "Account Details",
+        "Company Information",
+        "Personal Information",
+        "Address Information",
+        "Business Information",
+        "Billing Address",
+        "Shipping Address",
+        "Contact Details",
+    ];
 
     return (
         <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-black">
@@ -194,7 +407,7 @@ const Page = () => {
             <div className="relative z-10 container mx-auto px-4 flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-32 w-full h-full py-10">
                 {/* Left Side: Diamond & Quote */}
                 <div className="flex flex-col items-center text-center max-w-lg">
-                    <div className="relative w-48 h-48 md:w-72 md:h-72 mb-2 ">
+                    <div className="relative w-48 h-48 md:w-72 md:h-72 mb-2">
                         <Image
                             src={diamondImage}
                             alt="Diamond"
@@ -226,14 +439,14 @@ const Page = () => {
                     </h2>
 
                     {/* Progress Indicator */}
-                    <div className="flex justify-center items-center gap-2 mb-6">
-                        {[1, 2, 3, 4].map((step) => (
+                    <div className="flex justify-center items-center gap-1 mb-6 overflow-x-auto">
+                        {Array.from({ length: totalSteps }).map((_, index) => (
                             <div
-                                key={step}
-                                className={`h-2 w-12 rounded-full transition-all ${
-                                    step === currentStep
-                                        ? "bg-primary-yellow-1"
-                                        : step < currentStep
+                                key={index}
+                                className={`h-2 w-8 rounded-full transition-all ${
+                                    index + 1 === currentStep
+                                        ? "bg-primary-yellow-1 w-12"
+                                        : index + 1 < currentStep
                                           ? "bg-primary-yellow-1/50"
                                           : "bg-white/20"
                                 }`}
@@ -242,14 +455,8 @@ const Page = () => {
                     </div>
 
                     <p className="text-center text-sm text-gray-400 mb-6 font-lato">
-                        Step {currentStep} of 4:{" "}
-                        {currentStep === 1
-                            ? "Account Details"
-                            : currentStep === 2
-                              ? "Personal Information"
-                              : currentStep === 3
-                                ? "Address Information"
-                                : "Business Information"}
+                        Step {currentStep} of {totalSteps}:{" "}
+                        {stepTitles[currentStep - 1]}
                     </p>
 
                     <form className="space-y-4" onSubmit={handleSubmit}>
@@ -311,24 +518,124 @@ const Page = () => {
                                     />
                                     <Lock className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-teal-100/80" />
                                 </div>
+                            </>
+                        )}
 
+                        {/* Step 2: Company Info */}
+                        {currentStep === 2 && (
+                            <>
                                 <div className="relative group">
                                     <Input
                                         type="text"
                                         name="companyName"
-                                        placeholder="Company Name"
+                                        placeholder="Company Name *"
                                         value={formData.companyName}
                                         onChange={handleInputChange}
+                                        required
                                         disabled={isLoading}
                                         className="w-full bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 pr-10 rounded-lg"
                                     />
                                     <Building2 className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-teal-100/80" />
                                 </div>
+
+                                <div className="relative group">
+                                    <Input
+                                        type="text"
+                                        name="contactName"
+                                        placeholder="Contact Name *"
+                                        value={formData.contactName}
+                                        onChange={handleInputChange}
+                                        required
+                                        disabled={isLoading}
+                                        className="w-full bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 pr-10 rounded-lg"
+                                    />
+                                    <User className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-teal-100/80" />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <Input
+                                        type="text"
+                                        name="currency"
+                                        placeholder="Currency *"
+                                        value={formData.currency}
+                                        onChange={handleInputChange}
+                                        required
+                                        disabled={isLoading}
+                                        className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg"
+                                    />
+                                    <Input
+                                        type="text"
+                                        name="companyGroup"
+                                        placeholder="Company Group"
+                                        value={formData.companyGroup}
+                                        onChange={handleInputChange}
+                                        disabled={isLoading}
+                                        className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg"
+                                    />
+                                </div>
+
+                                <div className="relative group">
+                                    <Input
+                                        type="text"
+                                        name="firmRegNo"
+                                        placeholder="Firm Registration Number"
+                                        value={formData.firmRegNo}
+                                        onChange={handleInputChange}
+                                        disabled={isLoading}
+                                        className="w-full bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 pr-10 rounded-lg"
+                                    />
+                                    <FileText className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-teal-100/80" />
+                                </div>
+
+                                <div className="relative group">
+                                    <Input
+                                        type="text"
+                                        name="defaultTerms"
+                                        placeholder="Default Terms (e.g., Net 30)"
+                                        value={formData.defaultTerms}
+                                        onChange={handleInputChange}
+                                        disabled={isLoading}
+                                        className="w-full bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg"
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <Input
+                                        type="text"
+                                        name="creditLimit"
+                                        placeholder="Credit Limit"
+                                        value={formData.creditLimit}
+                                        onChange={handleInputChange}
+                                        disabled={isLoading}
+                                        className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg"
+                                    />
+                                    <Input
+                                        type="text"
+                                        name="annualTarget"
+                                        placeholder="Annual Target"
+                                        value={formData.annualTarget}
+                                        onChange={handleInputChange}
+                                        disabled={isLoading}
+                                        className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg"
+                                    />
+                                </div>
+
+                                <div className="relative group">
+                                    <Input
+                                        type="text"
+                                        name="remarks"
+                                        placeholder="Remarks (Optional)"
+                                        value={formData.remarks}
+                                        onChange={handleInputChange}
+                                        disabled={isLoading}
+                                        className="w-full bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg"
+                                    />
+                                </div>
                             </>
                         )}
 
-                        {/* Step 2: Personal Info */}
-                        {currentStep === 2 && (
+                        {/* Step 3: Personal Info */}
+                        {currentStep === 3 && (
                             <>
                                 <div className="relative group">
                                     <Input
@@ -362,7 +669,7 @@ const Page = () => {
                                     <Input
                                         type="text"
                                         name="countryCode"
-                                        placeholder="+1"
+                                        placeholder="+91"
                                         value={formData.countryCode}
                                         onChange={handleInputChange}
                                         disabled={isLoading}
@@ -398,8 +705,8 @@ const Page = () => {
                             </>
                         )}
 
-                        {/* Step 3: Address Info */}
-                        {currentStep === 3 && (
+                        {/* Step 4: Address Info */}
+                        {currentStep === 4 && (
                             <>
                                 <div className="relative group">
                                     <Input
@@ -463,8 +770,8 @@ const Page = () => {
                             </>
                         )}
 
-                        {/* Step 4: Business Info */}
-                        {currentStep === 4 && (
+                        {/* Step 5: Business Info */}
+                        {currentStep === 5 && (
                             <>
                                 <div className="relative group">
                                     <Input
@@ -502,6 +809,7 @@ const Page = () => {
                                         disabled={isLoading}
                                         className="w-full bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 pr-10 rounded-lg"
                                     />
+                                    <FileText className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-teal-100/80" />
                                 </div>
 
                                 <div className="relative group">
@@ -515,6 +823,348 @@ const Page = () => {
                                         className="w-full bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 pr-10 rounded-lg"
                                     />
                                     <Globe className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-teal-100/80" />
+                                </div>
+                            </>
+                        )}
+
+                        {/* Step 6: Billing Address */}
+                        {currentStep === 6 && (
+                            <>
+                                <div className="relative group">
+                                    <Input
+                                        type="text"
+                                        name="billingPrintName"
+                                        placeholder="Print Name (Optional)"
+                                        value={formData.billingPrintName}
+                                        onChange={handleInputChange}
+                                        disabled={isLoading}
+                                        className="w-full bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg"
+                                    />
+                                </div>
+
+                                <div className="relative group">
+                                    <Input
+                                        type="text"
+                                        name="billingStreet"
+                                        placeholder="Billing Street Address *"
+                                        value={formData.billingStreet}
+                                        onChange={handleInputChange}
+                                        required
+                                        disabled={isLoading}
+                                        className="w-full bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 pr-10 rounded-lg"
+                                    />
+                                    <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-teal-100/80" />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <Input
+                                        type="text"
+                                        name="billingCity"
+                                        placeholder="City *"
+                                        value={formData.billingCity}
+                                        onChange={handleInputChange}
+                                        required
+                                        disabled={isLoading}
+                                        className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg"
+                                    />
+                                    <Input
+                                        type="text"
+                                        name="billingState"
+                                        placeholder="State *"
+                                        value={formData.billingState}
+                                        onChange={handleInputChange}
+                                        required
+                                        disabled={isLoading}
+                                        className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg"
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <Input
+                                        type="text"
+                                        name="billingZipCode"
+                                        placeholder="Zip Code *"
+                                        value={formData.billingZipCode}
+                                        onChange={handleInputChange}
+                                        required
+                                        disabled={isLoading}
+                                        className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg"
+                                    />
+                                    <Input
+                                        type="text"
+                                        name="billingCountry"
+                                        placeholder="Country *"
+                                        value={formData.billingCountry}
+                                        onChange={handleInputChange}
+                                        required
+                                        disabled={isLoading}
+                                        className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg"
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <Input
+                                        type="text"
+                                        name="billingVatNo"
+                                        placeholder="VAT No (Optional)"
+                                        value={formData.billingVatNo}
+                                        onChange={handleInputChange}
+                                        disabled={isLoading}
+                                        className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg"
+                                    />
+                                    <Input
+                                        type="text"
+                                        name="billingGstnNo"
+                                        placeholder="GSTN No (Optional)"
+                                        value={formData.billingGstnNo}
+                                        onChange={handleInputChange}
+                                        disabled={isLoading}
+                                        className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg"
+                                    />
+                                </div>
+                            </>
+                        )}
+
+                        {/* Step 7: Shipping Address */}
+                        {currentStep === 7 && (
+                            <>
+                                <div className="flex items-center gap-3 mb-4">
+                                    <input
+                                        type="checkbox"
+                                        name="sameAsBilling"
+                                        checked={formData.sameAsBilling}
+                                        onChange={handleInputChange}
+                                        disabled={isLoading}
+                                        className="w-4 h-4 text-primary-yellow-1 bg-white/10 border-white/20 rounded focus:ring-primary-yellow-1"
+                                    />
+                                    <label className="text-sm text-gray-300 font-lato">
+                                        Same as Billing Address
+                                    </label>
+                                </div>
+
+                                <div className="relative group">
+                                    <Input
+                                        type="text"
+                                        name="shippingPrintName"
+                                        placeholder="Print Name (Optional)"
+                                        value={formData.shippingPrintName}
+                                        onChange={handleInputChange}
+                                        disabled={
+                                            isLoading || formData.sameAsBilling
+                                        }
+                                        className="w-full bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg disabled:opacity-50"
+                                    />
+                                </div>
+
+                                <div className="relative group">
+                                    <Input
+                                        type="text"
+                                        name="shippingStreet"
+                                        placeholder="Shipping Street Address *"
+                                        value={formData.shippingStreet}
+                                        onChange={handleInputChange}
+                                        required
+                                        disabled={
+                                            isLoading || formData.sameAsBilling
+                                        }
+                                        className="w-full bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 pr-10 rounded-lg disabled:opacity-50"
+                                    />
+                                    <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-teal-100/80" />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <Input
+                                        type="text"
+                                        name="shippingCity"
+                                        placeholder="City *"
+                                        value={formData.shippingCity}
+                                        onChange={handleInputChange}
+                                        required
+                                        disabled={
+                                            isLoading || formData.sameAsBilling
+                                        }
+                                        className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg disabled:opacity-50"
+                                    />
+                                    <Input
+                                        type="text"
+                                        name="shippingState"
+                                        placeholder="State *"
+                                        value={formData.shippingState}
+                                        onChange={handleInputChange}
+                                        required
+                                        disabled={
+                                            isLoading || formData.sameAsBilling
+                                        }
+                                        className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg disabled:opacity-50"
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <Input
+                                        type="text"
+                                        name="shippingZipCode"
+                                        placeholder="Zip Code *"
+                                        value={formData.shippingZipCode}
+                                        onChange={handleInputChange}
+                                        required
+                                        disabled={
+                                            isLoading || formData.sameAsBilling
+                                        }
+                                        className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg disabled:opacity-50"
+                                    />
+                                    <Input
+                                        type="text"
+                                        name="shippingCountry"
+                                        placeholder="Country *"
+                                        value={formData.shippingCountry}
+                                        onChange={handleInputChange}
+                                        required
+                                        disabled={
+                                            isLoading || formData.sameAsBilling
+                                        }
+                                        className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg disabled:opacity-50"
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <Input
+                                        type="text"
+                                        name="shippingVatNo"
+                                        placeholder="VAT No (Optional)"
+                                        value={formData.shippingVatNo}
+                                        onChange={handleInputChange}
+                                        disabled={
+                                            isLoading || formData.sameAsBilling
+                                        }
+                                        className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg disabled:opacity-50"
+                                    />
+                                    <Input
+                                        type="text"
+                                        name="shippingGstnNo"
+                                        placeholder="GSTN No (Optional)"
+                                        value={formData.shippingGstnNo}
+                                        onChange={handleInputChange}
+                                        disabled={
+                                            isLoading || formData.sameAsBilling
+                                        }
+                                        className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg disabled:opacity-50"
+                                    />
+                                </div>
+                            </>
+                        )}
+
+                        {/* Step 8: Contact Details */}
+                        {currentStep === 8 && (
+                            <>
+                                <div className="relative group">
+                                    <Input
+                                        type="text"
+                                        name="contactDetailName"
+                                        placeholder="Contact Name *"
+                                        value={formData.contactDetailName}
+                                        onChange={handleInputChange}
+                                        required
+                                        disabled={isLoading}
+                                        className="w-full bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 pr-10 rounded-lg"
+                                    />
+                                    <Users className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-teal-100/80" />
+                                </div>
+
+                                <div className="relative group">
+                                    <Input
+                                        type="text"
+                                        name="designation"
+                                        placeholder="Designation *"
+                                        value={formData.designation}
+                                        onChange={handleInputChange}
+                                        required
+                                        disabled={isLoading}
+                                        className="w-full bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg"
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <Input
+                                        type="tel"
+                                        name="businessTel1"
+                                        placeholder="Business Tel 1"
+                                        value={formData.businessTel1}
+                                        onChange={handleInputChange}
+                                        disabled={isLoading}
+                                        className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg"
+                                    />
+                                    <Input
+                                        type="tel"
+                                        name="businessTel2"
+                                        placeholder="Business Tel 2"
+                                        value={formData.businessTel2}
+                                        onChange={handleInputChange}
+                                        disabled={isLoading}
+                                        className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg"
+                                    />
+                                </div>
+
+                                <div className="relative group">
+                                    <Input
+                                        type="tel"
+                                        name="businessFax"
+                                        placeholder="Business Fax"
+                                        value={formData.businessFax}
+                                        onChange={handleInputChange}
+                                        disabled={isLoading}
+                                        className="w-full bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg"
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="relative group">
+                                        <Input
+                                            type="tel"
+                                            name="mobileNo"
+                                            placeholder="Mobile No *"
+                                            value={formData.mobileNo}
+                                            onChange={handleInputChange}
+                                            required
+                                            disabled={isLoading}
+                                            className="w-full bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 pr-10 rounded-lg"
+                                        />
+                                        <Phone className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-teal-100/80" />
+                                    </div>
+                                    <Input
+                                        type="tel"
+                                        name="personalNo"
+                                        placeholder="Personal No"
+                                        value={formData.personalNo}
+                                        onChange={handleInputChange}
+                                        disabled={isLoading}
+                                        className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg"
+                                    />
+                                </div>
+
+                                <div className="relative group">
+                                    <Input
+                                        type="tel"
+                                        name="otherNo"
+                                        placeholder="Other No (Optional)"
+                                        value={formData.otherNo}
+                                        onChange={handleInputChange}
+                                        disabled={isLoading}
+                                        className="w-full bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 rounded-lg"
+                                    />
+                                </div>
+
+                                <div className="relative group">
+                                    <Input
+                                        type="email"
+                                        name="contactEmail"
+                                        placeholder="Contact Email *"
+                                        value={formData.contactEmail}
+                                        onChange={handleInputChange}
+                                        required
+                                        disabled={isLoading}
+                                        className="w-full bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-primary-yellow-1/50 focus:bg-white/15 h-auto py-3 pl-4 pr-10 rounded-lg"
+                                    />
+                                    <Mail className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-teal-100/80" />
                                 </div>
                             </>
                         )}
@@ -533,7 +1183,7 @@ const Page = () => {
                                 </Button>
                             )}
 
-                            {currentStep < 4 ? (
+                            {currentStep < totalSteps ? (
                                 <Button
                                     type="button"
                                     onClick={handleNext}

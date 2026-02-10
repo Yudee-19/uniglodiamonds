@@ -1,4 +1,4 @@
-import apiClient from "@/lib/api"; // Adjust path if needed
+import apiClient from "@/lib/api";
 import { AxiosError } from "axios";
 
 export interface User {
@@ -7,10 +7,68 @@ export interface User {
     email: string;
     status: string;
     role: string;
+    companyName: string;
+    contactName: string;
+    currency: string;
+    companyGroup: string;
+    firmRegNo: string;
+    defaultTerms: string;
+    creditLimit: string;
+    annualTarget: string;
+    remarks: string;
+    billingAddress: Address[];
+    shippingAddress: Address[];
+    contactDetail: ContactDetail;
+    customerData: CustomerData;
     quotations: any[];
     createdAt: string;
     updatedAt: string;
     __v: number;
+}
+
+export interface Address {
+    isDefault: string;
+    printName: string;
+    street: string;
+    city: string;
+    state: string;
+    country: string;
+    zipCode: string;
+    vat_No: string;
+    gstn_No: string;
+}
+
+export interface ContactDetail {
+    contactName: string;
+    designation: string;
+    businessTel1: string;
+    businessTel2: string;
+    businessFax: string;
+    mobileNo: string;
+    personalNo: string;
+    otherNo: string;
+    email: string;
+}
+
+export interface CustomerData {
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    landlineNumber: string;
+    countryCode: string;
+    address: {
+        street: string;
+        city: string;
+        state: string;
+        postalCode: string;
+        country: string;
+    };
+    businessInfo: {
+        companyName: string;
+        businessType: string;
+        vatNumber: string;
+        websiteUrl: string;
+    };
 }
 
 export interface LoginResponseData {
@@ -33,26 +91,18 @@ export interface RegisterRequestData {
     email: string;
     password: string;
     companyName: string;
-    customerData: {
-        firstName: string;
-        lastName: string;
-        phoneNumber: string;
-        countryCode: string;
-        landlineNumber: string;
-        address: {
-            street: string;
-            city: string;
-            state: string;
-            postalCode: string;
-            country: string;
-        };
-        businessInfo: {
-            companyName: string;
-            businessType: string;
-            vatNumber: string;
-            websiteUrl: string;
-        };
-    };
+    contactName: string;
+    currency: string;
+    companyGroup: string;
+    firmRegNo: string;
+    defaultTerms: string;
+    creditLimit: string;
+    annualTarget: string;
+    remarks: string;
+    billingAddress: Address[];
+    shippingAddress: Address[];
+    contactDetail: ContactDetail;
+    customerData: CustomerData;
 }
 
 export interface RegisterResponseData {
@@ -94,7 +144,6 @@ export const getCurrentUser = async (): Promise<
     ApiSuccessResponse<LoginResponseData>
 > => {
     try {
-        // Assuming endpoint is /users/profile based on your reference
         const response =
             await apiClient.get<ApiSuccessResponse<LoginResponseData>>(
                 "/users/profile",
